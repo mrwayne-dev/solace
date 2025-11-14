@@ -1,0 +1,1009 @@
+/**
+ * ============================================================
+ *  HealthRunCare Dashboard.js (updated: fixes pending modal, toast, data loading, bank suggestions, polish items, icons)
+ * ============================================================
+ */
+;(function ($) {
+  "use strict";
+  /* ===================== Core UI Behaviors (existing) ===================== */
+  var selectImages = function () {
+    if ($(".image-select").length > 0) {
+      const selectIMG = $(".image-select");
+      selectIMG.find("option").each((idx, elem) => {
+        const selectOption = $(elem);
+        const imgURL = selectOption.attr("data-thumbnail");
+        if (imgURL) {
+          selectOption.attr(
+            "data-content",
+            "<img src='%i'/> %s"
+              .replace(/%i/, imgURL)
+              .replace(/%s/, selectOption.text())
+          );a
+        }
+      });
+      selectIMG.selectpicker();
+    }
+  };
+  var menuleft = function () {
+    if ($('div').hasClass('section-menu-left')) {
+      var bt = $(".section-menu-left").find(".has-children");
+      bt.on("click", function () {
+        var args = { duration: 200 };
+        if ($(this).hasClass("active")) {
+          $(this).children(".sub-menu").slideUp(args);
+          $(this).removeClass("active");
+        } else {
+          $(".sub-menu").slideUp(args);
+          $(this).children(".sub-menu").slideDown(args);
+          $(".menu-item.has-children").removeClass("active");
+          $(this).addClass("active");
+        }
+      });
+      $('.sub-menu-item').on('click', function(event){
+        event.stopPropagation();
+      });
+    }
+  };
+  var tabs = function(){
+    $('.widget-tabs').each(function(){
+        $(this).find('.widget-content-tab').children().hide();
+        $(this).find('.widget-content-tab').children(".active").show();
+        $(this).find('.widget-menu-tab').find('li').on('click',function(){
+            var liActive = $(this).index();
+            var contentActive=$(this).siblings().removeClass('active')
+              .parents('.widget-tabs').find('.widget-content-tab')
+              .children().eq(liActive);
+            contentActive.addClass('active').fadeIn("slow");
+            contentActive.siblings().removeClass('active');
+            $(this).addClass('active').parents('.widget-tabs')
+              .find('.widget-content-tab').children().eq(liActive).siblings().hide();
+        });
+    });
+  };
+  var collapse_menu = function () {
+    $(".button-show-hide").on("click", function () {
+      $('.layout-wrap').toggleClass('full-width');
+    });
+  };
+  var showpass = function() {
+    $(".show-pass").on("click", function () {
+      $(this).toggleClass("active");
+      var input = $(this).parents(".password").find(".password-input");
+      if (input.attr("type") === "password") {
+        input.attr("type", "text");
+      } else if (input.attr("type") === "text") {
+        input.attr("type", "password");
+      }
+    });
+  };
+  var select_colors_theme = function () {
+    if ($('div').hasClass("select-colors-theme")) {
+      $(".select-colors-theme .item").on("click", function () {
+        $(this).parents(".select-colors-theme").find(".active").removeClass("active");
+        $(this).toggleClass("active");
+      });
+    }
+  };
+  var icon_function = function () {
+    if ($('div').hasClass("list-icon-function")) {
+      $(".list-icon-function .trash").on("click", function () {
+        $(this).parents(".item-row").remove();
+      });
+    }
+  };
+  var box_search=function(){
+    $(document).on('click',function(e){
+      var clickID=e.target.id;
+      if((clickID!=='s')){
+          $('.box-content-search').removeClass('active');
+      }});
+    $(document).on('click',function(e){
+        var clickID=e.target.class;
+        if((clickID!=='a111')){
+            $('.show-search').removeClass('active');
+        }});
+    $('.show-search').on('click',function(event){
+      event.stopPropagation();}
+    );
+    $('.search-form').on('click',function(event){
+      event.stopPropagation();}
+    );
+    var input =  $('.header-dashboard').find('.form-search').find('input');
+    input.on('input', function() {
+      if ($(this).val().trim() !== '') {
+        $('.box-content-search').addClass('active');
+      } else {
+        $('.box-content-search').removeClass('active');
+      }
+    });
+  };
+  var preloader = function () {
+    setTimeout(function () {
+      $("#preload").fadeOut("slow", function () {
+          $(this).remove();
+      });
+    }, 300);
+  };
+  var variant_picker = function () {
+    if ($(".variant-picker-item").length) {
+      $(".variant-picker-item label").on("click", function () {
+        $(this)
+          .closest(".variant-picker-item")
+          .find(".variant-picker-label-value")
+          .text($(this).data("value"));
+      });
+    }
+  };
+  var fullcheckbox = function () {
+    $('.total-checkbox').on('click', function () {
+      if ( $(this).is(':checked') ) {
+        $(this).closest('.wrap-checkbox').find('.tf-table-item').addClass("checked");
+        $(this).closest('.wrap-checkbox').find('.checkbox-item').prop('checked', true);
+      } else {
+        $(this).closest('.wrap-checkbox').find('.tf-table-item').removeClass("checked");
+        $(this).closest('.wrap-checkbox').find('.checkbox-item').prop('checked', false);
+      }
+    });
+    $('.tf-table-item .checkbox-item').on('click', function () {
+      $(this).closest('.tf-table-item').toggleClass("checked");
+    });
+  };
+  var counter = function () {
+    if (!$(document.body).hasClass("counter-scroll")) return;
+    var $counter = $(".counter");
+    if ($counter.length === 0) return;
+    var a = 0;
+    var oTop = $counter.offset().top - window.innerHeight;
+    if (a === 0 && oTop < 500) {
+      if ($().countTo) {
+        $counter.find(".number").each(function () {
+          var to = $(this).data("to"), speed = $(this).data("speed");
+          $(this).countTo({ to: to, speed: speed });
+        });
+      }
+      a = 1;
+    }
+    $(window).scroll(function () {
+      if (a === 0 && $(window).scrollTop() > oTop) {
+        if ($().countTo) {
+          $counter.find(".number").each(function () {
+            var to = $(this).data("to"), speed = $(this).data("speed");
+            $(this).countTo({ to: to, speed: speed });
+          });
+        }
+        a = 1;
+      }
+    });
+  };
+  var sort = function () {
+    $(".title-sort .btn-key-sort").click(function() {
+      let columnIndex = $(this).data("index");
+      let type = $(this).data("type");
+      let table = $(".content-sort tbody");
+      let rows = table.find("tr").toArray();
+      let isAscending = $(this).data("order") === "asc";
+      rows.sort((rowA, rowB) => {
+        let cellA = $(rowA).children("td").find(".key-sort").eq(columnIndex).text().trim();
+        let cellB = $(rowB).children("td").find(".key-sort").eq(columnIndex).text().trim();
+        if (type === "number") {
+          return isAscending ? (Number(cellA) - Number(cellB)) : (Number(cellB) - Number(cellA));
+        } else {
+          return isAscending ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+        }
+      });
+      table.append(rows);
+      $(this).data("order", isAscending ? "desc" : "asc");
+    });
+  };
+  /* ===================== Utilities (new) ===================== */
+  // Show modal (simple) - with accessibility focus
+  function showModal(selector) {
+    const modal = $(selector);
+    if (!modal.length) return;
+    modal.attr('aria-hidden', 'false').addClass('open').addClass('is-open');
+    modal.find('[data-modal-close]').off('click').on('click', () => closeModal(selector));
+    modal.find('.modal-overlay').off('click').on('click', () => closeModal(selector));
+    // Accessibility: Focus the first focusable element in the modal
+    setTimeout(() => {
+        modal.find('input, button, select, textarea').first().focus();
+    }, 10); // Small delay to allow modal to be visually ready
+  }
+  // Close modal - with fade-out sync delay
+  function closeModal(selector) {
+    const modal = $(selector);
+    if (!modal.length) return;
+    // Add a class to trigger fade-out animation (if not already handled by CSS on .modal.open)
+    // Then remove the main classes after the animation completes
+    modal.attr('aria-hidden', 'true');
+    // Use a delay slightly longer than the CSS animation duration (e.g., 300ms if CSS is 250ms)
+    setTimeout(() => {
+        modal.removeClass('open').removeClass('is-open');
+    }, 300);
+  }
+  // Copy input value to clipboard and show toast
+  function copyToClipboard(selector) {
+    const el = $(selector);
+    if (!el.length) return;
+    const value = el.val() || el.text();
+    if (!value) {
+      showToast('Nothing to copy', 'error');
+      return;
+    }
+    navigator.clipboard?.writeText(value).then(() => {
+      showToast('Copied to clipboard', 'success');
+    }).catch(() => {
+      // fallback
+      const tmp = document.createElement('textarea');
+      tmp.value = value;
+      document.body.appendChild(tmp);
+      tmp.select();
+      try {
+        document.execCommand('copy');
+        showToast('Copied to clipboard', 'success');
+      } catch (e) {
+        showToast('Could not copy', 'error');
+      }
+      tmp.remove();
+    });
+  }
+  // Format to currency (USD default)
+  function formatCurrency(amount) {
+    if (amount == null || isNaN(Number(amount))) return '0.00';
+    return Number(amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  /* ===================== Icon Helper for Activity ===================== */
+  function getIconForType(type) {
+    const t = (type || '').toLowerCase();
+    if (t.includes('deposit')) return 'mdi:arrow-down-bold-circle-outline';
+    if (t.includes('withdraw')) return 'mdi:arrow-up-bold-circle-outline';
+    if (t.includes('donation')) return 'mdi:hand-heart-outline';
+    if (t.includes('investment')) return 'mdi:chart-line';
+    if (t.includes('holdlock')) return 'mdi:lock-outline';
+    if (t.includes('infrastructure')) return 'mdi:home-city-outline';
+    if (t.includes('maintenance')) return 'mdi:tools';
+    return 'mdi:wallet-outline';
+  }
+  // Determine color class for transaction amounts
+function getAmountClass(type) {
+  const t = (type || '').toLowerCase();
+  if (t.includes('withdraw')) return 'negative';
+  return 'positive'; // deposit, donation, investment, etc.
+}
+
+  /* ===================== Toast helper (updated to match new CSS + prevent stacking) ===================== */
+  // Basic toast implementation matching the new CSS styles
+  function showToast(message, type = 'info', timeout = 4000) { // Changed default timeout to match CSS animation (4s)
+    const container = $('#toast-container');
+    if (!container.length) {
+      console.error('Toast container #toast-container not found in the DOM.');
+      return;
+    }
+
+    // Prevent toast stacking beyond 3
+    if (container.children().length > 3) {
+        container.children().first().remove();
+    }
+
+    // Determine the icon based on the type
+    let icon = 'mdi:information-outline'; // Default icon
+    if (type === 'success') icon = 'mdi:check-circle-outline';
+    if (type === 'error') icon = 'mdi:alert-circle-outline';
+    if (type === 'warning') icon = 'mdi:alert-outline';
+
+    // Create the toast element with the correct classes and structure
+    const toastEl = $(`
+      <div class="toast toast-${type}">
+        <span class="iconify" data-icon="${icon}" data-width="22" data-height="22"></span>
+        <div class="toast-message">${message}</div>
+      </div>
+    `);
+
+    container.append(toastEl);
+
+    // If a timeout is specified, remove the toast after the duration
+    // The CSS handles the fadeOut animation via keyframes
+    if (timeout > 0) {
+      setTimeout(() => {
+        toastEl.remove(); // Remove the toast element after the CSS animation completes
+      }, timeout);
+    }
+
+    return toastEl; // Return the element if needed for further manipulation
+  }
+  /* ===================== Dashboard Data Loading (updated to handle both dashboard.php and wallet.php + icons) ===================== */
+var loadDashboardData = async function () {
+  try {
+    // 🟩 When on wallet.php, fetch summary directly from wallet backend
+    if (window.location.pathname.toLowerCase().includes('/wallet')) {
+      const walletRes = await fetchApi('/api/backend/wallet.php', { action: 'get_wallet_summary' });
+      if (walletRes.status === 'success') {
+        const w = walletRes.data;
+
+        // --- Update Wallet Card Values (IDs from wallet.php) ---
+        $('#total-balance').text(formatCurrency(w.balance ?? 0));
+        $('#pending-withdrawals').text(formatCurrency(w.pending_withdrawals ?? 0));
+        $('#total-deposited').text(formatCurrency(w.total_deposited ?? 0));
+        $('#total-withdrawn').text(formatCurrency(w.total_withdrawn ?? 0));
+        $('#total-donations').text(formatCurrency(w.total_donations ?? 0));
+        $('#total-investments').text(formatCurrency(w.total_investments ?? 0));
+        $('#holdlock-savings').text(formatCurrency(w.holdlock_savings ?? 0));
+        $('#total-earnings').text(formatCurrency(w.total_earnings ?? 0));
+
+        // 🟢 Stop here (no need to fetch dashboard.php)
+        return;
+      } else {
+        console.warn('Wallet summary failed:', walletRes.message);
+      }
+    }
+
+    // 🟨 Otherwise, fetch from dashboard.php for all other pages
+    const res = await fetchApi('/api/backend/dashboard.php', { action: 'get_data' });
+    if (res.status === 'success') {
+      const w = res.data.wallet || {};
+      const i = res.data.impacts || {};
+
+      const parseNum = v => {
+        if (v == null) return 0;
+        if (typeof v === 'string') {
+          const n = Number(v.replace(/[^0-9.\-]/g, ''));
+          return isNaN(n) ? 0 : n;
+        }
+        return Number(v) || 0;
+      };
+
+      // --- Update Wallet Card Values (shared structure) ---
+      $('#total-balance').text(formatCurrency(parseNum(w.balance ?? 0)));
+      $('#pending-withdrawals').text(Math.round(parseNum(w.pending_withdrawals ?? 0)));
+      $('#total-deposited').text(formatCurrency(parseNum(w.total_deposited ?? 0)));
+      $('#total-withdrawn').text(formatCurrency(parseNum(w.total_withdrawn ?? 0)));
+      $('#total-donations').text(formatCurrency(parseNum(w.donations ?? w.total_donations ?? 0)));
+      $('#total-investments').text(formatCurrency(parseNum(w.investments ?? w.total_investments ?? 0)));
+      $('#holdlock-savings').text(formatCurrency(parseNum(w.holdlock_savings ?? 0)));
+      $('#total-earnings').text(formatCurrency(parseNum(w.total_earnings ?? 0)));
+
+      // --- Wallet Activity List (wallet.php) ---
+      const list = $('#wallet-activity');
+      list.empty();
+      (res.data.recent_activity || []).forEach(tx => {
+        const iconName = getIconForType(tx.type);
+        const txTypeLower = (tx.type || '').toLowerCase();
+
+        let colorClass = '';
+        if (txTypeLower.includes('deposit')) colorClass = 'accent-green';
+        else if (txTypeLower.includes('withdraw')) colorClass = 'accent-red';
+        else if (txTypeLower.includes('donation')) colorClass = 'accent-orange';
+        else if (txTypeLower.includes('investment')) colorClass = 'accent-blue';
+        else if (txTypeLower.includes('holdlock')) colorClass = 'accent-purple';
+        else if (txTypeLower.includes('infrastructure')) colorClass = 'accent-gray';
+        else if (txTypeLower.includes('maintenance')) colorClass = 'accent-yellow';
+
+        const li = `
+          <li class="wallet-item ${colorClass}">
+            <div class="wallet-item-left">
+              <div class="wallet-item-icon">
+                <span class="iconify" data-icon="${iconName}" data-width="20" data-height="20"></span>
+              </div>
+              <div>
+                <div class="wallet-item-title f14-regular">${tx.type}</div>
+                <div class="wallet-item-date f12-regular text-Gray">${tx.date || tx.created_at || ''}</div>
+              </div>
+            </div>
+            <div class="wallet-item-right">
+              <div class="wallet-item-amount f14-bold ${getAmountClass(tx.type)}">
+                $${formatCurrency(tx.amount)}
+              </div>
+              <div class="wallet-item-status f12-regular text-Gray">${tx.status || ''}</div>
+            </div>
+          </li>`;
+        list.append(li);
+      });
+
+      // --- Dashboard Overview (dashboard.php) ---
+      $('#wallet-balance').text(formatCurrency(parseNum(w.balance ?? 0)));
+      $('#donations').text(formatCurrency(parseNum(w.donations ?? w.total_donations ?? 0)));
+      $('#investments').text(formatCurrency(parseNum(w.investments ?? w.total_investments ?? 0)));
+      $('#holdlock-savings').text(formatCurrency(parseNum(w.holdlock_savings ?? 0)));
+
+      // --- Impact Values ---
+      $('#total-contributions').text('$' + formatCurrency(parseNum(i.total_contributions ?? 0)));
+      $('#people-helped').text(parseNum(i.people_helped ?? 0));
+      $('#impact-score').text(formatCurrency(parseNum(i.impact_score ?? 0)) + '%');
+      $('#communities-helped').text(parseNum(i.communities_helped ?? 0));
+      $('#packages-funded').text(parseNum(i.packages_funded ?? 0));
+
+      // --- Recent Activity Table (dashboard.php) ---
+      const tableBody = $('#recent-activity');
+      tableBody.empty();
+      (res.data.recent_activity || []).forEach(tx => {
+        const txTypeLower = (tx.type || '').toLowerCase();
+        let colorClass = '';
+        if (txTypeLower.includes('deposit')) colorClass = 'accent-green';
+        else if (txTypeLower.includes('withdraw')) colorClass = 'accent-red';
+        else if (txTypeLower.includes('donation')) colorClass = 'accent-orange';
+        else if (txTypeLower.includes('investment')) colorClass = 'accent-blue';
+        else if (txTypeLower.includes('holdlock')) colorClass = 'accent-purple';
+        else if (txTypeLower.includes('infrastructure')) colorClass = 'accent-gray';
+        else if (txTypeLower.includes('maintenance')) colorClass = 'accent-yellow';
+
+        const row = `
+          <tr class="${colorClass}">
+            <td class="f14-regular">${tx.date || tx.created_at || ''}</td>
+            <td class="f14-regular">${tx.type}</td>
+            <td class="f14-regular ${getAmountClass(tx.type)}">
+              $${formatCurrency(tx.amount)}
+            </td>
+          </tr>`;
+        tableBody.append(row);
+      });
+
+      // --- Pending count badge ---
+      const pendingCount = (res.data.pending_count ?? 0);
+      $('#pending-count').text(pendingCount ? `(${pendingCount})` : '');
+    } else {
+      console.error('Failed to load dashboard ', res.message);
+      showToast('Failed to load dashboard ' + res.message, 'error');
+    }
+  } catch (error) {
+    console.error('Error loading dashboard ', error);
+    showToast('An error occurred while loading dashboard data.', 'error');
+  }
+};
+
+  // Expose a programmatic refresh if needed elsewhere
+  window.refreshDashboard = async function () {
+    await loadDashboardData();
+  };
+  /* ===================== Auto-refresh (new) ===================== */
+  // Auto-refresh interval (ms)
+  const AUTO_REFRESH_INTERVAL_MS = 90000; 
+  let autoRefreshTimer = null;
+  function startAutoRefresh() {
+    if (autoRefreshTimer) return;
+    autoRefreshTimer = setInterval(() => {
+      loadDashboardData().catch(err => console.error('Auto-refresh failed', err));
+    }, AUTO_REFRESH_INTERVAL_MS);
+    // initial immediate refresh as well
+    loadDashboardData().catch(err => console.error('Initial refresh failed', err));
+  }
+  function stopAutoRefresh() {
+    if (!autoRefreshTimer) return;
+    clearInterval(autoRefreshTimer);
+    autoRefreshTimer = null;
+  }
+  /* ===================== Wallet: Deposit Flow ===================== */
+  // Deposit form handler
+  function bindDepositForm() {
+    const form = $('#deposit-form');
+    if (!form.length) return;
+    form.on('submit', async function (e) {
+      e.preventDefault();
+      const amount = Number($('#deposit-amount').val() || 0);
+      const method = $('#deposit-method').val();
+      if (!amount || amount <= 0) {
+        showToast('Enter a valid deposit amount', 'error');
+        return;
+      }
+      if (!method) {
+        showToast('Select a payment method', 'error');
+        return;
+      }
+      // Call wallet API
+      try {
+        // Show minimal loader via toast
+        showToast('Processing deposit...', 'info', 2000);
+        const res = await fetchApi('/api/backend/wallet.php', { action: 'initiate_deposit', amount, method });
+        if (res.status === 'success') {
+          // If secure_exchange returned redirect_url (create_crypto_payment will return it)
+          const redirect = res.data?.redirect_url || res.data?.payment_url || res.data?.redirect || null;
+          if (redirect) {
+            showToast('Redirecting to payment provider...', 'success', 2000);
+            // Small delay to allow toast to show
+            setTimeout(() => { window.location.href = redirect; }, 600);
+            return;
+          }
+          // Manual methods (wire_transfer, cash_mailing)
+          showToast('Deposit request submitted. Support will provide details shortly.', 'success');
+          // Clear input
+          $('#deposit-amount').val('');
+          $('#deposit-method').val('');
+          // Refresh pending deposits & dashboard immediately
+          await loadPendingDeposits(); // This now populates the list but doesn't show modal
+          await loadDashboardData();
+        } else {
+          showToast(res.message || 'Deposit failed', 'error');
+        }
+      } catch (err) {
+        console.error('Deposit error', err);
+        showToast('Failed to initiate deposit', 'error');
+      }
+    });
+  }
+  /* ===================== Wallet: Pending Deposits Modal ===================== */
+async function loadPendingDeposits() {
+  try {
+    const res = await fetchApi('/api/backend/wallet.php', { action: 'get_pending_deposits' });
+    if (res.status === 'success') {
+      const deposits = res.data.deposits || [];
+      const modalBody = $('#pending-actions-modal .modal-body');
+      modalBody.find('.pending-list, .note.no-pending').remove(); // Clear old content
+
+      const listWrapper = $('<div class="pending-list"></div>');
+
+      if (!deposits.length) {
+        listWrapper.append('<p class="note no-pending">You have no pending deposits.</p>');
+      } else {
+        deposits.forEach(d => {
+          let details = {};
+          try { details = JSON.parse(d.details || '{}'); } catch (e) { details = {}; }
+
+const item = $(`
+  <div class="pending-item" data-ref="${d.reference}">
+    <div class="top">
+      <div class="details">
+        <div class="amount">$${formatCurrency(d.amount)}</div>
+        <div class="method">${d.method.replace('_', ' ')}</div>
+        <div class="ref">Ref: ${d.reference}</div>
+        <div class="date">Created: ${d.created_at}</div>
+      </div>
+      <div class="actions">
+        <button class="complete-deposit" data-ref="${d.reference}">
+          Complete
+        </button>
+      </div>
+    </div>
+  </div>
+`);
+
+          listWrapper.append(item);
+        });
+      }
+
+      modalBody.prepend(listWrapper);
+
+      // Bind Complete buttons
+      $('#pending-actions-modal')
+        .find('.complete-deposit')
+        .off('click')
+        .on('click', function () {
+          const ref = $(this).data('ref');
+          openPendingDepositDetails(ref, deposits);
+        });
+
+    } else {
+      showToast(res.message || 'Failed to load pending deposits', 'error');
+    }
+  } catch (err) {
+    console.error('Error loading pending deposits', err);
+    showToast('Failed to load pending deposits', 'error');
+  }
+}
+
+  // Open specific pending deposit in the modal FORM
+function openPendingDepositDetails(reference, deposits) {
+  const deposit = (deposits || []).find(d => d.reference === reference);
+  if (!deposit) {
+    showToast('Deposit not found. Please refresh and try again.', 'error');
+    return;
+  }
+
+  const methodInput = $('#pending-deposit-method');
+  const amountInput = $('#pending-deposit-amount');
+  const addressGroup = $('#pending-deposit-address-group');
+  const addressInput = $('#pending-deposit-address');
+  const instruction = $('#pending-deposit-instruction');
+
+  // Reset fields before filling
+  addressInput.val('');
+  addressGroup.addClass('hidden');
+  instruction.addClass('hidden').text('');
+
+  methodInput.prop('disabled', true).val(deposit.method || '');
+  amountInput.prop('disabled', true).val(formatCurrency(deposit.amount || 0));
+
+  // Parse admin-provided details
+  let details = {};
+  try {
+    details = JSON.parse(deposit.details || '{}');
+  } catch (e) {
+    details = {};
+  }
+
+  // Check all possible address keys (common variations)
+  const addressVal =
+    details.deposit_address ||
+    details.address ||
+    details.wallet_address ||
+    details.payment_address ||
+    details.created_invoice_url ||
+    (details.data && (details.data.address || details.data.deposit_address)) ||
+    '';
+
+  if (addressVal && typeof addressVal === 'string' && addressVal.trim() !== '') {
+    // ✅ Address provided by admin → show field
+    addressInput.val(addressVal.trim());
+    addressGroup.removeClass('hidden');
+  } else {
+    // ❌ No address provided → show toast
+    showToast(
+      'Deposit address or payment details are not yet available. Please check back shortly.',
+      'warning'
+    );
+  }
+
+  // Optional instruction/note from admin
+  const note = details.instruction || details.note || details.message || '';
+  if (note) {
+    instruction.removeClass('hidden').text(note);
+  }
+
+  // Store reference for "I Have Paid"
+  $('#pending-confirm-paid-btn').data('reference', deposit.reference);
+
+  // Show the modal with data populated
+  showModal('#pending-actions-modal');
+}
+
+
+  // Pending deposit: "I Have Paid" button handler
+function bindPendingConfirmPaid() {
+  $('#pending-confirm-paid-btn').on('click', async function () {
+    const ref = $(this).data('reference');
+    if (!ref) {
+      showToast('No deposit selected', 'error');
+      return;
+    }
+
+    try {
+      showToast('Marking deposit as paid...', 'info');
+      const res = await fetchApi('/api/backend/wallet.php', { action: 'confirm_deposit_payment', reference: ref });
+
+      if (res.status === 'success') {
+        showToast(res.message || 'Marked as paid. Awaiting verification.', 'success');
+        closeModal('#pending-actions-modal');
+        await loadPendingDeposits();  // Refresh the pending list
+        await loadDashboardData();    // Refresh wallet stats
+      } else {
+        showToast(res.message || 'Failed to mark deposit paid', 'error');
+      }
+    } catch (err) {
+      console.error('Confirm deposit error', err);
+      showToast('Failed to mark deposit paid', 'error');
+    }
+  });
+}
+
+  /* ===================== Wallet: Withdraw Flow (bankSuggestions integrated + fixes + polish) ===================== */
+  // Bank suggestions map (from user-provided data)
+  const bankSuggestions = { 
+    'United States of America': ['Chase Bank', 'Bank of America', 'Wells Fargo', 'Citibank', 'U.S. Bank', 'PNC Bank', 'Capital One', 'TD Bank', 'Truist', 'Fifth Third Bank', 'Regions Bank', 'KeyBank', 'Huntington Bank', 'Ally Bank', 'Discover Bank'],
+    'Germany': ['Deutsche Bank', 'Commerzbank', 'Sparkasse', 'HypoVereinsbank', 'Postbank', 'Volksbank', 'DZ Bank', 'Bayerische Landesbank', 'Landesbank Baden-Württemberg', 'Norddeutsche Landesbank', 'Helaba', 'KfW Bank', 'DekaBank', 'IKB Deutsche Industriebank', 'Württembergische Bank'],
+    'France': ['BNP Paribas', 'Société Générale', 'Crédit Agricole', 'Banque Populaire', 'Caisse d\'Épargne', 'Crédit Mutuel', 'La Banque Postale', 'BPCE', 'Crédit Coopératif', 'Banque Tarneaud', 'Banque Palatine', 'CIC', 'LCL', 'HSBC France', 'Rothschild & Co'],
+    'United Kingdom': ['HSBC', 'Barclays', 'Lloyds Bank', 'NatWest', 'Santander UK', 'Royal Bank of Scotland', 'Metro Bank', 'Starling Bank', 'Monzo', 'Revolut', 'Clydesdale Bank', 'TSB Bank', 'Co-operative Bank', 'Handelsbanken', 'AIB (NI)'],
+    'Italy': ['UniCredit', 'Intesa Sanpaolo', 'Banca Monte dei Paschi', 'BPM', 'Banco di Desio', 'Banca Popolare di Sondrio', 'Credito Emiliano', 'Banca Mediolanum', 'Banca Carige', 'Banca Ifis', 'Banca Finnat', 'Banca Valsabbina', 'Banca Popolare del Frusinate', 'Banca di Credito Cooperativo', 'Cassa di Risparmio'],
+    'Spain': ['BBVA', 'Santander', 'CaixaBank', 'Banco Sabadell', 'Bankinter', 'Unicaja', 'Kutxabank', 'Abanca', 'Liberbank', 'Banco Cooperativo Español', 'Cajamar', 'Caja Rural', 'Banco Popular', 'Ibercaja', 'Caja de Ingenieros'],
+    'Netherlands': ['ING', 'ABN AMRO', 'Rabobank', 'SNS Bank', 'Triodos Bank', 'KNAB', 'bunq', 'Handelsbanken', 'SNS REAAL', 'ASN Bank', 'NN Bank', 'RegioBank', 'Blokker Bank', 'Colorful', 'Waterland Bank'],
+    'Sweden': ['Swedbank', 'SEB', 'Handelsbanken', 'Nordea', 'Danske Bank', 'Länsförsäkringar Bank', 'SBAB', 'Ikano Bank', 'Resurs Bank', 'Marginalen Bank', 'Avanza Bank', 'Nordax Bank', 'Bluestep Bank', 'Svea Bank', 'Svea Bank'],
+    'Switzerland': ['UBS', 'Credit Suisse', 'PostFinance', 'Raiffeisen', 'Cantonal Bank of Zurich', 'Migros Bank', 'Coop Bank', 'Banque Cantonale Vaudoise', 'Luzerner Kantonalbank', 'Banque Cantonale de Genève', 'Banque Cantonale Neuchâteloise', 'Valiant Bank', 'Banque Cantonale de Fribourg', 'Banque Cantonale du Valais', 'Banque Cantonale de Lausanne'],
+    'Poland': ['PKO Bank Polski', 'mBank', 'Pekao SA', 'ING Bank Śląski', 'Santander Bank Polska', 'Alior Bank', 'Bank Millennium', 'Getin Bank', 'Credit Agricole Bank Polska', 'BNP Paribas Bank Polska', 'Deutsche Bank Polska', 'Citibank', 'Bank Pocztowy', 'BSK', 'Toyota Bank'],
+    'Austria': ['Erste Bank', 'Raiffeisen Bank', 'BKS Bank', 'Oberbank', 'BAWAG', 'Addiko Bank', 'Hypo Noe Landesbank', 'Hypo Tirol Bank', 'Volksbank', 'Bank Austria', 'UniCredit Bank Austria', 'Sparkasse Oberösterreich', 'Sparkasse Niederösterreich', 'Wiener Städtische Sparkasse', 'Bank für Tirol und Vorarlberg'],
+    'Greece': ['National Bank of Greece', 'Alpha Bank', 'Eurobank', 'Piraeus Bank', 'Attica Bank', 'Pancretan Bank', 'Cooperative Bank of Chania', 'Cooperative Bank of Heraklion', 'Bank of Cyprus Greece', 'National Bank of Greece', 'Eurobank Ergasias', 'Piraeus Bank', 'Alpha Bank Cyprus', 'Hellenic Bank', 'Cooperative Bank of Thessaly'],
+    'Portugal': ['Caixa Geral de Depósitos', 'Banco Comercial Português', 'Novo Banco', 'Millennium BCP', 'Santander Totta', 'Banco BPI', 'ActivoBank', 'Banco Best', 'Banco Carregosa', 'Banco CTT', 'Banco Finantia', 'Banco Invest', 'Banco Montepio', 'Banco Popular Portugal', 'Banif'],
+    'Norway': ['DNB', 'Nordea', 'SpareBank 1', 'Storebrand Bank', 'Sbanken', 'Handelsbanken', 'Pareto Bank', 'Santander Consumer Bank', 'BN Bank', 'Jyske Bank', 'Skandia Finans', 'SpareBank Møre', 'SpareBank Sør', 'SpareBank Vest', 'Varner Bank'],
+    'Denmark': ['Danske Bank', 'Nordea', 'Jyske Bank', 'Sydbank', 'Spar Nord', 'Ringkjøbing Landbobank', 'Lån & Spar Bank', 'Saxo Bank', 'Sparekassen Sjælland', 'Sparekassen Kronjylland', 'Sparekassen Vendsyssel', 'Sparekassen Thy', 'Sparekassen Lolland', 'Sparekassen Guldborgsund', 'Sparekassen Ballerup'],
+    'Belgium': ['BNP Paribas Fortis', 'KBC Bank', 'ING Belgium', 'AXA Bank', 'Argenta', 'Beobank', 'Belfius', 'Crelan', 'Keytrade Bank', 'N26', 'Hello Bank', 'Nagelmackers', 'Vdk Bank', 'Argenta Spaarbank', 'Belfius Bank'],
+    'Finland': ['Nordea', 'OP Financial Group', 'Danske Bank', 'Aktia Bank', 'S-Pankki', 'Handelsbanken', 'Nordea Bank Abp', 'Osuuspankki', 'Säästöpankki Optia', 'Aktia', 'Nordea Finans', 'S-Pankki Oy', 'Handelsbanken Finland', 'Aktia Säästöpankki', 'S-Pankki Holding'],
+    'Ireland': ['AIB', 'Bank of Ireland', 'Permanent TSB', 'KBC Bank Ireland', 'Ulster Bank', 'An Post Money', 'Revolut Bank UAB', 'N26', 'Rabobank Ireland', 'Santander Consumer Finance', 'Barclays', 'Credit Suisse', 'HSBC', 'J.P. Morgan', 'Citibank'],
+    'Czech Republic': ['Česká spořitelna', 'Komerční banka', 'ČSOB', 'Raiffeisenbank', 'Fio banka', 'Air Bank', 'mBank', 'Trinity Bank', 'Česká spořitelna a.s.', 'Komerční banka, a.s.', 'Československá obchodní banka', 'Raiffeisenbank a.s.', 'MONETA Money Bank', 'UniCredit Bank Czech Republic', 'Citibank'],
+    'Hungary': ['OTP Bank', 'K&H Bank', 'Erste Bank Hungary', 'CIB Bank', 'UniCredit Bank', 'Raiffeisen Bank', 'Budapest Bank', 'MKB Bank', 'Gránit Bank', 'Magnet Bank', 'HDB Bank', 'K&H Bank Zrt.', 'OTP Bank Nyrt.', 'Erste Bank Hungary Zrt.', 'UniCredit Bank Hungary Zrt.'],
+    'Ukraine': ['PrivatBank', 'Oschadbank', 'UkrSibbank', 'Raiffeisen Bank Aval', 'Sense Bank', 'PUMB', 'FUIB', 'Credit Agricole Bank', 'UniCredit Bank', 'Ukreximbank', 'Prominvestbank', 'Idea Bank', 'Pivdenny Bank', 'A-Bank', 'Concord Bank']
+  };
+  /* ===================== Country Dropdown Population (only for select) ===================== */
+  function populateCountryDropdown() {
+    const select = $('#modal-bank-country');
+    if (!select.length) return;
+    select.empty();
+    select.append('<option value="">Select Country</option>');
+    const countries = Object.keys(bankSuggestions).sort((a, b) => a.localeCompare(b));
+    countries.forEach(country => {
+      select.append(`<option value="${country}">${country}</option>`);
+    });
+  }
+  // Populate bank dropdown using bankSuggestions
+  function populateBankDropdown(country) {
+    const dropdown = $('#modal-bank-dropdown');
+    dropdown.empty();
+    if (!country || !bankSuggestions[country]) {
+      dropdown.append('<div class="p-8 text-Gray">Select a valid country first</div>');
+      return;
+    }
+    bankSuggestions[country].forEach(b => {
+      const item = $(`<div class="bank-option p-8 cursor-pointer" data-name="${b}">${b}</div>`);
+      item.on('click', function () {
+        $('#modal-bank-search').val($(this).text());
+        $('#modal-bank-name').val($(this).data('name'));
+        dropdown.empty().hide(); // Clear and hide dropdown after selection
+      });
+      dropdown.append(item);
+    });
+    // Show the dropdown after populating
+    dropdown.show();
+  }
+  // Show/hide UK-only sort-code input
+  function toggleUKSortCode(country) {
+    if (!country) return;
+    if (country.toLowerCase().includes('united kingdom') || country.toLowerCase() === 'uk') {
+      $('.uk-only').show();
+    } else {
+      $('.uk-only').hide();
+    }
+  }
+  // Handle withdraw form submit -> open modal pre-filled
+  function bindWithdrawForm() {
+    const form = $('#withdraw-form');
+    if (!form.length) return;
+    form.on('submit', function (e) {
+      e.preventDefault();
+      const amount = Number($('#withdraw-amount').val() || 0);
+      const method = $('#withdraw-method').val();
+      if (!amount || amount <= 0) {
+        showToast('Enter a valid withdrawal amount', 'error');
+        return;
+      }
+      if (!method) {
+        showToast('Select a withdrawal method', 'error');
+        return;
+      }
+      // --- UX POLISH: Reset Withdraw Modal Fields ---
+      $('#modal-bank-country').val('');
+      $('#modal-bank-search').val('');
+      $('#modal-bank-name').val('');
+      $('#modal-account-holder').val('');
+      $('#modal-iban').val('');
+      $('#modal-bic').val('');
+      $('#modal-sort-code').val('');
+      $('#modal-bank-currency').val('EUR'); // Default currency
+      $('#modal-transaction-ref').val('');
+      $('#modal-coin').val('btc'); // Default coin
+      $('#modal-wallet-address').val('');
+      $('#modal-cash-details').val('');
+      // Hide conditional fields
+      $('.uk-only').hide();
+      $('#local-bank-fields').addClass('hidden');
+      $('#wallet-address-fields').addClass('hidden');
+      $('#cash-mailing-fields').addClass('hidden');
+      // --- End Polish ---
+
+      // Populate modal fields
+      $('#modal-withdraw-amount').val(formatCurrency(amount));
+      $('#modal-method-name').text(method.replace('_', ' '));
+      // reset fields visibility
+      $('#local-bank-fields').addClass('hidden');
+      $('#wallet-address-fields').addClass('hidden');
+      $('#cash-mailing-fields').addClass('hidden');
+      // show correct fields
+      if (method === 'local_bank') {
+        $('#local-bank-fields').removeClass('hidden');
+        // Ensure country dropdown is populated when local bank is selected
+        // Only populate if the options are missing or empty
+        if ($('#modal-bank-country option').length <= 1) { // Only the default option exists
+            populateCountryDropdown(); // Call the function to populate the select
+        }
+        // Ensure the bank dropdown is ready (it should be if bindBankUI is called on init)
+        // Populate banks if a country was previously selected
+        const currentCountry = $('#modal-bank-country').val();
+        if (currentCountry) {
+            populateBankDropdown(currentCountry);
+        }
+      } else if (method === 'wallet_address') {
+        $('#wallet-address-fields').removeClass('hidden');
+      } else if (method === 'cash_mailing') {
+        $('#cash-mailing-fields').removeClass('hidden');
+      }
+      // store context on confirm button
+      $('#confirm-withdraw').data('withdraw-amount', amount);
+      $('#confirm-withdraw').data('withdraw-method', method);
+      // show modal
+      showModal('#withdraw-modal');
+    });
+  }
+  // Bind bank country change & bank search UI
+  function bindBankUI() {
+    // Handle country change: clear bank search and dropdown, populate dropdown for new country
+    $('#modal-bank-country').on('change', function () {
+      const country = $(this).val();
+      $('#modal-bank-search').val(''); // Clear the search input
+      $('#modal-bank-name').val('');   // Clear the hidden name field
+      // Clear and hide the dropdown
+      const dropdown = $('#modal-bank-dropdown');
+      dropdown.empty().hide(); // Hide after clearing
+      // Populate the dropdown based on the selected country
+      populateBankDropdown(country);
+      // Show/hide UK sort code
+      toggleUKSortCode(country);
+    });
+
+    // Handle bank search input
+    $('#modal-bank-search').on('input', function () {
+      const val = $(this).val().toLowerCase();
+      const country = $('#modal-bank-country').val();
+
+      // Clear the hidden name field as user types
+      $('#modal-bank-name').val('');
+
+      if (!val.trim()) {
+        // If input is empty, just hide the dropdown
+        $('#modal-bank-dropdown').empty().hide();
+        return;
+      }
+
+      if (!country) {
+        // If no country is selected, show a message or clear dropdown
+        const dropdown = $('#modal-bank-dropdown');
+        dropdown.empty().append('<div class="p-8 text-Gray">Please select a country first.</div>').show();
+        return;
+      }
+
+      // Fetch list for country then filter
+      let banks = bankSuggestions[country];
+      if (!banks) {
+        // fallback insensitive keys (if needed, but country should be exact from select)
+        const keys = Object.keys(bankSuggestions);
+        const matchKey = keys.find(k => k.toLowerCase() === country.toLowerCase());
+        if (matchKey) banks = bankSuggestions[matchKey];
+      }
+
+      const dropdown = $('#modal-bank-dropdown');
+      dropdown.empty();
+
+      if (!banks || !banks.length) {
+        dropdown.append('<div class="p-8 text-Gray">No banks found for this country.</div>');
+        dropdown.show(); // Ensure it's shown so user sees the message
+        return;
+      }
+
+      const filtered = banks.filter(b => b.toLowerCase().includes(val));
+      if (!filtered.length) {
+        dropdown.append('<div class="p-8 text-Gray">No matching banks.</div>');
+      } else {
+        filtered.forEach(b => {
+          const item = $(`<div class="bank-option p-8 cursor-pointer" data-name="${b}">${b}</div>`);
+          item.on('click', function () {
+            $('#modal-bank-search').val($(this).text()); // Set search input to selected name
+            $('#modal-bank-name').val($(this).data('name')); // Set hidden name field
+            dropdown.empty().hide(); // Clear and hide dropdown after selection
+          });
+          dropdown.append(item);
+        });
+      }
+      dropdown.show(); // Show the dropdown after populating
+    });
+
+    // Hide dropdown if user clicks outside
+    $(document).on('click', function (e) {
+      if (!$(e.target).closest('#modal-bank-search, #modal-bank-dropdown').length) {
+        $('#modal-bank-dropdown').hide();
+      }
+    });
+  }
+  // Confirm withdraw (modal confirm button)
+  function bindConfirmWithdraw() {
+    $('#confirm-withdraw').on('click', async function () {
+      const amount = Number($(this).data('withdraw-amount') || 0);
+      const method = $(this).data('withdraw-method') || '';
+      if (!amount || !method) {
+        showToast('Invalid withdraw context', 'error');
+        return;
+      }
+      // Collect details based on method
+      let details = {};
+      if (method === 'local_bank') {
+        details.country = $('#modal-bank-country').val();
+        details.bank_name = $('#modal-bank-name').val() || $('#modal-bank-search').val();
+        details.account_holder = $('#modal-account-holder').val();
+        details.iban = $('#modal-iban').val();
+        details.bic = $('#modal-bic').val();
+        details.sort_code = $('#modal-sort-code').val();
+        details.currency = $('#modal-bank-currency').val();
+        details.transaction_ref = $('#modal-transaction-ref').val();
+      } else if (method === 'wallet_address') {
+        details.coin = $('#modal-coin').val();
+        details.address = $('#modal-wallet-address').val();
+      } else if (method === 'cash_mailing') {
+        details.mail = $('#modal-cash-details').val();
+      }
+      // Basic validation
+      if (method === 'local_bank' && (!details.bank_name || !details.account_holder)) {
+        showToast('Please provide bank name and account holder', 'error');
+        return;
+      }
+      if (method === 'wallet_address' && (!details.address || details.address.length < 6)) {
+        showToast('Please provide a valid wallet address', 'error');
+        return;
+      }
+      if (method === 'cash_mailing' && !details.mail) {
+        showToast('Please provide mailing details', 'error');
+        return;
+      }
+      // Send withdraw request
+      try {
+        showToast('Submitting withdrawal request...', 'info');
+        const res = await fetchApi('/api/backend/wallet.php', { action: 'withdraw_request', amount, method, details });
+        if (res.status === 'success') {
+          showToast(res.message || 'Withdrawal request submitted', 'success');
+          closeModal('#withdraw-modal');
+          // refresh balances & dashboard
+          await loadDashboardData();
+          // NOTE: Removed loadPendingDeposits() call here.
+          // The pending deposit modal should only show when explicitly requested by the user (e.g., clicking the header button).
+          // loadPendingDeposits(); // This would incorrectly show the deposit list after withdrawal.
+        } else {
+          showToast(res.message || 'Withdrawal failed', 'error');
+        }
+      } catch (err) {
+        console.error('Withdraw error', err);
+        showToast('Failed to submit withdrawal', 'error');
+      }
+    });
+  }
+  /* ===================== Misc Bindings ===================== */
+  function bindCopyButtons() {
+    // dynamic copy buttons (pending-deposit-address-group has copy-btn)
+    $(document).on('click', '.copy-btn', function () {
+      const target = $(this).data('target');
+      if (!target) return;
+      copyToClipboard(`#${target}`);
+    });
+    // if you have any other copy triggers add class copy-trigger with data-target attr
+    $(document).on('click', '.copy-trigger', function () {
+      const target = $(this).data('target');
+      copyToClipboard(target);
+    });
+  }
+  /* ===================== Init & Wiring ===================== */
+  $(function () {
+    selectImages();
+    menuleft();
+    tabs();
+    collapse_menu();
+    showpass();
+    select_colors_theme();
+    icon_function();
+    box_search();
+    variant_picker();
+    fullcheckbox();
+    counter();
+    sort();
+    preloader();
+    // Wallet & Dashboard specific
+    loadDashboardData(); // This now updates both wallet.php and dashboard.php elements
+    bindDepositForm();
+    bindWithdrawForm(); // This now includes logic for populating countries on 'local_bank' + UX polish
+    bindBankUI();       // This handles country change and bank search
+    bindConfirmWithdraw();
+    bindPendingConfirmPaid();
+    bindCopyButtons();
+    // Dynamic population - Call populateCountryDropdown to fill the select on page load
+    populateCountryDropdown();
+    // Start the auto-refresh timer
+    startAutoRefresh();
+    // pending deposits button in header - loads list and shows modal
+    $('#pending-deposits-btn').on('click', function (e) {
+      e.preventDefault();
+      loadPendingDeposits(); // Load the list
+      showModal('#pending-actions-modal'); // Show the modal with the list
+    });
+    // close modals when escape pressed
+    $(document).on('keydown', function (e) {
+      if (e.key === 'Escape') {
+        closeModal('#withdraw-modal');
+        closeModal('#pending-actions-modal');
+      }
+    });
+    // Ensure auto refresh stops on page unload
+    window.addEventListener('beforeunload', function () {
+      stopAutoRefresh();
+    });
+    // make refreshDashboard available on window (already defined above)
+    window.refreshDashboard = loadDashboardData;
+  });
+})(jQuery);

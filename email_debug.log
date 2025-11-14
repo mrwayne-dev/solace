@@ -1,0 +1,2 @@
+20:01:29 | SMTP ERROR: Failed to connect to server: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond (10060)
+20:01:29 | SMTP Error: Could not connect to SMTP host. Failed to connect to server

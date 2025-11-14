@@ -1,0 +1,100 @@
+# ===============================
+# HealthRunCare .htaccess
+# Unified Auto-Detect — Local + Production
+# ===============================
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+# -------------------------------
+# ENVIRONMENT DETECTION
+# -------------------------------
+# Localhost (Laragon or XAMPP)
+RewriteCond %{HTTP_HOST} ^localhost [NC]
+SetEnv HRC_ENV dev
+
+# Production
+RewriteCond %{HTTP_HOST} !^localhost [NC]
+SetEnv HRC_ENV prod
+
+# -------------------------------
+# REDIRECT RULES (env-aware)
+# -------------------------------
+
+# Force HTTPS + non-www on production
+RewriteCond %{ENV:HRC_ENV} =prod
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteCond %{HTTP_HOST} ^(?:www\.)?(.*)$ [NC]
+RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+
+# Skip HTTPS redirect in dev
+RewriteCond %{ENV:HRC_ENV} =dev
+RewriteRule ^ - [L]
+
+# -------------------------------
+# DO NOT rewrite static assets
+# -------------------------------
+RewriteCond %{REQUEST_URI} ^/assets/ [NC,OR]
+RewriteCond %{REQUEST_URI} \.(css|js|png|jpg|jpeg|gif|webp|svg|ico|woff2?|ttf|eot|mp4)$ [NC]
+RewriteRule ^ - [L]
+
+# -------------------------------
+# API ROUTES
+# -------------------------------
+RewriteCond %{REQUEST_URI} ^/api/ [NC]
+RewriteRule ^api/(.*)$ api/$1 [L,QSA]
+
+# -------------------------------
+# PUBLIC ROUTES
+# -------------------------------
+RewriteRule ^$ pages/public/index.php [L,QSA]
+RewriteRule ^(about|contact|login|register|forgotpassword|logout|news|platform|solutions|whyhrc|charity|investment|minfrastructure|mdev|trustfund|holdlock)/?$ pages/public/$1.php [L,QSA]
+
+# -------------------------------
+# USER ROUTES
+# -------------------------------
+RewriteRule ^dashboard/?$ pages/user/dashboard.php [L,QSA]
+RewriteRule ^dashboard\.(charity|investment|wallet|trustfund|infrastructure|development|holdlock|transactions|logout)/?$ pages/user/$1.php [L,QSA]
+
+# -------------------------------
+# ADMIN ROUTES
+# -------------------------------
+RewriteRule ^admin/?$ pages/admin/dashboard.php [L,QSA]
+RewriteRule ^admin\.(dashboard|users|wallets|donations|funds|transactions|announcements|login|register|forgotpassword)/?$ pages/admin/$1.php [L,QSA]
+
+# -------------------------------
+# CATCH-ALL → 404
+# -------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^.*$ pages/public/error.php [L,QSA]
+</IfModule>
+
+# ===============================
+# Security & Headers
+# ===============================
+<IfModule mod_headers.c>
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set X-Content-Type-Options "nosniff"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+Header always set Content-Security-Policy "upgrade-insecure-requests;"
+</IfModule>
+
+# ===============================
+# Caching & Index Protection
+# ===============================
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType application/font-woff2 "access plus 1 year"
+</IfModule>
+
+Options -Indexes

@@ -1,0 +1,158 @@
+okay we already have php mailer set up
+our email.php is working as well as our email_temps.php
+ii provided the file structure earlier in the chat
+
+lets begin
+just to reitrate the steps
+for the deposit and withdraw fields
+when the user wants to deposit and then enters an amount, and selects secure exchange then clicks on  deposit now button, (we send an email saying deposit request initated to admin and user) we initiate the NowPayments -> API is then created -> User Pays -> NowPayment Webhook verifies the payment ->Credit Wallet & Mark complete -> then user is redirected back to the wallet.php page, we show a toast message saying deposit veriified successfully, Wallet Updated (when successful), if not successful show error (also send the admin and user emails for each case) 
+
+
+for wire transfer/cashmailing is quite simple when the user selects either and clicks on deposit now they're shown a toast message saying support will provide details shortly, an email is then sent to both admin and user
+users email is the deposit request initated, and admin is notified that he should provide account details for the deposit. admin goes to dashboard and provides the address for the deposit and then after which the user recieves an email saying the details have been provided, they go to their wallet.php page, to their pending deposits modal and they see the address there, they then fill out the details and pay then click i have paid, after which the admin only receives an email, then he confirms then the user receives the confirmation email for his deposit
+its that simple
+
+for withdrawal we have 3 options, local bank, wallet address and cash maling
+all of which have forms that once filled and their cta buttons are clicked we have the toast message saying withdraw request submitted (balance is deducted), user and admin receive emails concerning that, admin approves/declines request(user receives email for either one) then for approval the user then  recieves an email saying his funds will be transferred shortly, if declined balance returns to its normal value
+note all the transactions going on as they'll be recorded in the transactions table and wallet activity, from pending to completed all that
+
+wallet activity table is simply everything that happens in the wallet page
+
+is this clear
+after we finish the wallet.php file we'll work on the email_temps.php for the email templates concerning this page, not we want them not short , but detailed for clarity
+
+
+lets begin with the backend code
+i've attached my details.txt file with the wallet page frontend, email.php utility code and email_temp.php codes
+
+now we'll need to update the ui in wallet.php in the deposit modal to include the secure exchange link the user will provide
+and we'll also need to update our dashboard.js with the new workflow check the details.txt file
+
+
+
+
+
+const bankSuggestions = {
+  'United States of America': [
+    'Chase Bank', 'Bank of America', 'Wells Fargo', 'Citibank', 'U.S. Bank',
+    'PNC Bank', 'Capital One', 'TD Bank', 'Truist', 'Fifth Third Bank',
+    'Regions Bank', 'KeyBank', 'Huntington Bank', 'Ally Bank', 'Discover Bank'
+  ],
+  'Germany': [
+    'Deutsche Bank', 'Commerzbank', 'Sparkasse', 'HypoVereinsbank', 'Postbank',
+    'Volksbank', 'DZ Bank', 'Bayerische Landesbank', 'Landesbank Baden-Württemberg',
+    'Norddeutsche Landesbank', 'Helaba', 'KfW Bank', 'DekaBank', 'IKB Deutsche Industriebank', 'Württembergische Bank'
+  ],
+  'France': [
+    'BNP Paribas', 'Société Générale', 'Crédit Agricole', 'Banque Populaire', 'Caisse d\'Épargne',
+    'Crédit Mutuel', 'La Banque Postale', 'BPCE', 'Crédit Coopératif', 'Banque Tarneaud',
+    'Banque Palatine', 'CIC', 'LCL', 'HSBC France', 'Rothschild & Co'
+  ],
+  'United Kingdom': [
+    'HSBC', 'Barclays', 'Lloyds Bank', 'NatWest', 'Santander UK',
+    'Royal Bank of Scotland', 'Metro Bank', 'Starling Bank', 'Monzo', 'Revolut',
+    'Clydesdale Bank', 'TSB Bank', 'Co-operative Bank', 'Handelsbanken', 'AIB (NI)'
+  ],
+  'Italy': [
+    'UniCredit', 'Intesa Sanpaolo', 'Banca Monte dei Paschi', 'BPM', 'Banco di Desio',
+    'Banca Popolare di Sondrio', 'Credito Emiliano', 'Banca Mediolanum', 'Banca Carige',
+    'Banca Ifis', 'Banca Finnat', 'Banca Valsabbina', 'Banca Popolare del Frusinate',
+    'Banca di Credito Cooperativo', 'Cassa di Risparmio'
+  ],
+  'Spain': [
+    'BBVA', 'Santander', 'CaixaBank', 'Banco Sabadell', 'Bankinter',
+    'Unicaja', 'Kutxabank', 'Abanca', 'Liberbank', 'Banco Cooperativo Español',
+    'Cajamar', 'Caja Rural', 'Banco Popular', 'Ibercaja', 'Caja de Ingenieros'
+  ],
+  'Netherlands': [
+    'ING', 'ABN AMRO', 'Rabobank', 'SNS Bank', 'Triodos Bank',
+    'KNAB', 'bunq', 'Handelsbanken', 'SNS REAAL', 'ASN Bank',
+    'NN Bank', 'RegioBank', 'Blokker Bank', 'Colorful', 'Waterland Bank'
+  ],
+  'Sweden': [
+    'Swedbank', 'SEB', 'Handelsbanken', 'Nordea', 'Danske Bank',
+    'Länsförsäkringar Bank', 'SBAB', 'Ikano Bank', 'Resurs Bank', 'Collector Bank',
+    'Marginalen Bank', 'Avanza Bank', 'Nordax Bank', 'Bluestep Bank', 'Svea Bank'
+  ],
+  'Switzerland': [
+    'UBS', 'Credit Suisse', 'PostFinance', 'Raiffeisen', 'Cantonal Bank of Zurich',
+    'Migros Bank', 'Coop Bank', 'Banque Cantonale Vaudoise', 'Luzerner Kantonalbank',
+    'Banque Cantonale de Genève', 'Banque Cantonale Neuchâteloise', 'Valiant Bank',
+    'Banque Cantonale de Fribourg', 'Banque Cantonale du Valais', 'Banque Cantonale de Lausanne'
+  ],
+  'Poland': [
+    'PKO Bank Polski', 'mBank', 'Pekao SA', 'ING Bank Śląski', 'Santander Bank Polska',
+    'Alior Bank', 'Bank Millennium', 'Getin Bank', 'Credit Agricole Bank Polska',
+    'BNP Paribas Bank Polska', 'Deutsche Bank Polska', 'Citibank', 'Bank Pocztowy',
+    'BSK', 'Toyota Bank'
+  ],
+  'Austria': [
+    'Erste Bank', 'Raiffeisen Bank', 'BKS Bank', 'Oberbank', 'BAWAG',
+    'Addiko Bank', 'Hypo Noe Landesbank', 'Hypo Tirol Bank', 'Volksbank', 'Bank Austria',
+    'UniCredit Bank Austria', 'Sparkasse Oberösterreich', 'Sparkasse Niederösterreich',
+    'Wiener Städtische Sparkasse', 'Bank für Tirol und Vorarlberg'
+  ],
+  'Greece': [
+    'National Bank of Greece', 'Alpha Bank', 'Eurobank', 'Piraeus Bank', 'Attica Bank',
+    'Pancretan Bank', 'Cooperative Bank of Chania', 'Cooperative Bank of Heraklion',
+    'Bank of Cyprus Greece', 'National Bank of Greece', 'Eurobank Ergasias',
+    'Piraeus Bank', 'Alpha Bank Cyprus', 'Hellenic Bank', 'Cooperative Bank of Thessaly'
+  ],
+  'Portugal': [
+    'Caixa Geral de Depósitos', 'Banco Comercial Português', 'Novo Banco', 'Millennium BCP',
+    'Santander Totta', 'Banco BPI', 'ActivoBank', 'Banco Best', 'Banco Carregosa',
+    'Banco CTT', 'Banco Finantia', 'Banco Invest', 'Banco Montepio', 'Banco Popular Portugal',
+    'Banif'
+  ],
+  'Norway': [
+    'DNB', 'Nordea', 'SpareBank 1', 'Storebrand Bank', 'Sbanken',
+    'Handelsbanken', 'Pareto Bank', 'Santander Consumer Bank', 'BN Bank', 'Jyske Bank',
+    'Skandia Finans', 'SpareBank Møre', 'SpareBank Sør', 'SpareBank Vest', 'Varner Bank'
+  ],
+  'Denmark': [
+    'Danske Bank', 'Nordea', 'Jyske Bank', 'Sydbank', 'Spar Nord',
+    'Ringkjøbing Landbobank', 'Lån & Spar Bank', 'Saxo Bank', 'Sparekassen Sjælland',
+    'Sparekassen Kronjylland', 'Sparekassen Vendsyssel', 'Sparekassen Thy', 'Sparekassen Lolland',
+    'Sparekassen Guldborgsund', 'Sparekassen Ballerup'
+  ],
+  'Belgium': [
+    'BNP Paribas Fortis', 'KBC Bank', 'ING Belgium', 'AXA Bank', 'Argenta',
+    'Beobank', 'Belfius', 'Crelan', 'Keytrade Bank', 'N26', 'Hello Bank',
+    'Nagelmackers', 'Vdk Bank', 'Argenta Spaarbank', 'Belfius Bank'
+  ],
+  'Finland': [
+    'Nordea', 'OP Financial Group', 'Danske Bank', 'Aktia Bank', 'S-Pankki',
+    'Handelsbanken', 'Nordea Bank Abp', 'Osuuspankki', 'Säästöpankki Optia', 'Aktia',
+    'Nordea Finans', 'S-Pankki Oy', 'Handelsbanken Finland', 'Aktia Säästöpankki',
+    'S-Pankki Holding'
+  ],
+  'Ireland': [
+    'AIB', 'Bank of Ireland', 'Permanent TSB', 'KBC Bank Ireland', 'Ulster Bank',
+    'An Post Money', 'Revolut Bank UAB', 'N26', 'Rabobank Ireland', 'Santander Consumer Finance',
+    'Barclays', 'Credit Suisse', 'HSBC', 'J.P. Morgan', 'Citibank'
+  ],
+  'Czech Republic': [
+    'Česká spořitelna', 'Komerční banka', 'ČSOB', 'Raiffeisenbank', 'Fio banka',
+    'Air Bank', 'mBank', 'Trinity Bank', 'Česká spořitelna a.s.', 'Komerční banka, a.s.',
+    'Československá obchodní banka', 'Raiffeisenbank a.s.', 'MONETA Money Bank',
+    'UniCredit Bank Czech Republic', 'Citibank'
+  ],
+  'Hungary': [
+    'OTP Bank', 'K&H Bank', 'Erste Bank Hungary', 'CIB Bank', 'UniCredit Bank',
+    'Raiffeisen Bank', 'Budapest Bank', 'MKB Bank', 'Gránit Bank', 'Magnet Bank',
+    'HDB Bank', 'K&H Bank Zrt.', 'OTP Bank Nyrt.', 'Erste Bank Hungary Zrt.',
+    'UniCredit Bank Hungary Zrt.'
+  ],
+  'Ukraine': [
+    'PrivatBank', 'Oschadbank', 'UkrSibbank', 'Raiffeisen Bank Aval', 'Sense Bank',
+    'PUMB', 'FUIB', 'Credit Agricole Bank', 'UniCredit Bank', 'Ukreximbank',
+    'Prominvestbank', 'Idea Bank', 'Pivdenny Bank', 'A-Bank', 'Concord Bank'
+  ]
+};
+
+
+The wallet.php file serves as the central controller for all wallet-related operations within the HealthRunCare ecosystem. It shows balances, manages deposits, withdrawals, and transaction tracking for authenticated users through a single, secure API endpoint. When a user initiates a deposit from the dashboard by inputing the amount and clicking the deposit now button (an email(Deposit Request Initiated) is sent to the user and our toast message(Redirecting) or loader shows), the frontend sends a request to this backend with the deposit amount and selected method. If the method is Secure Exchange, the request is routed through the create_crypto_payment.php file under /api/payments, which connects to NOWPayments to generate a cryptocurrency payment link and returns it to the frontend for redirection. Once the user completes the payment, NOWPayments’ webhook verifies (nowpayment_webhook.php) it and automatically credits the user’s wallet and the user receives an email saying Deposit Request Paid For manual deposit methods like wire transfer or cash mailing, Once the user puts in an amount and selects either method and clicks the Deposit Now button, a toast message is shown saying "Support will provide details shortly", and an email(Deposit Request Initiatied) is sent to the user and the system creates a pending transaction in the transactions table and sends an email to admin — notifying the admin to provide payment details.
+
+
+
+Then we have the pending deposit modal, once the admin provides the details, the user will receive an email that the payment details have been provided, then they go to their wallet page, they open the modal and see their address with the 

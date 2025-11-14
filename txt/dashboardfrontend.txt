@@ -1,0 +1,2637 @@
+
+==============HOLDLOCK.PHP===============
+<?php
+// pages/user/holdlock.php
+
+session_start([
+    'cookie_lifetime' => 86400, // Example: 24 hours
+    'cookie_httponly' => true,
+    'cookie_secure' => true, // Ensure HTTPS is used in production
+    'cookie_samesite' => 'Strict',
+]);
+
+if (!isset($_SESSION['user_id'])) {
+    // Redirect to login page if not logged in
+    header('Location: /login');
+    exit;
+}
+// Retrieve user data from session
+$user_name = htmlspecialchars($_SESSION['full_name'] ?? 'User'); // Fallback to 'User' if not set
+$user_id = $_SESSION['user_id'] ?? null;
+$user_email = $_SESSION['email'] ?? null;
+$user_role = $_SESSION['role'] ?? 'user';
+
+// Placeholder data for plans
+$plans = [
+    [
+        'id' => 1,
+        'name' => 'Flexi Health Lock Plan',
+        'purpose' => 'A short-term plan designed for clients who want safe, quick returns while keeping their capital secure.',
+        'min_deposit' => '$10,000',
+        'max_deposit' => '$100,000',
+        'lock_period' => '6 months',
+        'roi' => '3–4%',
+        'risk' => 'Very Low',
+        'payout' => 'Full payout at maturity',
+        'summary' => 'Ideal for clients seeking liquidity and short-term growth. Funds are safely held and paid out at the end of the term.',
+        'icon' => 'mdi:clock-outline',
+        'color' => 'Green'
+    ],
+    [
+        'id' => 2,
+        'name' => 'Standard Lock & Grow Plan',
+        'purpose' => 'A one-year plan offering predictable and consistent growth with minimal risk.',
+        'min_deposit' => '$20,000',
+        'max_deposit' => '$300,000',
+        'lock_period' => '12 months',
+        'roi' => '7–9%',
+        'risk' => 'Low',
+        'payout' => 'Annual or full payout at maturity',
+        'summary' => 'A balanced one-year growth plan for investors who prefer stability and moderate fixed returns.',
+        'icon' => 'mdi:calendar-check',
+        'color' => 'Green'
+    ],
+    [
+        'id' => 3,
+        'name' => 'Executive LockPlus Plan',
+        'purpose' => 'A two-year plan for individuals and organizations seeking better returns from moderate-term investments.',
+        'min_deposit' => '$50,000',
+        'max_deposit' => '$500,000',
+        'lock_period' => '24 months',
+        'roi' => '14–18%',
+        'risk' => 'Moderate',
+        'payout' => 'Annual or full payout at maturity',
+        'summary' => 'Perfect for mid- to high-level investors seeking strong, consistent growth over two years with minimal risk exposure.',
+        'icon' => 'mdi:briefcase-check',
+        'color' => 'Blue'
+    ],
+    [
+        'id' => 4,
+        'name' => 'Prestige Capital Hold Plan',
+        'purpose' => 'A premium plan for investors with large capital who seek long-term, high-yield returns.',
+        'min_deposit' => '$250,000',
+        'max_deposit' => 'Unlimited',
+        'lock_period' => '36 months',
+        'roi' => '25–30%',
+        'risk' => 'Moderate',
+        'payout' => 'Annual, bi-annual, or full payout at maturity',
+        'summary' => 'A long-term, asset-secure investment option that rewards patience with premium returns and stable growth.',
+        'icon' => 'mdi:crown-outline',
+        'color' => 'Orange'
+    ],
+    [
+        'id' => 5,
+        'name' => 'Lifetime Reserve Lock Plan',
+        'purpose' => 'A lifelong plan designed for wealth preservation and consistent annual income.',
+        'min_deposit' => '$1,000,000',
+        'max_deposit' => 'Unlimited',
+        'lock_period' => 'Lifetime (Perpetual)',
+        'roi' => '6–8% annual',
+        'risk' => 'Low',
+        'payout' => 'Annual or quarterly lifetime payout',
+        'summary' => 'An exclusive wealth preservation plan that guarantees lifetime income, ideal for estates, families, or organizations focused on long-term legacy.',
+        'icon' => 'mdi:infinity',
+        'color' => 'Green'
+    ]
+];
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta -->
+    <meta charset="UTF-8">
+    <meta name="description" content="HealthRunCare HoldLock - Secure your capital with guaranteed trust-based growth plans.">
+    <meta name="author" content="HealthRunCare">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://healthruncare.com/holdlock">
+    <title>HealthRunCare HoldLock</title>
+
+    <!-- Preload + Apply (critical CSS) -->
+    <link rel="preload" href="../../assets/css/bootstrap.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="../../assets/css/dashboard.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="../../assets/icon/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+    <!-- Fallback for browsers without preload support -->
+    <noscript>
+    <link rel="stylesheet" href="../../assets/css/bootstrap.css">
+    <link rel="stylesheet" href="../../assets/css/dashboard.css">
+    </noscript>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../../assets/favicon/favicon-32x32.png" sizes="32x32">
+    <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="HRC">
+    <link rel="manifest" href="../../assets/favicon/site.webmanifest">
+</head>
+
+<body class="counter-scroll">
+    <!-- #wrapper -->
+    <div id="wrapper">
+        <!-- #page -->
+        <div id="page" class="">
+            <!-- layout-wrap -->
+            <div class="layout-wrap loader-off">
+                <!-- preload -->
+                <div id="preload" class="preload-container">
+                    <div class="preloading">
+                        <span></span>
+                    </div>
+                </div>
+                <!-- /preload -->
+                                <!-- section-menu-left -->
+                <div class="section-menu-left">
+                    <div class="box-logo">
+                        <a href="/dashboard" id="site-logo-inner">
+                            <img class="" id="logo_header" alt="HRC" src="/assets/images/healthruncarelogo.png" width="150px">
+                        </a>
+                        <div class="button-show-hide">
+                            <span class="iconify" data-icon="mdi:chevron-left"></span>
+                        </div>
+                    </div>
+                    <div class="section-menu-left-wrap">
+                        <div class="center">
+                            <div class="center-item">
+                                <div class="center-heading f14-regular text-Gray menu-heading mb-12">Navigation</div>
+                            </div>
+                            <div class="center-item">
+                                <ul class="">
+                                    <li class="menu-item has-children">
+                                        <a href="javascript:void(0);" class="menu-item-button">
+                                            <div class="icon">
+                                                <span class="iconify" data-icon="mdi:view-dashboard-outline"></span>
+                                            </div>
+                                            <div class="text">Dashboard</div>
+                                        </a>
+                                        <ul class="sub-menu">
+                                            <li class="sub-menu-item">
+                                                <a href="/dashboard" class="">
+                                                    <div class="text">Overview</div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item has-children">
+                                        <a href="javascript:void(0);" class="menu-item-button">
+                                            <div class="icon">
+                                                <span class="iconify" data-icon="mdi:wallet-outline"></span>
+                                            </div>
+                                            <div class="text">My Wallet</div>
+                                        </a>
+                                        <ul class="sub-menu">
+                                            <li class="sub-menu-item active">
+                                                <a href="/dashboard.wallet" class="">
+                                                    <div class="text">Wallet</div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="/dashboard.transactions" class="menu-item-button">
+                                            <div class="icon"><span class="iconify" data-icon="mdi:receipt-text-outline"></span></div>
+                                            <div class="text">Transaction</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="/dashboard.charity" class="menu-item-button">
+                                            <div class="icon">
+                                                <span class="iconify" data-icon="mdi:heart-outline"></span>
+                                            </div>
+                                            <div class="text">Charity</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="/dashboard.investment" class="menu-item-button">
+                                            <div class="icon"><span class="iconify" data-icon="mdi:chart-timeline-variant"></span></div>
+                                            <div class="text">Investments</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item active">
+                                        <a href="/dashboard.holdlock" class="menu-item-button active">
+                                            <div class="icon"><span class="iconify" data-icon="mdi:lock-outline"></span></div>
+                                            <div class="text">Holdlock</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="/dashboard.trustfund" class="menu-item-button">
+                                            <div class="icon"><span class="iconify" data-icon="mdi:account-cash-outline"></span></div>
+                                            <div class="text">Trustfund</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="/dashboard.infrastructure" class="menu-item-button">
+                                            <div class="icon"><span class="iconify" data-icon="mdi:office-building-outline"></span></div>
+                                            <div class="text">Infrastructure</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="/dashboard.development" class="menu-item-button">
+                                            <div class="icon"><span class="iconify" data-icon="mdi:tools"></span></div>
+                                            <div class="text">Maintenance Dev</div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /section-menu-left -->
+                <!-- section-content-right -->
+                <div class="section-content-right">
+                    <!-- header-dashboard -->
+                    <div class="header-dashboard">
+                        <div class="wrap">
+                            <div class="header-left">
+                                <div class="button-show-hide">
+                                    <i class="icon-menu"></i>
+                                </div>
+                                <h6>HoldLock</h6>
+                            </div>
+                            <div class="header-grid">
+                                <div class="line1"></div>
+                                <div class="popup-wrap user type-header">
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span class="header-user wg-user">
+                                                <span class="image">
+                                                    <img src="/assets/images/avatar/default.png" alt="">
+                                                </span>
+                                                <span class="content flex flex-column">
+                                                    <span class="label-02 text-Black name"><?= $user_name ?></span>
+                                                    <span class="f14-regular text-Gray">User</span>
+                                                </span>
+                                            </span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end has-content" aria-labelledby="dropdownMenuButton3" >
+                                            <li>
+                                                <a href="/dashboard.transactions" class="user-item">
+                                                    <div class="body-title-2">Transactions</div>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="/dashboard.logout" class="user-item">
+                                                    <div class="body-title-2">Log out</div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /header-dashboard -->
+                    <!-- main-content -->
+                    <div class="main-content">
+                        <!-- main-content-wrap -->
+                        <div class="main-content-inner">
+                            <!-- main-content-wrap -->
+                            <div class="main-content-wrap">
+                                <div class="tf-container">
+                                    <div class="row mb-32">
+                                        <div class="col-12">
+                                            <div class="wg-box impact-overview">
+                                            <div class="title mb-16 flex justify-between items-center">
+                                                <div class="label-01 text-Primary">HoldLock Summary</div>
+                                                <span class="f12-regular text-Gray">Your locked savings performance</span>
+                                            </div>
+
+                                            <div class="content">
+                                                <div class="row g-3">
+
+                                                <!-- Active Locks -->
+                                                <div class="col-md-3 col-6">
+                                                    <div class="impact-card">
+                                                    <div class="icon bg-PrimaryLight">
+                                                        <span class="iconify" data-icon="mdi:lock-outline" style="color: var(--color-primary);"></span>
+                                                    </div>
+                                                    <div class="text">
+                                                        <h6 class="text-Primary" id="card-active-locks">0</h6>
+                                                        <p class="f12-regular text-Gray">Active Locks</p>
+                                                    </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Total Locked Amount -->
+                                                <div class="col-md-3 col-6">
+                                                    <div class="impact-card">
+                                                    <div class="icon bg-GreenLight">
+                                                        <span class="iconify" data-icon="mdi:cash-lock" style="color: var(--Green);"></span>
+                                                    </div>
+                                                    <div class="text">
+                                                        <h6 class="text-Green" id="card-total-locked">$0.00</h6>
+                                                        <p class="f12-regular text-Gray">Total Locked</p>
+                                                    </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- ROI -->
+                                                <div class="col-md-3 col-6">
+                                                    <div class="impact-card">
+                                                    <div class="icon bg-AccentLight">
+                                                        <span class="iconify" data-icon="mdi:chart-areaspline" style="color: var(--color-accent);"></span>
+                                                    </div>
+                                                    <div class="text">
+                                                        <h6 class="text-Black" id="card-roi-earned">$0.00</h6>
+                                                        <p class="f12-regular text-Gray">ROI Earned</p>
+                                                    </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Next Unlock Date -->
+                                                <div class="col-md-3 col-6">
+                                                    <div class="impact-card">
+                                                    <div class="icon bg-YellowLight">
+                                                        <span class="iconify" data-icon="mdi:calendar-lock" style="color: #d4a017;"></span>
+                                                    </div>
+                                                    <div class="text">
+                                                        <h6 class="text-Black" id="card-next-unlock">—</h6>
+                                                        <p class="f12-regular text-Gray">Next Unlock Date</p>
+                                                    </div>
+                                                    </div>
+                                                </div>
+
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+
+                                    <!-- HoldLock Plans Grid (Uniform Investment Format) -->
+                                        <div class="row mb-32">
+                                        <div class="col-12">
+                                            <div class="wg-box holdlock-plans">
+                                            <div class="title mb-16 flex justify-between items-center">
+                                                <div class="label-01 text-Primary">Available HoldLock Plans</div>
+                                            </div>
+
+                                            <div class="content">
+                                                <div class="row g-4">
+                                                <?php foreach ($plans as $plan): ?>
+                                                <div class="col-lg-3 col-md-6">
+                                                    <div class="plan-card">
+                                                    <div class="plan-header flex justify-between items-center mb-12">
+                                                        <div class="flex items-center gap-2">
+                                                        <h6 class="plan-title"><?php echo htmlspecialchars($plan['name']); ?></h6>
+                                                        </div>
+                                                    </div>
+
+                                                    <p class="f12-regular text-Gray mb-12"><?php echo htmlspecialchars($plan['purpose']); ?></p>
+
+                                                    <table class="plan-features">
+                                                        <tr>
+                                                        <td>Min Deposit</td>
+                                                        <td><?php echo $plan['min_deposit']; ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                        <td>Lock Period</td>
+                                                        <td><?php echo $plan['lock_period']; ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                        <td>ROI</td>
+                                                        <td class="text-Green fw-bold"><?php echo $plan['roi']; ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                        <td>Max Deposit</td>
+                                                        <td><?php echo $plan['max_deposit']; ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                        <td>Payout</td>
+                                                        <td><?php echo $plan['payout']; ?></td>
+                                                        </tr>
+                                                    </table>
+
+                                                    <p class="f12-regular text-Gray italic mt-12">
+                                                        <?php echo htmlspecialchars($plan['summary']); ?>
+                                                    </p>
+                                                    </div>
+                                                </div>
+                                                <?php endforeach; ?>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+
+
+
+
+                                                        <!-- Start HoldLock Plan Section -->
+                                                            <div class="row mb-32">
+                                                            <!-- Left: Start Form -->
+                                                            <div class="col-lg-8 col-md-12">
+                                                                <div class="wg-box holdlock-form">
+                                                                <div class="title mb-16">
+                                                                    <div class="label-01 text-Primary">Start Your HoldLock Plan</div>
+                                                                </div>
+
+                                                                <div class="content">
+                                                                    <form class="form-style-1" id="holdlock-form" autocomplete="off">
+                                                                    <!-- Select Plan -->
+                                                                    <div class="mb-20">
+                                                                        <label class="f14-regular text-Black mb-8">Select Plan</label>
+                                                                        <select class="form-select custom-select" id="plan-select" onchange="updateHoldlockDetails()"
+>
+                                                                        <option>Select a Plan</option>
+                                                                        <?php foreach ($plans as $plan): ?>
+                                                                        <option
+                                                                            value="<?php echo $plan['id']; ?>"
+                                                                            data-min="<?php echo str_replace('$', '', $plan['min_deposit']); ?>"
+                                                                            data-max="<?php echo $plan['max_deposit'] === 'Unlimited' ? '' : str_replace('$', '', $plan['max_deposit']); ?>"
+                                                                            data-lock="<?php echo $plan['lock_period']; ?>"
+                                                                            data-roi="<?php echo $plan['roi']; ?>"
+                                                                        >
+                                                                            <?php echo htmlspecialchars($plan['name']); ?>
+                                                                        </option>
+                                                                        <?php endforeach; ?>
+                                                                        </select>
+                                                                    </div>
+
+                                                                    <!-- Lock Amount -->
+                                                                    <div class="mb-20 position-relative">
+                                                                        <label class="f14-regular text-Black mb-8">Amount to Lock (USD)</label>
+                                                                        <div class="input-group">
+                                                                        <span class="input-icon">
+                                                                            <span class="iconify" data-icon="mdi:lock"></span>
+                                                                        </span>
+                                                                        <input class="wallet-input form-control" type="number" placeholder="Enter amount" min="1" id="lock-amount">
+                                                                        </div>
+                                                                    </div>
+
+                                                                      <div class="mb-20 position-relative">
+                                                            <label class="f14-regular text-Black mb-8">Wallet Balance</label>
+                                                            <!-- In form -->
+                                                        <div class="input-group">
+                                                            <span class="input-icon"><span class="iconify" data-icon="mdi:wallet-outline"></span></span>
+                                                            <span id="wallet-balance" class="form-control readonly-input">$0.00</span>  <!-- <span> not input -->
+                                                        </div>
+                                                        </div>
+
+                                                                    <!-- Details -->
+                                                                    <div class="row mb-20">
+                                                                        <div class="col-md-6">
+                                                                        <label class="f14-regular text-Black mb-8">Lock Period</label>
+                                                                        <input class="f12-regular text-Gray p-12 border border-Gray rounded" type="text" id="lock-period" readonly>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                        <label class="f14-regular text-Black mb-8">Expected ROI</label>
+                                                                        <input class="f12-regular text-Gray p-12 border border-Gray rounded" type="text" id="expected-roi" readonly>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <!-- CTA -->
+                                                                    <button
+                                                                        type="submit"
+                                                                        class="tf-button style-default w-full f14-bold bg-Green text-White hover:bg-Primary transition-colors duration-300"
+                                                                        id="lock-btn"
+                                                                        disabled
+                                                                    >
+                                                                        Lock Funds
+                                                                    </button>
+                                                                    </form>
+                                                                </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Right: Benefits -->
+                                                            <div class="col-lg-4 col-md-12">
+                                                                <div class="wg-box holdlock-benefits">
+                                                                <div class="title mb-16">
+                                                                    <div class="label-01 text-Primary">HoldLock Benefits</div>
+                                                                </div>
+
+                                                                <div class="content">
+                                                                    <ul class="f12-regular text-Gray">
+                                                                    <li class="mb-8 flex items-center">
+                                                                        100% Capital Protection
+                                                                    </li>
+                                                                    <li class="mb-8 flex items-center">
+                                                                        Guaranteed Fixed Returns
+                                                                    </li>
+                                                                    <li class="mb-8 flex items-center">
+                                                                        Transparent Trust Management
+                                                                    </li>
+                                                                    <li class="mb-8 flex items-center">
+                                                                        Flexible Lock Periods
+                                                                    </li>
+                                                                    <li class="mb-8 flex items-center">
+                                                                        Lifetime Options Available
+                                                                    </li>
+                                                                    </ul>
+                                                                </div>
+                                                                </div>
+                                                            </div>
+                                                            </div>
+
+
+                                    <!-- My Locked Plans Table -->
+                                    <div class="row mb-32">
+                                    <div class="col-12">
+                                        <div class="wg-box locked-plans">
+                                        <div class="title mb-16 flex justify-between items-center">
+                                            <div class="label-01 text-Primary">My Locked Plans</div>
+                                        </div>
+
+                                    <div class="content">
+                                        <div class="table-responsive table-list-transaction">
+                                            <!-- Table Header -->
+                                            <div class="list-transaction-head title-sort bg-Primary text-White">
+                                            <div class="btn-key-sort"><div class="f12-bold">Plan Name</div></div>
+                                            <div class="btn-key-sort"><div class="f12-bold">Amount Locked</div></div>
+                                            <div class="btn-key-sort"><div class="f12-bold">ROI (%)</div></div>
+                                            <div class="btn-key-sort"><div class="f12-bold">Lock Period</div></div>
+                                            <div class="btn-key-sort"><div class="f12-bold">Payout Option</div></div>
+                                            <div class="btn-key-sort"><div class="f12-bold">Status</div></div>
+                                            <div class="btn-key-sort"><div class="f12-bold">Start Date</div></div>
+                                            </div>
+
+                                            <!-- Dynamic Table -->
+                                            <table id="active-holdlocks-table" class="list-transaction-content content-sort w-100">
+                                            <tbody id="active-holdlocks-table-body">
+                                                <!-- Populated dynamically by holdlock.js -->
+                                            </tbody>
+                                            </table>
+
+                                            <!-- Empty state message (optional) -->
+                                            <div id="no-active-holdlocks" class="text-center py-20 hidden">
+                                            <p class="f14-regular text-Gray">No active HoldLock plans yet. Start one above.</p>
+                                            </div>
+                                        </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+
+                            <!-- Eligible Unlocks Section -->
+                            <div class="row mb-32">
+                            <div class="col-12">
+                                <div class="wg-box unlock-plans">
+                                <div class="title mb-16 flex justify-between items-center">
+                                    <div class="label-01 text-Primary">Eligible Unlocks (Mature Plans)</div>
+                                </div>
+                                <div class="content">
+                                
+                                <div id="matured-holdlocks-table-wrapper" class="table-responsive table-list-transaction">
+                                    <div class="list-transaction-head title-sort bg-Green text-White">
+                                    <div class="btn-key-sort"><div class="f12-bold">Plan Name</div></div>
+                                    <div class="btn-key-sort"><div class="f12-bold">Original Amount</div></div>
+                                    <div class="btn-key-sort"><div class="f12-bold">ROI Earned</div></div>
+                                    <div class="btn-key-sort"><div class="f12-bold">Maturity Date</div></div>
+                                    <div class="btn-key-sort"><div class="f12-bold">Total Payout</div></div>  
+                                    <div class="btn-key-sort"><div class="f12-bold">Actions</div></div>
+                                    </div>
+                                    <table id="matured-holdlocks-table" class="list-transaction-content content-sort w-100">
+                                    <tbody id="matured-holdlocks-table-body">
+                                        <!-- Dynamically loaded via JS -->
+                                    </tbody>
+                                    </table>
+                                    <div id="matured-holdlocks-empty" class="text-center py-20 hidden">
+                                    <p class="f14-regular text-Gray">No mature plans available for unlock at this time.</p>
+                                </div>
+                                </div>
+                                </div>
+                                </div>
+                                </div>
+                                </div>
+                            </div>
+                            <!-- /main-content-wrap -->
+                        </div>
+                        <!-- /main-content-wrap -->
+                        
+                    </div>
+                    <!-- /main-content -->
+                </div>
+                <!-- /section-content-right -->
+            </div>
+            <!-- /layout-wrap -->
+        </div>
+        <!-- /#page -->
+    </div>
+    <!-- /#wrapper -->
+
+        <div id="loader" class="hidden">
+    <div class="line-loader">
+            <div></div><div></div><div></div><div></div><div></div>
+        </div>
+    </div>
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/bootstrap.min.js"></script>
+<script src="../../assets/js/api.js"></script>
+<script src="../../assets/js/holdlock.js"></script>
+<script src="../../assets/js/countto.js" defer></script>
+<script src="../../assets/js/bootstrap-select.min.js" defer></script>
+<script src="../../assets/js/dashboard.js" defer></script>
+
+    <!-- Iconify CDN -->
+    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+</body>
+</html>
+==============HOLDLOCK.PHP===============
+
+==============HOLDLOCK.PHP(Backend)===============
+<?php
+// ===============================================
+// FILE: /api/backend/charity.php
+// PURPOSE: Charity dashboard — summary cards, campaigns, donation processing, history.
+// Supports SPA requests (fetch/AJAX). Integrates with wallets/transactions.
+// ===============================================
+
+session_start([
+    'cookie_lifetime' => 86400,
+    'cookie_httponly' => true,
+    'cookie_secure' => false, // Set true on HTTPS
+    'cookie_samesite' => 'Strict',
+]);
+
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *'); // Restrict for production
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Credentials: true');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    exit(0);
+}
+
+// ---------------------------
+// Include dependencies
+// ---------------------------
+require_once __DIR__ . '/../../config/constants.php';
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../config/env.php';
+require_once __DIR__ . '/email.php';
+
+
+// ---------------------------
+// Auth check
+// ---------------------------
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(['status' => 'error', 'message' => 'Unauthorized. Please log in.']);
+    exit;
+}
+
+$user_id = (int) $_SESSION['user_id'];
+$user_name = $_SESSION['full_name'] ?? ($_SESSION['name'] ?? 'User');
+$user_email = $_SESSION['email'] ?? '';
+
+try {
+    $pdo = getPDO();
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['status' => 'error', 'message' => 'Database connection failed.']);
+    exit;
+}
+
+// ---------------------------
+// Parse input
+// ---------------------------
+$input = json_decode(file_get_contents('php://input'), true) ?: $_GET;
+$action = trim($input['action'] ?? 'get_summary');
+
+// Helper: JSON response + exit
+function jsonResponse($status, $message, $data = []) {
+    echo json_encode(['status' => $status, 'message' => $message, 'data' => $data]);
+    exit;
+}
+
+// Helper: Generate reference
+function generateReference($prefix) {
+    return strtoupper($prefix . '-' . uniqid() . '-' . rand(1000, 9999));
+}
+
+// ===========================================================
+// ACTION: GET SUMMARY (Cards: Total Donated, Count, Top Charity, Last Date)
+// ===========================================================
+if ($action === 'get_summary') {
+    try {
+        // Total donated & count from charity_donations
+        $stmt = $pdo->prepare("
+            SELECT 
+                COALESCE(SUM(amount), 0) AS total_donated,
+                COUNT(*) AS donations_made,
+                MAX(created_at) AS last_donation_date
+            FROM charity_donations 
+            WHERE user_id = ?
+        ");
+        $stmt->execute([$user_id]);
+        $summary = $stmt->fetch(PDO::FETCH_ASSOC) ?: [
+            'total_donated' => 0,
+            'donations_made' => 0,
+            'last_donation_date' => null
+        ];
+
+        // Top supported charity (highest sum amount)
+        $topStmt = $pdo->prepare("
+            SELECT c.name AS top_charity
+            FROM charity_donations cd
+            JOIN charities c ON cd.charity_id = c.id
+            WHERE cd.user_id = ?
+            GROUP BY c.id, c.name
+            ORDER BY SUM(cd.amount) DESC
+            LIMIT 1
+        ");
+        $topStmt->execute([$user_id]);
+        $topCharity = $topStmt->fetchColumn() ?: 'None';
+
+        // Format values clearly
+        $totalDonated = (float) $summary['total_donated'];
+        $donationsMade = (int) $summary['donations_made'];
+        $lastDate = $summary['last_donation_date'] 
+            ? date('M d, Y', strtotime($summary['last_donation_date'])) 
+            : 'None';
+
+        jsonResponse('success', 'Summary loaded.', [
+            // ✅ clean numeric for frontend formatting
+            'total_donated' => $totalDonated,
+            'donations_made' => $donationsMade,
+            'top_charity' => $topCharity,
+            'last_donation_date' => $lastDate
+        ]);
+
+    } catch (Exception $e) {
+        error_log('Error fetching charity summary: ' . $e->getMessage());
+        jsonResponse('error', 'Failed to load summary.');
+    }
+}
+
+
+// ===========================================================
+// ACTION: GET ACTIVE CAMPAIGNS
+// ===========================================================
+if ($action === 'get_campaigns') {
+    $stmt = $pdo->prepare("
+        SELECT id, name, organization, COALESCE(description, '') AS description, COALESCE(image, '/assets/images/charity/placeholder.jpg') AS image,
+               goal_amount AS goal, raised_amount AS raised, status,
+               ROUND((raised_amount / goal_amount * 100), 0) AS progress
+        FROM charities 
+        WHERE status = 'active' AND goal_amount > raised_amount
+        ORDER BY created_at DESC
+    ");
+    $stmt->execute();
+    $campaigns = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Format
+    foreach ($campaigns as &$c) {
+        $c['raised_formatted'] = number_format((float) $c['raised'], 2);
+        $c['goal_formatted'] = number_format((float) $c['goal'], 2);
+        $c['progress'] = (int) $c['progress'];
+    }
+
+    jsonResponse('success', 'Campaigns loaded.', ['campaigns' => $campaigns]);
+}
+
+// ===========================================================
+// ACTION: GET SINGLE CAMPAIGN (For details panel on select)
+// ===========================================================
+if ($action === 'get_single_campaign') {
+    $id = (int) ($input['id'] ?? 0);
+    if (!$id) jsonResponse('error', 'Invalid charity ID.');
+
+    $stmt = $pdo->prepare("
+        SELECT id, name, organization, COALESCE(description, '') AS description, COALESCE(image, '/assets/images/charity/placeholder.jpg') AS image,
+               goal_amount AS goal, raised_amount AS raised, status,
+               ROUND((raised_amount / goal_amount * 100), 0) AS progress
+        FROM charities WHERE id = ? AND status = 'active'
+    ");
+    $stmt->execute([$id]);
+    $campaign = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$campaign) jsonResponse('error', 'Charity not found or inactive.');
+
+    $campaign['raised_formatted'] = number_format((float) $campaign['raised'], 2);
+    $campaign['goal_formatted'] = number_format((float) $campaign['goal'], 2);
+    $campaign['progress'] = (int) $campaign['progress'];
+
+    jsonResponse('success', 'Campaign loaded.', ['campaign' => $campaign]);  // 'data' => $campaign for JS consistency
+}
+
+// ===========================================================
+// ACTION: MAKE DONATION
+// ===========================================================
+if ($action === 'make_donation') {
+    $charity_id = (int) ($input['charity_id'] ?? 0);
+    $amount = (float) ($input['amount'] ?? 0);
+    $note = trim($input['note'] ?? '');
+
+    if ($amount <= 0 || $charity_id <= 0) {
+        jsonResponse('error', 'Invalid donation details.');
+    }
+
+    // Validate charity exists and active
+    $chkStmt = $pdo->prepare("SELECT name, goal_amount, raised_amount FROM charities WHERE id = ? AND status = 'active'");
+    $chkStmt->execute([$charity_id]);
+    $charity = $chkStmt->fetch(PDO::FETCH_ASSOC);
+    if (!$charity || $charity['raised_amount'] >= $charity['goal_amount']) {
+        jsonResponse('error', 'Invalid or inactive charity.');
+    }
+
+    // Check wallet balance
+    $walletStmt = $pdo->prepare("SELECT balance, total_donations FROM wallets WHERE user_id = ?");
+    $walletStmt->execute([$user_id]);
+    $wallet = $walletStmt->fetch(PDO::FETCH_ASSOC);
+    if (!$wallet || $wallet['balance'] < $amount) {
+        jsonResponse('error', 'Insufficient balance.');
+    }
+
+    $reference = generateReference('HRC-DON');
+    $timestamp = date('Y-m-d H:i:s');
+
+    $pdo->beginTransaction();
+    try {
+        // Deduct from balance & update total_donations
+        $pdo->prepare("UPDATE wallets SET balance = balance - ?, total_donations = total_donations + ? WHERE user_id = ?")
+            ->execute([$amount, $amount, $user_id]);
+
+        // Add to charity raised_amount
+        $pdo->prepare("UPDATE charities SET raised_amount = raised_amount + ? WHERE id = ?")
+            ->execute([$amount, $charity_id]);
+
+        // Insert donation (with reference)
+        $pdo->prepare("
+            INSERT INTO charity_donations (user_id, charity_id, amount, reference, created_at)
+            VALUES (?, ?, ?, ?, ?)
+        ")->execute([$user_id, $charity_id, $amount, $reference, $timestamp]);
+
+        // Insert into transactions for reference/status/details
+        $details = json_encode(['charity_id' => $charity_id, 'note' => $note]);
+        $pdo->prepare("
+            INSERT INTO transactions (user_id, type, amount, reference, status, details, created_at)
+            VALUES (?, 'donation', ?, ?, 'completed', ?, ?)
+        ")->execute([$user_id, $amount, $reference, $details, $timestamp]);
+
+        $pdo->commit();
+
+        // Emails (conditional if sendEmail exists)
+        if (function_exists('sendEmail')) {
+            sendEmail([
+                'to' => $user_email,
+                'template' => 'donation_confirmed',
+                'variables' => [
+                    'user_name' => $user_name,
+                    'amount' => number_format($amount, 2),
+                    'charity_name' => $charity['name'],
+                    'reference' => $reference,
+                ]
+            ]);
+
+            sendEmail([
+                'to' => ADMIN_CONTACT_EMAIL,
+                'template' => 'admin_donation_notification',
+                'variables' => [
+                    'user_name' => $user_name,
+                    'user_email' => $user_email,
+                    'amount' => number_format($amount, 2),
+                    'charity_name' => $charity['name'],
+                    'reference' => $reference,
+                ]
+            ]);
+        }
+
+        jsonResponse('success', 'Donation successful!', ['reference' => $reference]);
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        error_log('Donation error: ' . $e->getMessage());
+        jsonResponse('error', 'Donation failed. Please try again.');
+    }
+}
+
+// ===========================================================
+// ACTION: GET DONATION HISTORY (Table: Reference from transactions, join on reference)
+// ===========================================================
+if (in_array($action, ['get_history', 'history'])) {
+    $page = max(1, (int) ($input['page'] ?? 1));
+    $limit = min(50, max(5, (int) ($input['limit'] ?? 10)));
+    $offset = ($page - 1) * $limit;
+    $search = trim($input['search'] ?? '');
+
+    $sql = "
+        SELECT t.reference, t.created_at, t.status, cd.amount, c.name AS charity_name
+        FROM charity_donations cd
+        JOIN transactions t ON t.reference = cd.reference
+        JOIN charities c ON cd.charity_id = c.id
+        WHERE cd.user_id = ?
+    ";
+    $params = [$user_id];
+
+    if (!empty($search)) {
+        $sql .= " AND (t.reference LIKE ? OR c.name LIKE ?)";
+        $params[] = "%$search%";
+        $params[] = "%$search%";
+    }
+
+    // Count total
+    $countSql = "SELECT COUNT(*) FROM ($sql) AS count_sub";
+    $countStmt = $pdo->prepare($countSql);
+    $countStmt->execute($params);
+    $total = (int) $countStmt->fetchColumn();
+    $total_pages = ceil($total / $limit);
+
+    // Fetch paginated
+        // Fetch paginated (MySQL doesn't allow binding for LIMIT/OFFSET)
+    $limit = (int)$limit;
+    $offset = (int)$offset;
+    // Append limit/offset directly into SQL string (safe due to integer casting)
+    $sql .= " ORDER BY cd.created_at DESC LIMIT $limit OFFSET $offset";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Format
+    $history = [];
+    foreach ($rows as $row) {
+        $history[] = [
+            'reference' => '#' . strtoupper(substr($row['reference'], strrpos($row['reference'], '-') + 1)),
+            'date' => date('M d, Y', strtotime($row['created_at'])),
+            'charity' => $row['charity_name'],
+            'amount' => (float) $row['amount'],
+            'status' => ucfirst($row['status']),
+        ];
+    }
+
+    jsonResponse('success', 'History loaded.', [
+        'history' => $history,
+        'pagination' => [
+            'current_page' => $page,
+            'total_pages' => $total_pages,
+            'total_items' => $total,
+        ],
+    ]);
+}
+
+// Invalid action
+http_response_code(400);
+jsonResponse('error', 'Invalid action.');
+?>
+==============HOLDLOCK.PHP(Backend)===============
+
+==============HOLDLOCK.JS===============
+/* =======================================================
+   holdlock.js — HealthRunCare HoldLock Frontend Logic (Final Fixed)
+   ======================================================= */
+
+document.addEventListener('DOMContentLoaded', function () {
+  // === DOM ELEMENTS ===
+  const walletBalanceEl = document.getElementById('wallet-balance');
+  const planSelect = document.getElementById('plan-select');
+  const lockAmountEl = document.getElementById('lock-amount');
+  const lockTermEl = document.getElementById('lock-period');
+  const lockRoiEl = document.getElementById('expected-roi');
+  const lockBtn = document.getElementById('lock-btn');
+  const lockForm = document.getElementById('holdlock-form');
+
+  const cardActiveLocks = document.getElementById('card-active-locks');
+  const cardTotalLocked = document.getElementById('card-total-locked');
+  const cardRoiEarned = document.getElementById('card-roi-earned');
+  const cardNextUnlock = document.getElementById('card-next-unlock');
+
+  const activeLocksTbody = document.getElementById('active-holdlocks-table-body');
+  const maturedLocksTbody = document.getElementById('matured-holdlocks-table-body');
+
+  window.__hrc_holdlock_plans = window.__hrc_holdlock_plans || [];
+
+  // === INITIAL LOAD ===
+  loadSummary();
+  loadPlans();
+  loadActiveLocks();
+  loadMaturedLocks();
+
+  // === PLAN SELECTION HANDLER ===
+  window.updateHoldlockDetails = function () {
+    const selectedOption = planSelect?.options[planSelect.selectedIndex];
+    const planId = selectedOption ? parseInt(selectedOption.value) : null;
+
+    if (!planId) {
+      lockTermEl.value = '';
+      lockRoiEl.value = '';
+      lockAmountEl.placeholder = 'Enter amount';
+      lockAmountEl.value = '';
+      lockAmountEl.removeAttribute('min');
+      lockAmountEl.removeAttribute('max');
+      lockBtn.disabled = true;
+      return;
+    }
+
+    const plan = window.__hrc_holdlock_plans.find(p => p.id === planId);
+    if (!plan) {
+      const dataTerm = selectedOption?.getAttribute('data-lock') || '';
+      const dataRoi = selectedOption?.getAttribute('data-roi') || '';
+      lockTermEl.value = dataTerm;
+      lockRoiEl.value = dataRoi;
+      lockAmountEl.placeholder = 'Enter amount';
+      lockBtn.disabled = !dataTerm || !dataRoi;
+      return;
+    }
+
+    // Assign lock details
+    lockTermEl.value = plan.lock_period || plan.duration_text || (plan.duration_days ? plan.duration_days + ' days' : '');
+    lockRoiEl.value = plan.roi_percent ? `${plan.roi_percent}%` : (plan.roi || '');
+
+    // --- CLEAN FIX FOR MIN/MAX PLACEHOLDER ---
+    let minVal = plan.min || plan.min_deposit || 0;
+    let maxVal = plan.max_deposit === 'Unlimited' ? null : (plan.max || plan.max_deposit || 0);
+
+    // Strip formatting like "$10,000"
+    if (typeof minVal === 'string') minVal = parseFloat(minVal.replace(/[$,]/g, '')) || 0;
+    if (typeof maxVal === 'string' && maxVal !== 'Unlimited') maxVal = parseFloat(maxVal.replace(/[$,]/g, '')) || 0;
+
+    // Set numeric input limits
+    if (!isNaN(minVal)) lockAmountEl.min = minVal;
+    if (!isNaN(maxVal) && maxVal > 0) lockAmountEl.max = maxVal;
+
+    // Format placeholder display
+    const pmin = minVal ? `$${Number(minVal).toLocaleString()}` : '';
+    const pmax = maxVal ? `$${Number(maxVal).toLocaleString()}` : 'Unlimited';
+    lockAmountEl.placeholder = pmax === 'Unlimited' ? `Min: ${pmin}` : `${pmin} - ${pmax}`;
+
+    // ✅ Autofill the minimum value for convenience
+    lockAmountEl.value = minVal || '';
+
+    lockBtn.disabled = false;
+  };
+
+  // === START HOLDLOCK FORM SUBMIT ===
+  if (lockForm) {
+    lockForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      if (!lockBtn) return;
+
+      lockBtn.disabled = true;
+      toggleLoader(true);
+
+      const planId = parseInt(planSelect.value || 0);
+      const amount = parseFloat(lockAmountEl?.value || 0);
+
+      if (!planId) {
+        showToast('Please select a HoldLock plan.', 'error');
+        toggleLoader(false);
+        lockBtn.disabled = false;
+        return;
+      }
+      if (!amount || amount <= 0) {
+        showToast('Enter a valid amount to lock.', 'error');
+        toggleLoader(false);
+        lockBtn.disabled = false;
+        return;
+      }
+
+      const selectedPlan = window.__hrc_holdlock_plans.find(p => p.id === planId);
+      if (selectedPlan) {
+        let min = selectedPlan.min || selectedPlan.min_deposit || 0;
+        let max = selectedPlan.max_deposit === 'Unlimited' ? Infinity : (selectedPlan.max || selectedPlan.max_deposit || Infinity);
+
+        if (typeof min === 'string') min = parseFloat(min.replace(/[$,]/g, '')) || 0;
+        if (typeof max === 'string' && max !== 'Unlimited') max = parseFloat(max.replace(/[$,]/g, '')) || Infinity;
+
+        if (amount < min) {
+          showToast(`Minimum amount for this plan is $${min.toLocaleString()}.`, 'error');
+          toggleLoader(false);
+          lockBtn.disabled = false;
+          return;
+        }
+        if (amount > max) {
+          showToast(`Maximum amount for this plan is $${max.toLocaleString()}.`, 'error');
+          toggleLoader(false);
+          lockBtn.disabled = false;
+          return;
+        }
+      }
+
+      // API request
+      const res = await fetchApi('/api/backend/holdlock.php', {
+        action: 'start_holdlock',
+        plan_id: planId,
+        amount: amount
+      });
+
+      toggleLoader(false);
+
+      if (res.status === 'success') {
+        showToast('HoldLock started successfully.', 'success');
+        lockAmountEl.value = '';
+        planSelect.selectedIndex = 0;
+        updateHoldlockDetails();
+        loadSummary();
+        loadActiveLocks();
+        loadMaturedLocks();
+      } else {
+        showToast(res.message || 'Failed to start holdlock.', 'error');
+      }
+
+      lockBtn.disabled = false;
+    });
+  }
+
+  // === SUMMARY (CARDS + WALLET) ===
+async function loadSummary() {
+  toggleLoader(true);
+  const res = await fetchApi('/api/backend/holdlock.php', { action: 'get_summary' });
+  toggleLoader(false);
+
+  if (res.status === 'success') {
+    const summary = res.data?.summary || {};
+    const wallet = res.data?.wallet || {};
+
+    cardActiveLocks.textContent = summary.active_locks_count ?? 0;
+    cardTotalLocked.textContent = '$' + Number(summary.total_locked || 0).toFixed(2);
+    cardRoiEarned.textContent = '$' + Number(summary.total_roi || 0).toFixed(2);
+
+    // ✅ Format the next maturity date nicely
+    if (summary.next_maturity) {
+      const date = new Date(summary.next_maturity);
+      const formattedDate = date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+      cardNextUnlock.textContent = formattedDate;
+    } else {
+      cardNextUnlock.textContent = '—';
+    }
+
+    walletBalanceEl.textContent = '$' + Number(wallet.balance || 0).toFixed(2);
+  } else {
+    console.warn('Failed to load holdlock summary:', res);
+  }
+}
+
+
+  // === LOAD PLANS ===
+  async function loadPlans() {
+    const res = await fetchApi('/api/backend/holdlock.php', { action: 'get_plans' });
+    if (res.status !== 'success') {
+      console.warn('Failed to load holdlock plans:', res);
+      return;
+    }
+
+    const plans = res.data?.plans || [];
+    window.__hrc_holdlock_plans = plans;
+
+    const firstOption = planSelect.querySelector('option:first-child');
+    planSelect.innerHTML = '';
+    if (firstOption) planSelect.appendChild(firstOption);
+
+    plans.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = p.name || ('Plan ' + p.id);
+      opt.setAttribute('data-lock', p.lock_period || '');
+      opt.setAttribute('data-roi', p.roi_percent ? p.roi_percent + '%' : (p.roi || ''));
+      planSelect.appendChild(opt);
+    });
+
+    planSelect.addEventListener('change', updateHoldlockDetails);
+    planSelect.selectedIndex = 0;
+    updateHoldlockDetails();
+  }
+
+  // === LOAD ACTIVE LOCKS ===
+  async function loadActiveLocks() {
+    toggleLoader(true);
+    const res = await fetchApi('/api/backend/holdlock.php', { action: 'get_active' });
+    toggleLoader(false);
+
+    activeLocksTbody.innerHTML = '';
+    const locks = res.data?.locks || [];
+
+    if (!locks.length) {
+      document.getElementById('no-active-holdlocks')?.classList.remove('hidden');
+      return;
+    } else {
+      document.getElementById('no-active-holdlocks')?.classList.add('hidden');
+    }
+
+    locks.forEach(l => {
+      const tr = document.createElement('tr');
+      tr.className = 'tf-table-item';
+      tr.innerHTML = `
+        <td data-label="Plan Name">${escapeHtml(l.plan_name)}</td>
+        <td data-label="Amount Locked">$${Number(l.amount).toFixed(2)}</td>
+        <td data-label="ROI (%)" class="text-Green">${Number(l.roi_percent || 0).toFixed(2)}%</td>
+        <td data-label="Lock Period">${escapeHtml(l.duration_days ? l.duration_days + ' days' : l.lock_period || '—')}</td>
+        <td data-label="Payout Option">${escapeHtml(l.payout_option || 'maturity')}</td>
+        <td data-label="Status"><div class="box-status ${l.status === 'locked' ? 'bg-Green' : 'bg-Gray'}"><span>${l.status}</span></div></td>
+        <td data-label="Start Date">${l.created_at || '—'}</td>
+      `;
+      activeLocksTbody.appendChild(tr);
+    });
+  }
+
+  // === LOAD MATURED LOCKS ===
+  async function loadMaturedLocks() {
+    const res = await fetchApi('/api/backend/holdlock.php', { action: 'get_matured' });
+    maturedLocksTbody.innerHTML = '';
+    const matured = res.data?.matured || [];
+
+    if (!matured.length) {
+      document.getElementById('matured-holdlocks-empty')?.classList.remove('hidden');
+      return;
+    } else {
+      document.getElementById('matured-holdlocks-empty')?.classList.add('hidden');
+    }
+
+    matured.forEach(m => {
+      const payout = (parseFloat(m.amount) + parseFloat(m.roi_earned || 0)).toFixed(2);
+      const tr = document.createElement('tr');
+      tr.className = 'tf-table-item';
+      tr.innerHTML = `
+        <td data-label="Plan Name">${escapeHtml(m.plan_name)}</td>
+        <td data-label="Original Amount">$${Number(m.amount).toFixed(2)}</td>
+        <td data-label="ROI Earned" class="text-Green">$${Number(m.roi_earned).toFixed(2)}</td>
+        <td data-label="Maturity Date">${m.maturity_date || '—'}</td>
+        <td data-label="Total Payout">$${payout}</td>
+        <td data-label="Actions">
+          <button class="tf-button bg-Green text-White f12-regular hover:bg-Primary" onclick="initiateHoldlockUnlock(${m.id}, false)">Unlock</button>
+        </td>
+      `;
+      maturedLocksTbody.appendChild(tr);
+    });
+  }
+
+  // === UNLOCK FUNCTION ===
+  window.initiateHoldlockUnlock = async function (holdlockId, earlyFlag = false) {
+    const confirmMsg = earlyFlag
+      ? 'This will perform an early unlock and apply penalty. Proceed?'
+      : 'Unlock this matured HoldLock and credit your wallet?';
+    if (!confirm(confirmMsg)) return;
+
+    toggleLoader(true);
+    const res = await fetchApi('/api/backend/holdlock.php', {
+      action: 'unlock',
+      holdlock_id: holdlockId,
+      early: earlyFlag ? 1 : 0
+    });
+    toggleLoader(false);
+
+    if (res.status === 'success') {
+      showToast('HoldLock unlocked successfully.', 'success');
+      loadSummary();
+      loadActiveLocks();
+      loadMaturedLocks();
+    } else {
+      showToast(res.message || 'Failed to unlock holdlock.', 'error');
+    }
+  };
+
+  // === UTILITIES ===
+  function escapeHtml(str) {
+    if (!str && str !== 0) return '';
+    return String(str).replace(/[&<>"'`=\/]/g, s => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;',
+      "'": '&#39;', '/': '&#x2F;', '`': '&#x60;', '=': '&#x3D;'
+    })[s]);
+  }
+
+  function toggleLoader(show = true) {
+    const loader = document.getElementById('loader');
+    if (!loader) return;
+    loader.classList.toggle('hidden', !show);
+  }
+
+  // === AUTO REFRESH EVERY 60s ===
+  setInterval(() => {
+    loadSummary();
+    loadActiveLocks();
+    loadMaturedLocks();
+  }, 60000);
+});
+
+==============HOLDLOCK.JS===============
+
+==============TRUSTFUND.PHP===============
+<?php
+// pages/user/trustfund.php
+
+session_start([
+    'cookie_lifetime' => 86400, // Example: 24 hours
+    'cookie_httponly' => true,
+    'cookie_secure' => true, // Ensure HTTPS is used in production
+    'cookie_samesite' => 'Strict',
+]);
+
+if (!isset($_SESSION['user_id'])) {
+    // Redirect to login page if not logged in
+    header('Location: /login');
+    exit;
+}
+// Retrieve user data from session
+$user_name = htmlspecialchars($_SESSION['full_name'] ?? 'User'); // Fallback to 'User' if not set
+$user_id = $_SESSION['user_id'] ?? null;
+$user_email = $_SESSION['email'] ?? null;
+$user_role = $_SESSION['role'] ?? 'user';
+
+// Placeholder data for trust fund plans
+$plans = [
+    [
+        'id' => 1,
+        'name' => 'Child Education Growth Plan',
+        'purpose' => 'To help parents and guardians build a secure education fund for their children’s future, with guaranteed growth and flexible payout options.',
+        'min_deposit' => '$500',
+        'max_deposit' => '$50,000',
+        'lock_period' => '3 years',
+        'roi' => '20–28%',
+        'risk' => 'Low',
+        'payout' => 'Annual payout or at maturity',
+        'summary' => 'A safe and steady plan that allows parents to prepare for their children’s education needs. Funds grow through secure, education-focused investments with short-term profitability.',
+        'icon' => 'mdi:school-outline',
+        'color' => 'Green'
+    ],
+    [
+        'id' => 2,
+        'name' => 'Legacy Wealth Trust Plan',
+        'purpose' => 'To help high-net-worth individuals and families build long-term generational wealth through sustainable, asset-backed investments.',
+        'min_deposit' => '$500,000',
+        'max_deposit' => 'Unlimited',
+        'lock_period' => '5 years',
+        'roi' => '45–60%',
+        'risk' => 'Moderate',
+        'payout' => 'Annual or full payout at maturity',
+        'summary' => 'A premium trust plan for investors who want to establish multi-generational wealth. Funds are allocated into stable, high-yield ventures in healthcare and infrastructure, ensuring significant compounded returns.',
+        'icon' => 'mdi:family-tree',
+        'color' => 'Blue'
+    ],
+    [
+        'id' => 3,
+        'name' => 'Business Succession Trust Plan',
+        'purpose' => 'To help business owners secure and grow their assets while creating a smooth transition or expansion strategy.',
+        'min_deposit' => '$5,000',
+        'max_deposit' => '$500,000',
+        'lock_period' => '4 years',
+        'roi' => '40–55%',
+        'risk' => 'Moderate to High',
+        'payout' => 'Annual or full payout at maturity',
+        'summary' => 'This plan empowers entrepreneurs to expand or stabilize their businesses while earning profitable returns through diversified investments in growth industries.',
+        'icon' => 'mdi:briefcase-outline',
+        'color' => 'Orange'
+    ],
+    [
+        'id' => 4,
+        'name' => 'Medical Protection Trust Plan',
+        'purpose' => 'To create a secure health reserve that earns profit while providing access to emergency medical funds.',
+        'min_deposit' => '$300',
+        'max_deposit' => '$25,000',
+        'lock_period' => '3 years',
+        'roi' => '15–20%',
+        'risk' => 'Low',
+        'payout' => 'Quarterly, annual, or at maturity',
+        'summary' => 'A health-focused savings and investment plan that offers financial security for medical needs while maintaining capital growth through health sector investments.',
+        'icon' => 'mdi:heart-pulse',
+        'color' => 'Green'
+    ],
+    [
+        'id' => 5,
+        'name' => 'Future Builders Business Plan',
+        'purpose' => 'To help young professionals and entrepreneurs grow startup capital or long-term business project funds.',
+        'min_deposit' => '$1,000',
+        'max_deposit' => '$100,000',
+        'lock_period' => '4 years',
+        'roi' => '30–45%',
+        'risk' => 'Moderate',
+        'payout' => 'Annual or full payout at maturity',
+        'summary' => 'This plan provides growth opportunities for future business leaders. HealthRunCare invests your capital into profitable startups and innovation projects that deliver measurable social and financial impact.',
+        'icon' => 'mdi:rocket-outline',
+        'color' => 'Blue'
+    ],
+    [
+        'id' => 6,
+        'name' => 'Guardian Trust Income Plan',
+        'purpose' => 'To provide steady, reliable annual income for beneficiaries such as children, dependents, or retirees.',
+        'min_deposit' => '$10,000',
+        'max_deposit' => '$200,000',
+        'lock_period' => '5 years',
+        'roi' => '35% total (approx. 7% yearly)',
+        'risk' => 'Low to Moderate',
+        'payout' => 'Annual income distribution',
+        'summary' => 'A dependable, income-generating plan that ensures steady annual payouts while preserving your trust capital — ideal for long-term dependents and family income planning.',
+        'icon' => 'mdi:shield-check-outline',
+        'color' => 'Green'
+    ],
+    [
+        'id' => 7,
+        'name' => 'Perpetual Legacy Trust Plan',
+        'purpose' => 'To establish a lifetime trust that pays continuous annual income while keeping the principal amount permanently invested.',
+        'min_deposit' => '$1,000,000',
+        'max_deposit' => 'Unlimited',
+        'lock_period' => 'Lifetime (Perpetual)',
+        'roi' => '10–12% annual',
+        'risk' => 'Low',
+        'payout' => 'Annual or quarterly for life',
+        'summary' => 'An elite trust for individuals or institutions seeking permanent wealth and lifetime income. The principal remains preserved within HealthRunCare’s managed assets, generating annual returns indefinitely.',
+        'icon' => 'mdi:infinity',
+        'color' => 'Orange'
+    ]
+];
+
+// Placeholder data for user's trust fund plans
+$trustPlans = [
+    [
+        'plan' => 'Child Education Growth Plan',
+        'amount' => 2500.00,
+        'roi' => '25%',
+        'term_duration' => '3 years',
+        'payout' => 'Annual',
+        'status' => 'Active',
+        'start_date' => 'Sep 1, 2025'
+    ],
+    [
+        'plan' => 'Medical Protection Trust Plan',
+        'amount' => 10000.00,
+        'roi' => '18%',
+        'term_duration' => '3 years',
+        'payout' => 'Quarterly',
+        'status' => 'Active',
+        'start_date' => 'Aug 15, 2025'
+    ]
+];
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta -->
+    <meta charset="UTF-8">
+    <meta name="description" content="HealthRunCare TrustFund - Empower your legacy with secure, impact-driven trust investments.">
+    <meta name="author" content="HealthRunCare">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://healthruncare.com/trustfund">
+    <title>HealthRunCare TrustFund</title>
+
+    <!-- Preload + Apply (critical CSS) -->
+    <link rel="preload" href="../../assets/css/bootstrap.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="../../assets/css/dashboard.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="../../assets/icon/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+    <!-- Fallback for browsers without preload support -->
+    <noscript>
+    <link rel="stylesheet" href="../../assets/css/bootstrap.css">
+    <link rel="stylesheet" href="../../assets/css/dashboard.css">
+    </noscript>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../../assets/favicon/favicon-32x32.png" sizes="32x32">
+    <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="HRC">
+    <link rel="manifest" href="../../assets/favicon/site.webmanifest">
+</head>
+
+<body class="counter-scroll">
+    <!-- #wrapper -->
+    <div id="wrapper">
+        <!-- #page -->
+        <div id="page" class="">
+            <!-- layout-wrap -->
+            <div class="layout-wrap loader-off">
+                <!-- preload -->
+                <div id="preload" class="preload-container">
+                    <div class="preloading">
+                        <span></span>
+                    </div>
+                </div>
+                <!-- /preload -->
+                                <!-- section-menu-left -->
+                <div class="section-menu-left">
+                    <div class="box-logo">
+                        <a href="/dashboard" id="site-logo-inner">
+                            <img class="" id="logo_header" alt="HRC" src="/assets/images/healthruncarelogo.png" width="150px">
+                        </a>
+                        <div class="button-show-hide">
+                            <span class="iconify" data-icon="mdi:chevron-left"></span>
+                        </div>
+                    </div>
+                    <div class="section-menu-left-wrap">
+                        <div class="center">
+                            <div class="center-item">
+                                <div class="center-heading f14-regular text-Gray menu-heading mb-12">Navigation</div>
+                            </div>
+                            <div class="center-item">
+                                <ul class="">
+                                    <li class="menu-item has-children">
+                                        <a href="javascript:void(0);" class="menu-item-button">
+                                            <div class="icon">
+                                                <span class="iconify" data-icon="mdi:view-dashboard-outline"></span>
+                                            </div>
+                                            <div class="text">Dashboard</div>
+                                        </a>
+                                        <ul class="sub-menu">
+                                            <li class="sub-menu-item">
+                                                <a href="/dashboard" class="">
+                                                    <div class="text">Overview</div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item has-children">
+                                        <a href="javascript:void(0);" class="menu-item-button">
+                                            <div class="icon">
+                                                <span class="iconify" data-icon="mdi:wallet-outline"></span>
+                                            </div>
+                                            <div class="text">My Wallet</div>
+                                        </a>
+                                        <ul class="sub-menu">
+                                            <li class="sub-menu-item">
+                                                <a href="/dashboard.wallet" class="">
+                                                    <div class="text">Wallet</div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="/dashboard.transactions" class="menu-item-button">
+                                            <div class="icon"><span class="iconify" data-icon="mdi:receipt-text-outline"></span></div>
+                                            <div class="text">Transaction</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="/dashboard.charity" class="menu-item-button">
+                                            <div class="icon">
+                                                <span class="iconify" data-icon="mdi:heart-outline"></span>
+                                            </div>
+                                            <div class="text">Charity</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="/dashboard.investment" class="menu-item-button">
+                                            <div class="icon"><span class="iconify" data-icon="mdi:chart-timeline-variant"></span></div>
+                                            <div class="text">Investments</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="/dashboard.holdlock" class="menu-item-button">
+                                            <div class="icon"><span class="iconify" data-icon="mdi:lock-outline"></span></div>
+                                            <div class="text">Holdlock</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item active">
+                                        <a href="/dashboard.trustfund" class="menu-item-button active">
+                                            <div class="icon"><span class="iconify" data-icon="mdi:account-cash-outline"></span></div>
+                                            <div class="text">Trustfund</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="/dashboard.infrastructure" class="menu-item-button">
+                                            <div class="icon"><span class="iconify" data-icon="mdi:office-building-outline"></span></div>
+                                            <div class="text">Infrastructure</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="/dashboard.development" class="menu-item-button">
+                                            <div class="icon"><span class="iconify" data-icon="mdi:tools"></span></div>
+                                            <div class="text">Maintenance Dev</div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /section-menu-left -->
+                <!-- section-content-right -->
+                <div class="section-content-right">
+                    <!-- header-dashboard -->
+                    <div class="header-dashboard">
+                        <div class="wrap">
+                            <div class="header-left">
+                                <div class="button-show-hide">
+                                    <i class="icon-menu"></i>
+                                </div>
+                                <h6>TrustFund</h6>
+                            </div>
+                            <div class="header-grid">
+                                <div class="line1"></div>
+                                <div class="popup-wrap user type-header">
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span class="header-user wg-user">
+                                                <span class="image">
+                                                    <img src="/assets/images/avatar/default.png" alt="">
+                                                </span>
+                                                <span class="content flex flex-column">
+                                                    <span class="label-02 text-Black name"><?= $user_name ?></span>
+                                                    <span class="f14-regular text-Gray">User</span>
+                                                </span>
+                                            </span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end has-content" aria-labelledby="dropdownMenuButton3" >
+                                            <li>
+                                                <a href="/dashboard.transactions" class="user-item">
+                                                    <div class="body-title-2">Transactions</div>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="/dashboard.logout" class="user-item">
+                                                    <div class="body-title-2">Log out</div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /header-dashboard -->
+                    <!-- main-content -->
+                    <div class="main-content">
+                        <!-- main-content-wrap -->
+                        <div class="main-content-inner">
+                            <!-- main-content-wrap -->
+                            <div class="main-content-wrap">
+                                <div class="tf-container">
+                                    <div class="row mb-32">
+                                        <div class="col-12">
+                                            <div class="wg-box impact-overview">
+                                            <div class="title mb-16 flex justify-between items-center">
+                                                <div class="label-01 text-Primary">TrustFund Summary</div>
+                                                <span class="f12-regular text-Gray">Your portfolio growth insight</span>
+                                            </div>
+
+                                            <div class="content">
+                                                <div class="row g-3">
+
+                                                <!-- Total Trusts -->
+                                                <div class="col-md-3 col-6">
+                                                    <div class="impact-card">
+                                                    <div class="icon bg-PrimaryLight">
+                                                        <span class="iconify" data-icon="mdi:account-cash-outline" style="color: var(--color-primary);"></span>
+                                                    </div>
+                                                    <div class="text">
+                                                        <h6 class="text-Primary"><?php echo $total_trusts ?? 0; ?></h6>
+                                                        <p class="f12-regular text-Gray">Active Trusts</p>
+                                                    </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Total Invested -->
+                                                <div class="col-md-3 col-6">
+                                                    <div class="impact-card">
+                                                    <div class="icon bg-GreenLight">
+                                                        <span class="iconify" data-icon="mdi:cash-plus" style="color: var(--Green);"></span>
+                                                    </div>
+                                                    <div class="text">
+                                                        <h6 class="text-Green">$<?php echo number_format($total_invested ?? 0, 2); ?></h6>
+                                                        <p class="f12-regular text-Gray">Total Invested</p>
+                                                    </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- ROI -->
+                                                <div class="col-md-3 col-6">
+                                                    <div class="impact-card">
+                                                    <div class="icon bg-AccentLight">
+                                                        <span class="iconify" data-icon="mdi:chart-bar" style="color: var(--color-accent);"></span>
+                                                    </div>
+                                                    <div class="text">
+                                                        <h6 class="text-Black">$<?php echo number_format($trust_roi ?? 0, 2); ?></h6>
+                                                        <p class="f12-regular text-Gray">ROI Earned</p>
+                                                    </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Next Payout -->
+                                                <div class="col-md-3 col-6">
+                                                    <div class="impact-card">
+                                                    <div class="icon bg-YellowLight">
+                                                        <span class="iconify" data-icon="mdi:calendar-sync" style="color: #d4a017;"></span>
+                                                    </div>
+                                                    <div class="text">
+                                                        <h6 class="text-Black"><?php echo $next_payout ?? '—'; ?></h6>
+                                                        <p class="f12-regular text-Gray">Next Payout Date</p>
+                                                    </div>
+                                                    </div>
+                                                </div>
+
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                   <!-- TrustFund Plans Grid (Unified Investment Format) -->
+                                        <div class="row mb-32">
+                                        <div class="col-12">
+                                            <div class="wg-box trustfund-plans">
+                                            <div class="title mb-16 flex justify-between items-center">
+                                                <div class="label-01 text-Primary">Available TrustFund Plans</div>
+                                            </div>
+
+                                            <div class="content">
+                                                <div class="row g-4">
+                                                <?php foreach ($plans as $plan): ?>
+                                                <div class="col-lg-3 col-md-6">
+                                                    <div class="plan-card">
+                                                    <div class="plan-header flex justify-between items-center mb-12">
+                                                        <div class="flex items-center gap-2">
+                                                        <h6 class="plan-title"><?php echo htmlspecialchars($plan['name']); ?></h6>
+                                                        </div>
+                                                    </div>
+
+                                                    <p class="f12-regular text-Gray mb-12">
+                                                        <?php echo htmlspecialchars($plan['purpose']); ?>
+                                                    </p>
+
+                                                    <table class="plan-features">
+                                                        <tr>
+                                                        <td>Min Investment</td>
+                                                        <td><?php echo $plan['min_deposit']; ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                        <td>Term</td>
+                                                        <td><?php echo $plan['lock_period']; ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                        <td>ROI</td>
+                                                        <td class="text-Green fw-bold"><?php echo $plan['roi']; ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                        <td>Risk Level</td>
+                                                        <td class="text-<?php echo $plan['color'] ?? 'Gray'; ?> fw-bold">
+                                                            <?php echo $plan['risk']; ?>
+                                                        </td>
+                                                        </tr>
+                                                        <tr>
+                                                        <td>Payout Option</td>
+                                                        <td><?php echo $plan['payout']; ?></td>
+                                                        </tr>
+                                                    </table>
+
+                                                    <p class="f12-regular text-Gray italic mt-12">
+                                                        <?php echo htmlspecialchars($plan['summary']); ?>
+                                                    </p>
+                                                    </div>
+                                                </div>
+                                                <?php endforeach; ?>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    <!-- Start Trust Fund Section -->
+                                                            <div class="row mb-32">
+                                                            <!-- Left: Start Form -->
+                                                            <div class="col-lg-8 col-md-12">
+                                                                <div class="wg-box trustfund-form">
+                                                                <div class="title mb-16">
+                                                                    <div class="label-01 text-Primary">Start Your TrustFund Plan</div>
+                                                                </div>
+
+                                                                <div class="content">
+                                                                    <form class="form-style-1" id="trustfund-form">
+                                                                    <!-- Select Plan -->
+                                                                    <div class="mb-20">
+                                                                        <label class="f14-regular text-Black mb-8">Select Plan</label>
+                                                                        <select class="form-select custom-select" id="plan-select" onchange="updatePlanDetails()">
+                                                                        <option>Select a Plan</option>
+                                                                        <?php foreach ($plans as $plan): ?>
+                                                                        <option
+                                                                            value="<?php echo $plan['id']; ?>"
+                                                                            data-min="<?php echo str_replace('$', '', $plan['min_deposit']); ?>"
+                                                                            data-max="<?php echo $plan['max_deposit'] === 'Unlimited' ? '' : str_replace('$', '', $plan['max_deposit']); ?>"
+                                                                            data-term="<?php echo $plan['lock_period']; ?>"
+                                                                            data-roi="<?php echo $plan['roi']; ?>"
+                                                                        >
+                                                                            <?php echo htmlspecialchars($plan['name']); ?>
+                                                                        </option>
+                                                                        <?php endforeach; ?>
+                                                                        </select>
+                                                                    </div>
+
+                                                                    <!-- Investment Amount -->
+                                                                    <div class="mb-20 position-relative">
+                                                                        <label class="f14-regular text-Black mb-8">Amount to Invest (USD)</label>
+                                                                        <div class="input-group">
+                                                                        <span class="input-icon">
+                                                                            <span class="iconify" data-icon="mdi:account-cash"></span>
+                                                                        </span>
+                                                                        <input class="wallet-input form-control" type="number" placeholder="Enter amount" min="1" id="invest-amount">
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="mb-20 position-relative">
+                                                                        <label class="f14-regular text-Black mb-8">Wallet Balance</label>
+                                                                        <div class="input-group">
+                                                                            <span class="input-icon"><span class="iconify" data-icon="mdi:wallet-outline"></span></span>
+                                                                            <input 
+                                                                            class="wallet-input form-control readonly-input" 
+                                                                            type="text" 
+                                                                            id="wallet-balance" 
+                                                                            value="$<?php echo number_format($user_wallet_balance ?? 0, 2); ?>" 
+                                                                            readonly>
+                                                                        </div>
+                                                                        </div>
+
+                                                                    <!-- Details -->
+                                                                    <div class="row mb-20">
+                                                                        <div class="col-md-6">
+                                                                        <label class="f14-regular text-Black mb-8">Term Duration</label>
+                                                                        <input class="f12-regular text-Gray p-12 border border-Gray rounded" type="text" id="term-duration" readonly>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                        <label class="f14-regular text-Black mb-8">Expected ROI</label>
+                                                                        <input class="f12-regular text-Gray p-12 border border-Gray rounded" type="text" id="expected-roi" readonly>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <!-- CTA -->
+                                                                    <button
+                                                                        type="submit"
+                                                                        class="tf-button style-default w-full f14-bold bg-Green text-White hover:bg-Primary transition-colors duration-300"
+                                                                        id="invest-btn"
+                                                                        disabled
+                                                                    >
+                                                                        Start Trust Fund
+                                                                    </button>
+                                                                    </form>
+                                                                </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Right: Benefits -->
+                                                            <div class="col-lg-4 col-md-12">
+                                                                <div class="wg-box trustfund-benefits">
+                                                                <div class="title mb-16">
+                                                                    <div class="label-01 text-Primary">Why Choose TrustFunds</div>
+                                                                </div>
+
+                                                                <div class="content">
+                                                                    <ul class="f12-regular text-Gray">
+                                                                    <li class="mb-8 flex items-center">
+                                                                        100% Legally Registered Trust
+                                                                    </li>
+                                                                    <li class="mb-8 flex items-center">
+                                                                        Professionally Managed by Experts
+                                                                    </li>
+                                                                    <li class="mb-8 flex items-center">
+                                                                        Transparent Audited Reporting
+                                                                    </li>
+                                                                    <li class="mb-8 flex items-center">
+                                                                        Flexible Payout Options
+                                                                    </li>
+                                                                    <li class="mb-8 flex items-center">
+                                                                        Positive Social Impact
+                                                                    </li>
+                                                                    </ul>
+                                                                </div>
+                                                                </div>
+                                                            </div>
+                                                            </div>
+
+                                    <!-- My TrustFund Plans Table -->
+<!-- My TrustFund Plans Section -->
+<div class="row">
+  <div class="col-12">
+    <div class="wg-box trustfund-plans-table">
+      <div class="title mb-16 flex justify-between items-center">
+        <div class="label-01 text-Primary">My TrustFund Plans</div>
+        <div class="view-all">
+          <a href="#" class="f12-regular text-Primary hover:underline flex items-center">
+            View All
+            <span class="iconify ml-2" data-icon="mdi:chevron-right"></span>
+          </a>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="table-responsive table-list-transaction">
+          <div class="list-transaction-head title-sort bg-Primary text-White">
+            <div class="btn-key-sort"><div class="f12-bold">Plan Name</div></div>
+            <div class="btn-key-sort"><div class="f12-bold">Amount Invested</div></div>
+            <div class="btn-key-sort"><div class="f12-bold">ROI (%)</div></div>
+            <div class="btn-key-sort"><div class="f12-bold">Term Duration</div></div>
+            <div class="btn-key-sort"><div class="f12-bold">Payout Option</div></div>
+            <div class="btn-key-sort"><div class="f12-bold">Status</div></div>
+            <div class="btn-key-sort"><div class="f12-bold">Start Date</div></div>
+          </div>
+
+          <table class="list-transaction-content content-sort w-100">
+            <tbody>
+              <?php foreach ($trustPlans as $trust): ?>
+              <tr class="tf-table-item">
+                <td data-label="Plan Name">
+                  <div class="f12-medium key-sort"><?php echo htmlspecialchars($trust['plan']); ?></div>
+                </td>
+                <td data-label="Amount Invested">
+                  <div class="f12-bold key-sort">$<?php echo number_format($trust['amount'], 2); ?></div>
+                </td>
+                <td data-label="ROI (%)">
+                  <div class="f12-bold text-Green key-sort"><?php echo $trust['roi']; ?></div>
+                </td>
+                <td data-label="Term Duration">
+                  <div class="f12-medium key-sort"><?php echo $trust['term_duration']; ?></div>
+                </td>
+                <td data-label="Payout Option">
+                  <div class="f12-medium key-sort"><?php echo $trust['payout']; ?></div>
+                </td>
+                <td data-label="Status">
+                  <div class="box-status bg-Green">
+                    <span class="font-poppins key-sort"><?php echo $trust['status']; ?></span>
+                  </div>
+                </td>
+                <td data-label="Start Date">
+                  <div class="f12-medium key-sort"><?php echo $trust['start_date']; ?></div>
+                </td>
+              </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Eligible Unlocks Section -->
+<div class="row mb-32">
+  <div class="col-12">
+    <div class="wg-box unlock-plans">
+      <div class="title mb-16 flex justify-between items-center">
+        <div class="label-01 text-Primary">Eligible Unlocks (Mature Plans)</div>
+        <div class="view-all">
+          <a href="#" class="f12-regular text-Primary hover:underline flex items-center">
+            View All
+            <span class="iconify ml-2" data-icon="mdi:chevron-right"></span>
+          </a>
+        </div>
+      </div>
+
+      <div class="content">
+        <?php if (empty($maturePlans)): ?>
+          <div class="text-center py-20">
+            <p class="f14-regular text-Gray">No mature plans available for unlock at this time.</p>
+          </div>
+        <?php else: ?>
+          <div class="table-responsive table-list-transaction">
+            <div class="list-transaction-head title-sort bg-Green text-White">
+              <div class="btn-key-sort"><div class="f12-bold">Plan Name</div></div>
+              <div class="btn-key-sort"><div class="f12-bold">Original Amount</div></div>
+              <div class="btn-key-sort"><div class="f12-bold">ROI Earned</div></div>
+              <div class="btn-key-sort"><div class="f12-bold">Maturity Date</div></div>
+              <div class="btn-key-sort"><div class="f12-bold">Total Payout</div></div>  
+              <div class="btn-key-sort"><div class="f12-bold">Actions</div></div>
+            </div>
+
+            <table class="list-transaction-content content-sort w-100">
+              <tbody>
+                <?php foreach ($maturePlans as $mature): ?>
+                <tr class="tf-table-item">
+                  <td data-label="Plan Name">
+                    <div class="f12-medium key-sort"><?php echo htmlspecialchars($mature['plan']); ?></div>
+                  </td>
+                  <td data-label="Original Amount">
+                    <div class="f12-bold key-sort">$<?php echo number_format($mature['amount'], 2); ?></div>
+                  </td>
+                  <td data-label="ROI Earned">
+                    <div class="f12-bold text-Green key-sort"><?php echo $mature['roi_earned']; ?></div>
+                  </td>
+                  <td data-label="Maturity Date">
+                    <div class="f12-medium key-sort"><?php echo $mature['maturity_date']; ?></div>
+                  </td>
+                  <td data-label="Total Payout">
+                    <div class="f12-bold key-sort">$<?php echo number_format($mature['total_payout'], 2); ?></div>
+                  </td>
+                  <td data-label="Actions">
+                    <button class="unlock-btn bg-Green text-White px-4 py-2 rounded f12-regular hover:bg-Primary transition-colors" onclick="initiateUnlock(<?php echo $mature['id']; ?>)">
+                      Unlock Now
+                    </button>
+                  </td>
+                </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+        <?php endif; ?>
+      </div>
+    </div>
+  </div>
+</div>
+
+                                </div>
+                                </div>
+                            </div>
+                            <!-- /main-content-wrap -->
+                        </div>
+                        <!-- /main-content-wrap -->
+                        
+                    </div>
+                    <!-- /main-content -->
+                </div>
+                <!-- /section-content-right -->
+            </div>
+            <!-- /layout-wrap -->
+        </div>
+        <!-- /#page -->
+    </div>
+    <!-- /#wrapper -->
+
+        <div id="loader" class="hidden">
+    <div class="line-loader">
+            <div></div><div></div><div></div><div></div><div></div>
+        </div>
+    </div>
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <script src="../../assets/js/jquery.min.js"></script>
+    <script src="../../assets/js/bootstrap.min.js"></script>
+    <script src="../../assets/js/countto.js" defer></script>
+    <script src="../../assets/js/bootstrap-select.min.js" defer></script>
+    <script src="../../assets/js/dashboard.js" defer></script>
+    <!-- Iconify CDN -->
+    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.selectpicker').selectpicker();
+        });
+
+        let selectedPlanId = null;
+        const plans = <?php echo json_encode($plans); ?>;
+
+        function selectPlan(id) {
+            selectedPlanId = id;
+            const plan = plans.find(p => p.id === id);
+            if (plan) {
+                $('#plan-select').val(id).trigger('change');
+            }
+        }
+
+        function updatePlanDetails() {
+            const selectedOption = $('#plan-select option:selected');
+            const id = parseInt(selectedOption.val());
+            const plan = plans.find(p => p.id === id);
+            if (plan) {
+                $('#term-duration').val(plan.lock_period);
+                $('#expected-roi').val(plan.roi);
+                $('#invest-btn').prop('disabled', false);
+            } else {
+                $('#term-duration').val('');
+                $('#expected-roi').val('');
+                $('#invest-btn').prop('disabled', true);
+            }
+        }
+    </script>
+</body>
+</html>
+==============TRUSTFUND.PHP===============
+
+==============EMAIL_TEMPS.PHP===============
+<?php
+// ========================================
+// EMAIL TEMPLATES — HealthRunCare
+// ========================================
+/**
+ * Returns all email templates used in the system.
+ * Each template includes 'subject' and 'html' keys.
+ *
+ * Usage (in email.php):
+ *   $templates = getEmailTemplates();
+ *   $templates['deposit_initiated']['html'];
+ */
+function getEmailTemplates() {
+    $year = date('Y');
+    // IMPORTANT: Update this URL to your actual logo path accessible via the web
+    $logoUrl = 'https://healthruncare.com/assets/images/healthruncarelogo.png';
+    $appName = 'HealthRunCare';
+    $supportEmail = 'support@healthruncare.com'; // Define support email for easy updates
+    $websiteUrl = 'https://healthruncare.com/'; // Define main website URL
+    // Define color palette
+    $colors = [
+        'primary'           => '#386641',   // Matches --Primary
+        'primary_light'     => '#CADEDE',   // Matches --Accent
+        'surface'           => '#ffffff',   // Matches --Surface
+        'accent'            => '#FEFAE0',   // Matches --Bg / --Gainsboro
+        'text'              => '#1C2628',   // Matches --Black
+        'muted'             => '#6B7C7D',   // Matches --GrayDark
+        'border'            => 'rgba(28, 38, 40, 0.1)', // Matches --LightGray
+        'success'           => '#386641',   // Matches --Green
+        'warning'           => '#9FB8B8',   // Slight contrast tone (from --Surface-Alt)
+        'danger'            => '#2f5336',   // Darker primary hover tone
+        'highlight'         => '#CADEDE',   // Soft accent highlight
+        'highlight_text'    => '#1C2628',   // Contrast text color
+    ];
+    // Header structure
+    $header = "
+        <table role='presentation' cellspacing='0' cellpadding='0' border='0' width='100%' style='background:{$colors['surface']};'>
+            <tr>
+                <td style='padding: 20px 28px; border-bottom: 1px solid {$colors['border']};'>
+                    <img src='{$logoUrl}' alt='{$appName} Logo' style='max-width:150px; height:auto; vertical-align:middle;'>
+                </td>
+            </tr>
+        </table>";
+    // Footer structure
+    $footer = "
+        <table role='presentation' cellspacing='0' cellpadding='0' border='0' width='100%' style='background:{$colors['accent']};'>
+            <tr>
+                <td style='padding: 20px 28px; text-align: center; font-size: 12px; color:{$colors['muted']}; border-top: 1px solid {$colors['border']}'>
+                    <p style='margin: 8px 0;'>© {$year} {$appName}. All rights reserved.</p>
+                    <p style='margin: 8px 0; font-size: 11px;'>
+                        You are receiving this email because you are a registered user of {$appName}.
+                        If you have any questions, feel free to contact us at <a href='mailto:{$supportEmail}' style='color:{$colors['primary']}; text-decoration: none;'>{$supportEmail}</a>.
+                    </p>
+                    <p style='margin: 8px 0; font-size: 11px;'>
+                        <a href='{$websiteUrl}' style='color:{$colors['primary']}; text-decoration: none;'>Visit our Website</a> |
+                        <a href='{$websiteUrl}/pages/public/privacy.php' style='color:{$colors['primary']}; text-decoration: none;'>Privacy Policy</a>
+                    </p>
+                </td>
+            </tr>
+        </table>";
+    // Base HTML wrapper with improved structure and responsiveness
+    $wrap = fn($content) => "
+        <!DOCTYPE html>
+        <html lang='en'>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>" . htmlspecialchars($appName) . " Notification</title>
+        </head>
+        <body style='margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: {$colors['primary_light']};'>
+            <table role='presentation' cellspacing='0' cellpadding='0' border='0' width='100%' style='background-color: {$colors['primary_light']}; min-height: 100vh;'>
+                <tr>
+                    <td style='padding: 20px 0;'>
+                    <!--[if mso]>
+                    <table role='presentation' cellspacing='0' cellpadding='0' border='0' align='center' style='width: 600px;'>
+                        <tr>
+                            <td>
+                    <![endif]-->
+                    <table role='presentation' cellspacing='0' cellpadding='0' border='0' align='center' style='width: 100%; max-width: 600px; background-color: {$colors['surface']}; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);'>
+                        {$header}
+                        <tr>
+                            <td style='padding: 32px 28px; line-height: 1.6; color: {$colors['text']};'>
+                                {$content}
+                            </td>
+                        </tr>
+                        {$footer}
+                    </table>
+                    <!--[if mso]>
+                            </td>
+                        </tr>
+                    </table>
+                    <![endif]-->
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>";
+    // ------------------------------
+    // Template definitions with enhanced content
+    // ------------------------------
+    return [
+        'login_alert' => [
+            'subject' => '[Security Alert] New Login Detected on Your HealthRunCare Account',
+            'html' => $wrap("
+                <h2 style='color: {$colors['text']}; margin-top: 0; font-size: 24px;'>Login Activity Detected</h2>
+                <p>Dear {{user_name}},</p>
+                <p>We noticed a recent login to your <strong>{$appName}</strong> account. This message has been sent to ensure that you recognize this activity and that your account remains secure.</p>
+                <div style='background-color: {$colors['highlight']}; border-left: 4px solid {$colors['primary']}; padding: 12px 16px; margin: 18px 0; border-radius: 6px;'>
+                    <p style='margin: 0; color: {$colors['highlight_text']}; line-height: 1.6;'>
+                        <strong>Date & Time:</strong> {{login_time}}<br>
+                        <strong>IP Address:</strong> {{ip}}<br>
+                    </p>
+                </div>
+                <p>If this login was performed by you, no further action is needed and your account remains protected.</p>
+                <p>If you do not recognize this activity, please take the following steps immediately to secure your account:</p>
+                <ol style='padding-left: 18px;'>
+                    <li>Reset your password using the link below.</li>
+                    <li>Review your recent transactions and login sessions for any unauthorized actions.</li>
+                    <li>Contact our support team at
+                        <a href='mailto:{$supportEmail}' style='color:{$colors['primary']}; text-decoration: none;'>{$supportEmail}</a>
+                        for further investigation or assistance.
+                    </li>
+                </ol>
+                <p style='margin: 24px 0;'>
+                    <a href='{$websiteUrl}/pages/public/forgotpassword.php'
+                    style='display:inline-block; padding: 12px 24px; background-color: {$colors['danger']};
+                    color: white; text-decoration: none; border-radius: 4px;'>
+                    Secure Your Account
+                    </a>
+                </p>
+                <p>Thank you for your prompt attention to this matter. Your security is our top priority at {$appName}.</p>
+                <p>Kind regards,<br><strong>The {$appName} Security Team</strong></p>
+            "),
+        ],
+        'welcome_user' => [
+            'subject' => 'Welcome to HealthRunCare!',
+            'html' => $wrap("
+                <h2 style='color: {$colors['success']}; margin-top: 0; font-size: 24px;'>Welcome Aboard! 🎉</h2>
+                <p>Dear {{user_name}},</p>
+                <p>Congratulations on joining the <strong>{$appName}</strong> community! We are thrilled to have you as a member.</p>
+                <p>Your account has been successfully created, and your personalized digital wallet is now active and ready for you to explore.</p>
+                <h3 style='font-size: 18px; color: {$colors['primary']};'>What You Can Do Next:</h3>
+                <ul>
+                    <li><strong>Deposit Funds:</strong> Easily add money to your wallet using various secure methods.</li>
+                    <li><strong>Make Donations:</strong> Contribute to meaningful causes and support those in need.</li>
+                    <li><strong>Explore Investments:</strong> Discover opportunities to grow your funds while contributing positively.</li>
+                    <li><strong>Track Impact:</strong> Monitor the positive changes your contributions are making.</li>
+                </ul>
+                <p>We believe that together, we can create a healthier and more caring world. Your journey with us starts now!</p>
+                <p>If you have any questions or need assistance, our friendly support team is always here for you at <a href='mailto:{$supportEmail}' style='color:{$colors['primary']}; text-decoration: none;'>{$supportEmail}</a>.</p>
+                <p>Thank you for choosing {$appName}. Welcome to a community focused on positive impact.</p>
+                <p>Warmly,<br>The {$appName} Team</p>
+            "),
+        ],
+        'deposit_initiated' => [
+            'subject' => 'Deposit Request Received!',
+            'html' => $wrap("
+                <h2 style='color: {$colors['text']}; margin-top: 0; font-size: 24px;'>Deposit Request Confirmed</h2>
+                <p>Hi {{user_name}},</p>
+                <p>Thank you for choosing {$appName} to add funds to your wallet.</p>
+                <p>We have successfully received your deposit request.</p>
+                <div style='background-color: {$colors['accent']}; padding: 16px; margin: 15px 0; border-radius: 4px; border: 1px solid {$colors['border']};'>
+                    <p style='margin: 0;'><strong>Deposit Amount:</strong> \${{amount}}</p>
+                    <p style='margin: 0;'><strong>Payment Method:</strong> {{method}}</p>
+                    <p style='margin: 0;'><strong>Transaction Reference:</strong> {{reference}}</p>
+                </div>
+                <p>Our team is currently reviewing your request. You will receive an email shortly with specific instructions and payment details (e.g., bank details or wallet address) based on your chosen method.</p>
+                <p>Please follow the instructions carefully to complete your deposit. Once we confirm the payment, the funds will be added to your wallet balance.</p>
+                <p>If you have any questions, feel free to reach out to us.</p>
+                <p>Thank you for trusting {$appName}.</p>
+                <p>Best regards,<br>The {$appName} Team</p>
+            "),
+        ],
+        'admin_deposit_notification' => [
+            'subject' => 'New Deposit Request!',
+            'html' => $wrap("
+                <h2 style='color: {$colors['primary']}; margin-top: 0; font-size: 24px;'>New Deposit Request Awaiting Action</h2>
+                <p>Hello Admin,</p>
+                <p>A new deposit request has been submitted by a user and requires your attention.</p>
+                <div style='background-color: {$colors['accent']}; padding: 16px; margin: 15px 0; border-radius: 4px; border: 1px solid {$colors['border']};'>
+                    <p style='margin: 0;'><strong>User Name:</strong> {{user_name}}</p>
+                    <p style='margin: 0;'><strong>User Email:</strong> {{user_email}}</p>
+                    <p style='margin: 0;'><strong>Deposit Amount:</strong> \${{amount}}</p>
+                    <p style='margin: 0;'><strong>Payment Method:</strong> {{method}}</p>
+                    <p style='margin: 0;'><strong>Transaction Reference:</strong> {{reference}}</p>
+                </div>
+                <p>Please log in to the admin dashboard to review this request. You will need to provide the necessary payment details (e.g., bank account information, wallet address) to the user so they can complete the deposit.</p>
+                <p>Thank you for managing the {$appName} platform.</p>
+                <p>Best regards,<br>The {$appName} Team</p>
+            "),
+        ],
+        'deposit_details_provided' => [
+            'subject' => 'Deposit Instructions Ready!',
+            'html' => $wrap("
+                <h2 style='color: {$colors['text']}; margin-top: 0; font-size: 24px;'>Deposit Instructions Ready</h2>
+                <p>Hi {{user_name}},</p>
+                <p>Great news! The payment details for your deposit request (Reference: {{reference}}) are now ready.</p>
+                <p>Please proceed with your deposit of <strong>\${{amount}}</strong> using the information provided below.</p>
+                <div style='background-color: {$colors['highlight']}; border-left: 4px solid {$colors['primary']}; padding: 12px; margin: 15px 0; border-radius: 0 4px 4px 0;'>
+                    <p style='margin: 0; color: {$colors['highlight_text']};'><strong>Deposit Address/Details:</strong><br>{{deposit_address}}</p>
+                </div>
+                <p><strong>Important:</strong> Please ensure the amount sent matches exactly \${{amount}} and use the provided address or details precisely. Any mismatch may cause delays or loss of funds.</p>
+                <p>After sending the payment, please return to your wallet dashboard and click the 'I Have Paid' button for this transaction to notify us. This helps us track and confirm your deposit quickly.</p>
+                <p>Thank you for your patience and for using {$appName}.</p>
+                <p>Best regards,<br>The {$appName} Team</p>
+            "),
+        ],
+        'deposit_confirmed' => [
+            'subject' => 'Success! Your Deposit Has Been Confirmed!',
+            'html' => $wrap("
+                <h2 style='color: {$colors['success']}; margin-top: 0; font-size: 24px;'>Deposit Confirmed Successfully! 🎉</h2>
+                <p>Hi {{user_name}},</p>
+                <p>Excellent news! We have successfully verified the payment for your deposit request (Reference: {{reference}}).</p>
+                <div style='background-color: {$colors['success']}; color: white; padding: 16px; margin: 15px 0; border-radius: 4px; text-align: center;'>
+                    <p style='margin: 0; font-size: 18px;'><strong>Amount Credited:</strong> \${{amount}}</p>
+                </div>
+                <p>The full amount of \${{amount}} has been securely added to your {$appName} wallet balance. You can now use these funds for donations, investments, or other activities within the platform.</p>
+                <p>We appreciate your trust in {$appName} and thank you for contributing to our mission.</p>
+                <p>Keep up the great work!</p>
+                <p>Best regards,<br>The {$appName} Team</p>
+            "),
+        ],
+        'admin_payment_confirmed' => [
+            'subject' => 'User Confirmed Payment for Deposit!',
+            'html' => $wrap("
+                <h2 style='color: {$colors['warning']}; margin-top: 0; font-size: 24px;'>User Payment Confirmed</h2>
+                <p>Hello Admin,</p>
+                <p>A user has marked a pending deposit as paid in their dashboard.</p>
+                <div style='background-color: {$colors['accent']}; padding: 16px; margin: 15px 0; border-radius: 4px; border: 1px solid {$colors['border']};'>
+                    <p style='margin: 0;'><strong>User Name:</strong> {{user_name}}</p>
+                    <p style='margin: 0;'><strong>User Email:</strong> {{user_email}}</p>
+                    <p style='margin: 0;'><strong>Deposit Amount:</strong> \${{amount}}</p>
+                    <p style='margin: 0;'><strong>Payment Method:</strong> {{method}}</p>
+                    <p style='margin: 0;'><strong>Transaction Reference:</strong> {{reference}}</p>
+                    <p style='margin: 0;'><strong>Confirmation Details:</strong> {{details}}</p>
+                </div>
+                <p>Please log in to the admin panel to verify the payment manually and finalize the deposit process by crediting the user's wallet.</p>
+                <p>Thank you for managing the {$appName} platform.</p>
+                <p>Best regards,<br>The {$appName} Team</p>
+            "),
+        ],
+        'withdrawal_initiated' => [
+            'subject' => 'Withdrawal Request Submitted!',
+            'html' => $wrap("
+                <h2 style='color: {$colors['text']}; margin-top: 0; font-size: 24px;'>Withdrawal Request Received</h2>
+                <p>Hi {{user_name}},</p>
+                <p>Your request to withdraw funds from your {$appName} wallet has been successfully submitted.</p>
+                <div style='background-color: {$colors['accent']}; padding: 16px; margin: 15px 0; border-radius: 4px; border: 1px solid {$colors['border']};'>
+                    <p style='margin: 0;'><strong>Withdrawal Amount:</strong> \${{amount}}</p>
+                    <p style='margin: 0;'><strong>Withdrawal Method:</strong> {{method}}</p>
+                    <p style='margin: 0;'><strong>Transaction Reference:</strong> {{reference}}</p>
+                </div>
+                <p>Your wallet balance has been temporarily adjusted to reflect this pending request. The funds will be released once the request is reviewed and approved by our team.</p>
+                <p>You will receive an email notification as soon as the status of your withdrawal changes (approved or declined).</p>
+                <p>We appreciate your patience during the review process.</p>
+                <p>Thank you for using {$appName}.</p>
+                <p>Best regards,<br>The {$appName} Team</p>
+            "),
+        ],
+        'admin_withdrawal_notification' => [
+            'subject' => 'New Withdrawal Request!',
+            'html' => $wrap("
+                <h2 style='color: {$colors['primary']}; margin-top: 0; font-size: 24px;'>New Withdrawal Request Awaiting Review</h2>
+                <p>Hello Admin,</p>
+                <p>A user has submitted a new withdrawal request that requires your review and action.</p>
+                <div style='background-color: {$colors['accent']}; padding: 16px; margin: 15px 0; border-radius: 4px; border: 1px solid {$colors['border']};'>
+                    <p style='margin: 0;'><strong>User Name:</strong> {{user_name}}</p>
+                    <p style='margin: 0;'><strong>User Email:</strong> {{user_email}}</p>
+                    <p style='margin: 0;'><strong>Withdrawal Amount:</strong> \${{amount}}</p>
+                    <p style='margin: 0;'><strong>Withdrawal Method:</strong> {{method}}</p>
+                    <p style='margin: 0;'><strong>Transaction Reference:</strong> {{reference}}</p>
+                </div>
+                <p>Please log in to the admin panel to review the details and either approve or decline this request according to our policies.</p>
+                <p>Thank you for managing the {$appName} platform.</p>
+                <p>Best regards,<br>The {$appName} Team</p>
+            "),
+        ],
+        'withdrawal_approved' => [
+            'subject' => 'Great News! Your Withdrawal Has Been Approved!',
+            'html' => $wrap("
+                <h2 style='color: {$colors['success']}; margin-top: 0; font-size: 24px;'>Withdrawal Approved! 🎉</h2>
+                <p>Hi {{user_name}},</p>
+                <p>We are pleased to inform you that your withdrawal request (Reference: {{reference}}) has been successfully reviewed and approved by our team.</p>
+                <div style='background-color: {$colors['success']}; color: white; padding: 16px; margin: 15px 0; border-radius: 4px; text-align: center;'>
+                    <p style='margin: 0; font-size: 18px;'><strong>Approved Amount:</strong> \${{amount}}</p>
+                </div>
+                <p>The funds of \${{amount}} will be transferred to your designated account (via {{method}}) within the next 1-3 business days. Please allow for standard processing time.</p>
+                <p>We hope you are satisfied with your experience on {$appName}.</p>
+                <p>Thank you for being a valued member of our community.</p>
+                <p>Best regards,<br>The {$appName} Team</p>
+            "),
+        ],
+        'withdrawal_declined' => [
+            'subject' => 'Withdrawal Request Declined',
+            'html' => $wrap("
+                <h2 style='color: {$colors['danger']}; margin-top: 0; font-size: 24px;'>Withdrawal Request Status Update</h2>
+                <p>Hi {{user_name}},</p>
+                <p>We regret to inform you that your withdrawal request for \${{amount}} (Reference: {{reference}}) has been declined.</p>
+                <p>The funds associated with this request have been returned to your {$appName} wallet balance. You can access them immediately.</p>
+                <div style='background-color: {$colors['highlight']}; border-left: 4px solid {$colors['danger']}; padding: 12px; margin: 15px 0; border-radius: 0 4px 4px 0;'>
+                    <p style='margin: 0; color: {$colors['highlight_text']};'><strong>Reason:</strong> Our system or team identified an issue with the request. This could be due to policy violations, account verification requirements, or other security checks.</p>
+                </div>
+                <p>If you believe this decision was made in error, or if you need further clarification, please do not hesitate to contact our support team at <a href='mailto:{$supportEmail}' style='color:{$colors['primary']}; text-decoration: none;'>{$supportEmail}</a>.</p>
+                <p>We appreciate your understanding and continued use of {$appName}.</p>
+                <p>Best regards,<br>The {$appName} Team</p>
+            "),
+        ],
+        // Default fallback
+        'generic' => [
+            'subject' => "{$appName} Notification",
+            'html' => $wrap("
+                <h2 style='color: {$colors['text']}; margin-top: 0;'>Notification</h2>
+                <p>Dear {{user_name}},</p>
+                <p>You have a new notification from <strong>{$appName}</strong>.</p>
+                <p>Please log in to your account to view the full details.</p>
+                <p>If you have any concerns, feel free to contact our support team.</p>
+                <p>Thank you for using {$appName}.</p>
+                <p>Best regards,<br>The {$appName} Team</p>
+            "),
+        ],
+        'password_reset' => [
+            'subject' => 'Password Reset Request - Your OTP Code for HealthRunCare',
+            'html' => $wrap("
+                <h2 style='color: {$colors['warning']}; margin-top: 0; font-size: 24px;'>Password Reset Requested</h2>
+                <p>Hi {{user_name}},</p>
+                <p>We received a request to reset the password for your <strong>{$appName}</strong> account associated with this email address.</p>
+                <p>To proceed with resetting your password, please use the following One-Time Password (OTP) code:</p>
+                <div style='text-align: center; margin: 20px 0;'>
+                    <span style='display: inline-block; padding: 15px 30px; font-size: 32px; font-weight: bold; letter-spacing: 5px; background-color: {$colors['primary_light']}; color: {$colors['primary']}; border-radius: 8px; border: 2px dashed {$colors['primary']};'>
+                        {{otp}}
+                    </span>
+                </div>
+                <p><strong>This code is valid for 10 minutes.</strong> If you do not use it within this time, you will need to request a new one.</p>
+                <p>If you did not request this password reset, you can safely ignore this email. Your account remains secure.</p>
+                <p>Do not share this code with anyone.</p>
+                <p>Thank you for keeping your {$appName} account secure.</p>
+                <p>Best regards,<br>The {$appName} Security Team</p>
+            "),
+        ],
+        'password_reset_success' => [
+            'subject' => 'Success! Your HealthRunCare Password Has Been Changed!',
+            'html' => $wrap("
+                <h2 style='color: {$colors['success']}; margin-top: 0; font-size: 24px;'>Password Successfully Reset</h2>
+                <p>Hi {{user_name}},</p>
+                <p>This is a confirmation that the password for your <strong>{$appName}</strong> account has been successfully changed.</p>
+                <div style='background-color: {$colors['success']}; color: white; padding: 12px; margin: 15px 0; border-radius: 4px; text-align: center;'>
+                    <p style='margin: 0;'><strong>Account:</strong> {{user_email}}</p>
+                    <p style='margin: 0;'><strong>Status:</strong> Password Updated Successfully</p>
+                </div>
+                <p>If you performed this action, no further steps are needed. Your account is secure.</p>
+                <div style='background-color: {$colors['highlight']}; border-left: 4px solid {$colors['danger']}; padding: 12px; margin: 15px 0; border-radius: 0 4px 4px 0;'>
+                    <p style='margin: 0; color: {$colors['highlight_text']};'><strong>Security Alert:</strong> If you did not request this password change, your account may have been compromised. Please contact our support team immediately at <a href='mailto:{$supportEmail}' style='color:{$colors['danger']}; text-decoration: none;'>{$supportEmail}</a> to secure your account.</p>
+                </div>
+                <p>We recommend using a strong, unique password and enabling two-factor authentication if available.</p>
+                <p>Thank you for keeping your {$appName} account secure.</p>
+                <p>Best regards,<br>The {$appName} Security Team</p>
+            "),
+        ],
+        'logout_notification' => [
+            'subject' => 'You Have Successfully Logged Out of Your HealthRunCare Account',
+            'html' => $wrap("
+                <h2 style='color: {$colors['text']}; margin-top: 0; font-size: 24px;'>Logout Confirmation</h2>
+                <p>Hi {{user_name}},</p>
+                <p>This email confirms that you have successfully logged out of your <strong>{$appName}</strong> account.</p>
+                <p>Your session has ended securely.</p>
+                <div style='background-color: {$colors['accent']}; padding: 16px; margin: 15px 0; border-radius: 4px; border: 1px solid {$colors['border']};'>
+                    <p style='margin: 0;'><strong>Logged Out At:</strong> {{logout_time}}</p>
+                    <p style='margin: 0;'><strong>Session Status:</strong> Ended</p>
+                </div>
+                <p>For your security, we recommend that you always log out when using shared or public devices. Additionally, please ensure that you are accessing {$appName} through our official website: <a href='{$websiteUrl}' style='color:{$colors['primary']}; text-decoration: none;'>{$websiteUrl}</a>.</p>
+                <p>We look forward to seeing you again soon.</p>
+                <p>Best regards,<br>The {$appName} Team</p>
+            "),
+        ],
+        'donation_confirmed' => [
+            'subject' => 'Donation Confirmation! Thank You for Supporting Us',
+            'html' => $wrap("
+                <h2 style='color: {$colors['success']}; margin-top: 0; font-size: 24px;'>Thank You, {{user_name}}!</h2>
+                <p>Hi {{user_name}},</p>
+                <p>We’ve received your generous donation of <strong>\${{amount}}</strong> to <strong>{{charity_name}}</strong>.</p>
+                <p>Your support helps us continue making a difference in lives across the world.</p>
+                <div style='background-color: {$colors['accent']}; padding: 16px; margin: 15px 0; border-radius: 4px; border: 1px solid {$colors['border']};'>
+                    <p style='margin: 0;'><strong>Transaction Reference:</strong> {{reference}}</p>
+                </div>
+                <p>For your records, you can view all your donations in your {$appName} dashboard.</p>
+                <p>If you have any questions, feel free to reach out to us at <a href='mailto:{$supportEmail}' style='color:{$colors['primary']}; text-decoration: none;'>{$supportEmail}</a>.</p>
+                <p>Thank you for being a part of our mission to create positive impact.</p>
+                <p>Best regards,<br>The {$appName} Team</p>
+            "),
+        ],
+        'admin_donation_notification' => [
+            'subject' => 'New Donation Received on HealthRunCare!',
+            'html' => $wrap("
+                <h2 style='color: {$colors['primary']}; margin-top: 0; font-size: 24px;'>New Donation Received</h2>
+                <p>Hello Admin,</p>
+                <p>{{user_name}} ({{user_email}}) just donated <strong>\${{amount}}</strong> to <strong>{{charity_name}}</strong>.</p>
+                <div style='background-color: {$colors['accent']}; padding: 16px; margin: 15px 0; border-radius: 4px; border: 1px solid {$colors['border']};'>
+                    <p style='margin: 0;'><strong>Reference:</strong> {{reference}}</p>
+                </div>
+                <p>Please log in to the admin dashboard to review the full details and process accordingly.</p>
+                <p>Thank you for managing the {$appName} platform.</p>
+                <p>Best regards,<br>The {$appName} Team</p>
+            "),
+        ],
+// ========================== INVESTMENT EMAILS ==========================
+'investment_confirmed' => [
+    'subject' => 'Your Investment Has Been Started Successfully',
+    'html' => $wrap("
+        <h2 style='color: {$colors['success']}; margin-top: 0; font-size: 24px;'>Investment Confirmed</h2>
+        <p>Hi {{user_name}},</p>
+        <p>Your investment in <strong>{{plan_name}}</strong> has been successfully initiated.</p>
+        <div style='background-color: {$colors['accent']}; padding: 16px; margin: 15px 0; border-radius: 6px; border: 1px solid {$colors['border']};'>
+            <p style='margin: 0;'><strong>Amount:</strong> \${{amount}}</p>
+            <p style='margin: 0;'><strong>ROI:</strong> {{roi_percent}}%</p>
+            <p style='margin: 0;'><strong>Duration:</strong> {{duration_days}} days</p>
+            <p style='margin: 0;'><strong>Maturity Date:</strong> {{maturity_date}}</p>
+            <p style='margin: 0;'><strong>Reference:</strong> {{reference}}</p>
+        </div>
+        <p>Thank you for trusting <strong>{$appName}</strong> with your investment. You can monitor its progress anytime in your dashboard.</p>
+        <p>Best regards,<br>The {$appName} Team</p>
+    "),
+],
+
+'admin_investment_notification' => [
+    'subject' => 'New Investment Started on HealthRunCare',
+    'html' => $wrap("
+        <h2 style='color: {$colors['primary']}; margin-top: 0; font-size: 24px;'>New Investment Alert</h2>
+        <p>Hello Admin,</p>
+        <p>A new investment has been started by <strong>{{user_name}}</strong> ({{user_email}}).</p>
+        <div style='background-color: {$colors['accent']}; padding: 16px; margin: 15px 0; border-radius: 6px; border: 1px solid {$colors['border']};'>
+            <p style='margin: 0;'><strong>Plan:</strong> {{plan_name}}</p>
+            <p style='margin: 0;'><strong>Amount:</strong> \${{amount}}</p>
+            <p style='margin: 0;'><strong>Reference:</strong> {{reference}}</p>
+        </div>
+        <p>Please log in to the admin dashboard to review this investment.</p>
+        <p>— {$appName} System</p>
+    "),
+],
+
+'weekly_investment_update' => [
+    'subject' => 'Weekly ROI Update — HealthRunCare Investment',
+    'html' => $wrap("
+        <h2 style='color: {$colors['primary']}; margin-top: 0; font-size: 24px;'>Your Weekly ROI Update</h2>
+        <p>Hi {{user_name}},</p>
+        <p>Great news! Your investment in <strong>{{plan_name}}</strong> has earned <strong>\${{weekly_roi}}</strong> this week.</p>
+        <div style='background-color: {$colors['accent']}; padding: 16px; margin: 15px 0; border-radius: 6px; border: 1px solid {$colors['border']};'>
+            <p style='margin: 0;'><strong>Total ROI So Far:</strong> \${{total_roi}}</p>
+            <p style='margin: 0;'><strong>Next Maturity Date:</strong> {{next_maturity}}</p>
+        </div>
+        <p>Your investment continues to grow steadily. You can view your full performance report on your {$appName} dashboard.</p>
+        <p>Keep investing and growing with confidence!</p>
+        <p>Best regards,<br>The {$appName} Team</p>
+    "),
+],
+
+'investment_matured' => [
+    'subject' => 'Your Investment Has Matured — Funds Credited',
+    'html' => $wrap("
+        <h2 style='color: {$colors['success']}; margin-top: 0; font-size: 24px;'>Investment Maturity Notice</h2>
+        <p>Congratulations {{user_name}},</p>
+        <p>Your investment in <strong>{{plan_name}}</strong> has successfully matured and the payout has been credited to your wallet.</p>
+        <div style='background-color: {$colors['highlight']}; padding: 16px; margin: 15px 0; border-radius: 6px; border: 1px solid {$colors['border']};'>
+            <p style='margin: 0;'><strong>Principal:</strong> \${{amount}}</p>
+            <p style='margin: 0;'><strong>ROI Earned:</strong> \${{roi_earned}}</p>
+            <p style='margin: 0;'><strong>Total Payout:</strong> \${{total_payout}}</p>
+            <p style='margin: 0;'><strong>Maturity Date:</strong> {{maturity_date}}</p>
+        </div>
+        <p>Thank you for choosing <strong>{$appName}</strong>. We look forward to helping you grow your impact even further.</p>
+        <p>Warm regards,<br>The {$appName} Investments Team</p>
+    "),
+],
+// ===============================
+// 📧 HOLDLOCK EMAIL TEMPLATES
+// ===============================
+
+'holdlock_started' => [
+    'subject' => 'Your HoldLock Plan Has Been Activated',
+    'html' => $wrap("
+        <h2 style='color: {$colors['success']}; margin-top: 0; font-size: 24px;'>HoldLock Plan Activated</h2>
+        <p>Hi {{user_name}},</p>
+        <p>We’re pleased to inform you that your <strong>{{plan_name}}</strong> has been successfully activated on <strong>{$appName}</strong>.</p>
+
+        <div style='background-color: {$colors['accent']}; padding: 16px; margin: 18px 0; border-radius: 6px; border: 1px solid {$colors['border']};'>
+            <p style='margin: 0;'><strong>Amount Locked:</strong> \${{amount}}</p>
+            <p style='margin: 0;'><strong>ROI:</strong> {{roi_percent}}%</p>
+            <p style='margin: 0;'><strong>Duration:</strong> {{duration_days}} days</p>
+            <p style='margin: 0;'><strong>Early Unlock Penalty:</strong> {{penalty_percent}}%</p>
+            <p style='margin: 0;'><strong>Maturity Date:</strong> {{maturity_date}}</p>
+            <p style='margin: 0;'><strong>Reference:</strong> {{reference}}</p>
+        </div>
+
+        <p>Your funds are now securely held and will begin accruing interest immediately. You’ll be notified once your plan reaches maturity or becomes eligible for early unlock.</p>
+
+        <p>Thank you for trusting <strong>{$appName}</strong> with your financial growth journey.</p>
+        <p>Warm regards,<br><strong>The {$appName} Team</strong></p>
+    "),
+],
+
+'admin_holdlock_notification' => [
+    'subject' => 'New HoldLock Plan Started on HealthRunCare',
+    'html' => $wrap("
+        <h2 style='color: {$colors['primary']}; margin-top: 0; font-size: 24px;'>New HoldLock Plan Alert</h2>
+        <p>Hello Admin,</p>
+        <p>A new HoldLock plan has been initiated by a user.</p>
+
+        <div style='background-color: {$colors['accent']}; padding: 16px; margin: 18px 0; border-radius: 6px; border: 1px solid {$colors['border']};'>
+            <p style='margin: 0;'><strong>User Name:</strong> {{user_name}}</p>
+            <p style='margin: 0;'><strong>User Email:</strong> {{user_email}}</p>
+            <p style='margin: 0;'><strong>Plan:</strong> {{plan_name}}</p>
+            <p style='margin: 0;'><strong>Amount Locked:</strong> \${{amount}}</p>
+            <p style='margin: 0;'><strong>Reference:</strong> {{reference}}</p>
+        </div>
+
+        <p>Please review this transaction in the admin dashboard if needed. This notification is for record and tracking purposes.</p>
+        <p>Best regards,<br><strong>{$appName} System</strong></p>
+    "),
+],
+
+'holdlock_unlocked_early' => [
+    'subject' => 'Early Unlock Processed for Your HoldLock Plan',
+    'html' => $wrap("
+        <h2 style='color: {$colors['warning']}; margin-top: 0; font-size: 24px;'>HoldLock Early Unlock Processed</h2>
+        <p>Hi {{user_name}},</p>
+        <p>Your <strong>{{plan_name}}</strong> plan was unlocked early as requested.</p>
+
+        <div style='background-color: {$colors['highlight']}; padding: 16px; margin: 18px 0; border-radius: 6px; border: 1px solid {$colors['border']};'>
+            <p style='margin: 0;'><strong>ROI Earned:</strong> \${{roi}}</p>
+            <p style='margin: 0;'><strong>Penalty Applied:</strong> \${{penalty}}</p>
+            <p style='margin: 0;'><strong>Total Payout:</strong> \${{payout}}</p>
+        </div>
+
+        <p>Your payout has been credited to your wallet. Please note that early unlocks include a penalty deduction as stated in the plan’s terms.</p>
+        <p>Thank you for using <strong>{$appName}</strong> for your secure fund management.</p>
+        <p>Best regards,<br><strong>The {$appName} Team</strong></p>
+    "),
+],
+
+'holdlock_matured' => [
+    'subject' => 'Your HoldLock Plan Has Matured — Funds Credited!',
+    'html' => $wrap("
+        <h2 style='color: {$colors['success']}; margin-top: 0; font-size: 24px;'>HoldLock Plan Matured 🎉</h2>
+        <p>Congratulations {{user_name}},</p>
+        <p>Your <strong>{{plan_name}}</strong> plan has successfully matured, and your funds have been credited to your wallet.</p>
+
+        <div style='background-color: {$colors['accent']}; padding: 16px; margin: 18px 0; border-radius: 6px; border: 1px solid {$colors['border']};'>
+            <p style='margin: 0;'><strong>Amount Locked:</strong> \${{amount}}</p>
+            <p style='margin: 0;'><strong>ROI Earned:</strong> \${{roi_earned}}</p>
+            <p style='margin: 0;'><strong>Total Payout:</strong> \${{total_payout}}</p>
+            <p style='margin: 0;'><strong>Maturity Date:</strong> {{maturity_date}}</p>
+            <p style='margin: 0;'><strong>Reference:</strong> {{reference}}</p>
+        </div>
+
+        <p>Your funds are now available in your {$appName} wallet for withdrawal or reinvestment. We’re delighted to have supported your journey to financial growth.</p>
+        <p>Thank you for trusting <strong>{$appName}</strong>.</p>
+        <p>Warm regards,<br><strong>The {$appName} Team</strong></p>
+    "),
+],
+
+    ];
+}
+?>
+==============EMAIL_TEMPS.PHP===============

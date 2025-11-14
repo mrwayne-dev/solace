@@ -1,0 +1,121 @@
+Starting HealthRunCare Unified Cron... 
+[08/11/2025 22:31:09.66] ------------------------------------------ 
+
+Warning: file_put_contents(D:\mrwayne\web_dev\healthruncare\api\cron/cron_log.txt): Failed to open stream: Resource temporarily unavailable in D:\mrwayne\web_dev\healthruncare\api\cron\investment_cron.php on line 2
+[2025-11-08 21:31:31] Weekly ROI Update Complete — Processed: 5 | Matured: 0
+[08/11/2025 22:31:31.74] ✅ Cron execution finished. 
+------------------------------------------ 
+Starting HoldLock Cron... 
+[08/11/2025 22:51:22.24] ------------------------------------------ 
+
+Warning: require_once(D:\mrwayne\web_dev\healthruncare\api\cron/email.php): Failed to open stream: No such file or directory in D:\mrwayne\web_dev\healthruncare\api\cron\holdlock_cron.php on line 16
+
+Fatal error: Uncaught Error: Failed opening required 'D:\mrwayne\web_dev\healthruncare\api\cron/email.php' (include_path='.;C:/laragon/etc/php/pear') in D:\mrwayne\web_dev\healthruncare\api\cron\holdlock_cron.php:16
+Stack trace:
+#0 {main}
+  thrown in D:\mrwayne\web_dev\healthruncare\api\cron\holdlock_cron.php on line 16
+[08/11/2025 22:51:22.32] ✅ HoldLock Cron execution finished. 
+------------------------------------------ 
+Starting HoldLock Cron... 
+[08/11/2025 22:52:16.94] ------------------------------------------ 
+✅ HoldLock CRON completed successfully. Processed 11 entries.
+[08/11/2025 22:52:17.05] ✅ HoldLock Cron execution finished. 
+------------------------------------------ 
+Starting TrustFund Cron... 
+[08/11/2025 23:04:23.49] ------------------------------------------ 
+===============================
+ HRC TrustFund Auto-Maturity CRON
+===============================
+Started at: 2025-11-08 22:04:23
+
+✅ No matured TrustFunds found.
+[08/11/2025 23:04:23.59] ✅ TrustFund Cron execution finished. 
+------------------------------------------ 
+Starting TrustFund Cron... 
+[08/11/2025 23:06:00.63] ------------------------------------------ 
+===============================
+ HRC TrustFund Auto-Maturity CRON
+===============================
+Started at: 2025-11-08 22:06:00
+
+✅ No matured TrustFunds found.
+[08/11/2025 23:06:00.74] ✅ TrustFund Cron execution finished. 
+------------------------------------------ 
+Starting TrustFund Cron... 
+[08/11/2025 23:08:21.19] ------------------------------------------ 
+✅ No matured TrustFunds found.
+[08/11/2025 23:08:21.27] ✅ TrustFund Cron execution finished. 
+------------------------------------------ 
+Starting TrustFund Cron... 
+[08/11/2025 23:08:55.64] ------------------------------------------ 
+✅ No matured TrustFunds found.
+[08/11/2025 23:08:55.72] ✅ TrustFund Cron execution finished. 
+------------------------------------------ 
+Starting TrustFund Cron... 
+[08/11/2025 23:09:51.82] ------------------------------------------ 
+✅ Completed — 0 TrustFunds processed | Total ROI: $0.00 | Total Payout: $0.00
+[08/11/2025 23:09:51.92] ✅ TrustFund Cron execution finished. 
+------------------------------------------ 
+Starting TrustFund Cron... 
+[08/11/2025 23:15:55.25] ------------------------------------------ 
+✅ Completed — 0 TrustFunds processed | Total ROI: $0.00 | Total Payout: $0.00
+[08/11/2025 23:15:55.34] ✅ TrustFund Cron execution finished. 
+------------------------------------------ 
+Starting TrustFund Cron... 
+[08/11/2025 23:17:29.26] ------------------------------------------ 
+✅ Completed — 1 TrustFunds processed | Total ROI: $125.00 | Total Payout: $625.00
+[08/11/2025 23:17:33.68] ✅ TrustFund Cron execution finished. 
+------------------------------------------ 
+Starting TrustFund Cron... 
+[08/11/2025 23:45:11.09] ------------------------------------------ 
+
+Warning: file_put_contents(D:\mrwayne\web_dev\healthruncare\api\cron/cron_log.txt): Failed to open stream: Resource temporarily unavailable in D:\mrwayne\web_dev\healthruncare\api\cron\maintenance_cron.php on line 2
+===============================
+ HRC Maintenance Auto-Maturity CRON
+===============================
+Started at: 2025-11-08 22:45:11
+
+
+✅ Completed processing. Total matured: 0
+Finished at: 2025-11-08 22:45:11
+[08/11/2025 23:45:11.20] ✅ TrustFund Cron execution finished. 
+------------------------------------------ 
+Starting maintenance_cron Cron... 
+[08/11/2025 23:46:04.52] ------------------------------------------ 
+
+Warning: file_put_contents(D:\mrwayne\web_dev\healthruncare\api\cron/cron_log.txt): Failed to open stream: Resource temporarily unavailable in D:\mrwayne\web_dev\healthruncare\api\cron\maintenance_cron.php on line 2
+===============================
+ HRC Maintenance Auto-Maturity CRON
+===============================
+Started at: 2025-11-08 22:46:04
+
+
+✅ Completed processing. Total matured: 0
+Finished at: 2025-11-08 22:46:04
+[08/11/2025 23:46:04.60] ✅ maintenance_cron execution finished. 
+------------------------------------------ 
+Starting maintenance_cron Cron... 
+[08/11/2025 23:47:33.19] ------------------------------------------ 
+===============================
+ HRC Maintenance Auto-Maturity CRON
+===============================
+Started at: 2025-11-08 22:47:33
+
+
+✅ Completed processing. Total matured: 0
+Finished at: 2025-11-08 22:47:33
+[08/11/2025 23:47:33.28] ✅ maintenance_cron execution finished. 
+------------------------------------------ 
+Starting maintenance_cron Cron... 
+[08/11/2025 23:48:54.34] ------------------------------------------ 
+===============================
+ HRC Maintenance Auto-Maturity CRON
+===============================
+Started at: 2025-11-08 22:48:54
+
+✅ Maintenance #1 (Maintenance Support Starter Plan) matured and credited.
+
+✅ Completed processing. Total matured: 1
+Finished at: 2025-11-08 22:49:02
+[08/11/2025 23:49:02.79] ✅ maintenance_cron execution finished. 
+------------------------------------------ 
