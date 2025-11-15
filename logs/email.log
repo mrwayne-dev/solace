@@ -179,3 +179,7 @@
 [2025-11-13 10:21:35] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
 [2025-11-13 10:21:45] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
 [2025-11-13 10:21:49] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-14 12:54:53] SENT → aleruchi0987@gmail.com | Template: donation_confirmed | Subject: Donation Confirmation! Thank You for Supporting Us
+[2025-11-14 12:54:58] SENT → support@healthruncare.com | Template: admin_donation_notification | Subject: New Donation Received on HealthRunCare!
+[2025-11-14 13:04:23] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
+[2025-11-14 13:24:49] ERROR → aleruchi0987@gmail.com | SMTP Error: data not accepted. | Mailer: SMTP Error: data not accepted. SMTP server error: DATA END command failed

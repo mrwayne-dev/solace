@@ -3,7 +3,7 @@
 session_start([
     'cookie_lifetime' => 86400, // Example: 24 hours
     'cookie_httponly' => true,
-    'cookie_secure' => true, // Ensure HTTPS is used in production
+    'cookie_secure' => true, 
     'cookie_samesite' => 'Strict',
 ]);
 if (!isset($_SESSION['user_id'])) {
@@ -57,7 +57,7 @@ $user_role = $_SESSION['role'] ?? 'user';
         <div id="page" class="">
             <!-- layout-wrap -->
             <div class="layout-wrap loader-off">
-                <!-- preload -->
+                <!-- preload -->=
                 <div id="preload" class="preload-container">
                     <div class="preloading">
                         <span></span>
