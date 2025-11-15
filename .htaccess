@@ -62,7 +62,7 @@ RewriteRule ^dashboard\.(charity|investment|wallet|trustfund|infrastructure|deve
 # ADMIN ROUTES
 # -------------------------------
 RewriteRule ^admin/?$ pages/admin/dashboard.php [L,QSA]
-RewriteRule ^admin\.(dashboard|users|wallets|donations|funds|transactions|announcements|login|register|forgotpassword)/?$ pages/admin/$1.php [L,QSA]
+RewriteRule ^admin\.(dashboard|users|wallets|donations|funds|transactions|announcements|login|register|forgotpassword|settings)/?$ pages/admin/$1.php [L,QSA]
 
 # -------------------------------
 # CATCH-ALL → 404

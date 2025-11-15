@@ -8865,3 +8865,196 @@ td.negative {
     min-height: auto;
   }
 }
+@media (max-width: 576px) {
+    .tf-container .row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .tf-container .row > * {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .wg-box {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .tab-sell-order {
+        width: 100% !important;
+    }
+}
+
+/* Quick Actions Panel */
+.quick-actions-box {
+    padding: 20px;
+    border-radius: 14px;
+    background: var(--White);
+    box-shadow: 0px 4px 20px rgba(20, 25, 38, 0.05);
+}
+
+/* Align everything left */
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.quick-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* LEFT ALIGN EVERYTHING */
+    gap: 10px;
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 13px;
+    transition: all .25s ease;
+    border: none;
+    text-align: left;
+}
+
+/* Make sure links behave like buttons */
+.quick-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 16px rgba(0,0,0,0.08);
+}
+
+/* Icons inherit text color */
+.quick-action-btn .iconify {
+    font-size: 18px;
+    transition: 0.2s ease;
+    color: inherit;
+}
+
+/* Unify color treatment across all buttons */
+.quick-action-btn.bg-Primary {
+    background: var(--Primary);
+    color: var(--White);
+}
+.quick-action-btn.bg-Primary:hover {
+    background: var(--Primary-Hover);
+}
+
+.quick-action-btn.bg-Green {
+    background: var(--Green);
+    color: var(--White);
+}
+
+.quick-action-btn.bg-Green:hover {
+    background: #2f5336;
+    color: var(--Gainsboro);
+}
+
+.quick-action-btn.bg-GrayLight {
+    background: var(--LightGray);
+    color: var(--Primary); /* unified color */
+}
+
+.quick-action-btn.bg-GrayLight:hover {
+    background: rgba(28, 38, 40, 0.13);
+}
+
+.quick-action-btn.bg-Accent {
+    background: var(--Accent);
+    color: var(--Primary); /* unified color */
+}
+
+.quick-action-btn.bg-Accent:hover {
+    background: #b7cdcd;
+}
+
+/* Ensure <a> tags inherit styles perfectly */
+.quick-action-btn:link,
+.quick-action-btn:visited {
+    color: inherit;
+}
+/* ============================================================= */
+/* USERS PAGE UI IMPROVEMENTS                                    */
+/* ============================================================= */
+
+/* Shorter, tighter stat cards */
+.wallet-card {
+    height: 140px !important;
+    padding: 18px 20px !important;
+}
+.wallet-card-balance {
+    font-size: 28px !important;
+    margin: 8px 0 !important;
+}
+.wallet-card-header {
+    font-size: 13.5px !important;
+}
+.wallet-card-footer {
+    font-size: 12.5px !important;
+}
+
+/* New card colours */
+.wallet-green { background: #CADEDE !important; color: var(--Black); }
+.wallet-accent { background: var(--Gray) !important; color: var(--Black); }
+.wallet-purple { background: var(--Gainsboro) !important; color: var(--Black);}
+
+/* Mobile cards even shorter */
+@media (max-width: 768px) {
+    .wallet-card {
+        height: 130px !important;
+    }
+    .wallet-card-balance {
+        font-size: 24px !important;
+    }
+}
+
+/* Export CSV button – proper hover colours */
+.tf-button.style-2 {
+    background: var(--White);
+    color: var(--Primary);
+    border: 1.5px solid var(--Primary);
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+.tf-button.style-2:hover {
+    background: var(--Primary) !important;
+    color: var(--White) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(56, 102, 65, 0.25);
+}
+
+/* Table row hover */
+.list-transaction-content tr:hover {
+    background: var(--Gainsboro);
+}
+
+/* Badges for Role & Status */
+.badge {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.badge-role-admin { background: var(--Primary); color: var(--White); }
+.badge-role-user  { background: var(--LightGray); color: var(--Black); }
+.badge-status-active    { background: #22C55E; color: var(--White); }
+.badge-status-suspended { background: #EF4444; color: var(--White); }
+
+/* 3-dot actions button */
+.action-dots-btn {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+.action-dots-btn:hover {
+    background: rgba(28,38,40,0.08);
+}
+.action-dots-btn .iconify {
+    font-size: 22px;
+    color: var(--GrayDark);
+}

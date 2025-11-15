@@ -1,0 +1,55 @@
+# ============================================
+# HealthRunCare (HRC) Optimized Gitignore
+# ============================================
+
+# --- OS & Editor files ---
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
+
+# --- Logs ---
+logs/
+*.log
+email_debug.log
+api/cron/*.log
+api/cron/*.txt
+
+# --- Cache & Temp ---
+/temp/
+/cache/
+*.cache
+
+# --- Uploads ---
+uploads/
+!uploads/.gitkeep
+
+# --- Environment Files ---
+config/env.php
+config/test_db.php
+
+# --- Certificates ---
+config/certs/
+*.pem
+*.crt
+*.key
+
+# --- Composer Vendor (Optional: Keep if needed) ---
+vendor/
+
+# --- Node (if ever used) ---
+node_modules/
+
+# --- PHPStorm / VSCode ---
+.idea/
+.vscode/
+
+# --- Windows garbage ---
+ehthumbs.db
+Desktop.ini
+
+# --- Backups ---
+*.bak
+*.old
+*.backup

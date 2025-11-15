@@ -48,13 +48,6 @@ $admin_email = $_SESSION['admin_email'] ?? '';
     <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="HRC">
     <link rel="manifest" href="../../assets/favicon/site.webmanifest">
-    <style>
-        /* Additional specific styles for the admin dashboard if needed */
-        .status.text-Green { background: var(--Primary); color: var(--White); border: 1px solid var(--Primary-Hover); }
-        .status.text-Orange { background: #FD7E14; color: var(--White); border: 1px solid #C65A00; }
-        .status.text-Red { background: #dc3545; color: var(--White); border: 1px solid #bd2130; }
-        .status.text-Gray { background: var(--Gray); color: var(--White); border: 1px solid var(--GrayDark); }
-    </style>
 </head>
 <body class="counter-scroll">
     <!-- #wrapper -->
@@ -74,20 +67,28 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                 <div class="section-menu-left">
                     <div class="box-logo">
                         <a href="/admin/dashboard" id="site-logo-inner">
-                            <img class="" id="logo_header" alt="HRC Admin" src="/assets/images/healthruncarelogo.png" width="150px">
+                            <img id="logo_header" alt="HRC Admin" src="/assets/images/healthruncarelogo.png" width="150px">
                         </a>
                         <div class="button-show-hide">
                             <span class="iconify" data-icon="mdi:chevron-left"></span>
                         </div>
                     </div>
+
                     <div class="section-menu-left-wrap">
                         <div class="center">
+
+                            <!-- Navigation Label -->
                             <div class="center-item">
-                                <div class="center-heading f14-regular text-Gray menu-heading mb-12">Navigation</div>
+                                <div class="center-heading f14-regular text-Gray menu-heading mb-12">
+                                    Navigation
+                                </div>
                             </div>
+
                             <div class="center-item">
-                                <ul class="">
-                                    <li class="menu-item active has-children">
+                                <ul>
+
+                                    <!-- DASHBOARD -->
+                                    <li class="menu-item has-children active">
                                         <a href="javascript:void(0);" class="menu-item-button active">
                                             <div class="icon">
                                                 <span class="iconify" data-icon="mdi:view-dashboard-outline"></span>
@@ -96,74 +97,108 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                         </a>
                                         <ul class="sub-menu">
                                             <li class="sub-menu-item active">
-                                                <a href="/admin/dashboard" class="">
+                                                <a href="/admin/dashboard">
                                                     <div class="text">Overview</div>
                                                 </a>
                                             </li>
                                         </ul>
                                     </li>
+
+                                    <!-- USERS -->
                                     <li class="menu-item">
-                                        <a href="/admin/users" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:account-group-outline"></span></div>
+                                        <a href="/admin.users" class="menu-item-button">
+                                            <div class="icon">
+                                                <span class="iconify" data-icon="mdi:account-group-outline"></span>
+                                            </div>
                                             <div class="text">Users</div>
                                         </a>
                                     </li>
+
+                                    <!-- TRANSACTIONS -->
                                     <li class="menu-item">
-                                        <a href="/admin/transactions" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:receipt-text-outline"></span></div>
+                                        <a href="/admin.transactions" class="menu-item-button">
+                                            <div class="icon">
+                                                <span class="iconify" data-icon="mdi:receipt-text"></span>
+                                            </div>
                                             <div class="text">Transactions</div>
                                         </a>
                                     </li>
+
+                                    <!-- WALLET MANAGEMENT -->
                                     <li class="menu-item">
-                                        <a href="/admin/wallets" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:wallet-outline"></span></div>
-                                            <div class="text">Wallets</div>
+                                        <a href="/admin.wallets" class="menu-item-button">
+                                            <div class="icon">
+                                                <span class="iconify" data-icon="mdi:wallet-outline"></span>
+                                            </div>
+                                            <div class="text">Wallet Management</div>
                                         </a>
                                     </li>
+
+                                    <!-- DONATIONS (UPDATED ICON) -->
                                     <li class="menu-item">
-                                        <a href="/admin/investments" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:chart-timeline-variant"></span></div>
-                                            <div class="text">Investments</div>
+                                        <a href="/admin.donations" class="menu-item-button">
+                                            <div class="icon">
+                                                <span class="iconify" data-icon="mdi:hand-heart-outline"></span>
+                                            </div>
+                                            <div class="text">Donations</div>
                                         </a>
                                     </li>
-                                     <li class="menu-item">
-                                        <a href="/admin/holdlock" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:lock-outline"></span></div>
-                                            <div class="text">Holdlock</div>
+
+                                    <!-- FUND MANAGEMENT (Dropdown) -->
+                                    <li class="menu-item has-children">
+                                        <a href="javascript:void(0);" class="menu-item-button">
+                                            <div class="icon">
+                                                <span class="iconify" data-icon="mdi:shield-cash-outline"></span>
+                                            </div>
+                                            <div class="text">Fund Management</div>
                                         </a>
+
+                                        <ul class="sub-menu">
+
+                                            <!-- Investments -->
+                                            <li class="sub-menu-item">
+                                                <a href="/admin.funds">
+                                                    <div class="text">Investments</div>
+                                                </a>
+                                            </li>
+
+                                            <!-- Holdlock -->
+                                            <li class="sub-menu-item">
+                                                <a href="/admin.funds/deposits">
+                                                    <div class="text">Holdlock</div>
+                                                </a>
+                                            </li>
+
+                                            <!-- Infrastructure -->
+                                            <li class="sub-menu-item">
+                                                <a href="/admin.funds/withdrawals">
+                                                    <div class="text">Infrastructure</div>
+                                                </a>
+                                            </li>
+
+                                            <!-- Maintenance -->
+                                            <li class="sub-menu-item">
+                                                <a href="/admin.funds/activity">
+                                                    <div class="text">Maintenance</div>
+                                                </a>
+                                            </li>
+
+                                        </ul>
                                     </li>
+
+                                    <!-- SETTINGS -->
                                     <li class="menu-item">
-                                        <a href="/admin/charity" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:heart-outline"></span></div>
-                                            <div class="text">Charity</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/admin/trustfund" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:account-cash-outline"></span></div>
-                                            <div class="text">Trustfund</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/admin/infrastructure" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:office-building-outline"></span></div>
-                                            <div class="text">Infrastructure</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/admin/maintenance" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:tools"></span></div>
-                                            <div class="text">Maintenance</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/admin/settings" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:cog-outline"></span></div>
+                                        <a href="/admin.settings" class="menu-item-button">
+                                            <div class="icon">
+                                                <span class="iconify" data-icon="mdi:cog-outline"></span>
+                                            </div>
                                             <div class="text">Settings</div>
                                         </a>
                                     </li>
+
                                 </ul>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -186,7 +221,7 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span class="header-user wg-user">
                                                 <span class="image">
-                                                    <img src="/assets/images/avatar/admin_default.png" alt="Admin Avatar">
+                                                    <img src="/assets/images/avatar/default.png" alt="Admin Avatar">
                                                 </span>
                                                 <span class="content flex flex-column">
                                                     <span class="label-02 text-Black name"><?= $admin_name ?></span>
@@ -240,7 +275,7 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                                         <div class="wallet-card-header">Total Revenue</div>
                                                         <div class="wallet-card-balance">$<span id="total-revenue">0.00</span></div>
                                                         <div class="wallet-card-footer">
-                                                            <span class="iconify" data-icon="mdi:cash-multiple"></span> All Sources
+                                                            HRC-REV-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
                                                         </div>
                                                     </div>
 
@@ -249,7 +284,7 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                                         <div class="wallet-card-header">Total Donations</div>
                                                         <div class="wallet-card-balance">$<span id="total-donations">0.00</span></div>
                                                         <div class="wallet-card-footer">
-                                                            <span class="iconify" data-icon="mdi:heart"></span> Charity & Impact
+                                                            HRC-DON-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
                                                         </div>
                                                     </div>
 
@@ -258,7 +293,7 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                                         <div class="wallet-card-header">Active Investments</div>
                                                         <div class="wallet-card-balance"><span id="active-investments">0</span></div>
                                                         <div class="wallet-card-footer">
-                                                            <span class="iconify" data-icon="mdi:trending-up"></span> Currently Active
+                                                            HRC-INV-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
                                                         </div>
                                                     </div>
 
@@ -267,10 +302,9 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                                         <div class="wallet-card-header">Total Users</div>
                                                         <div class="wallet-card-balance"><span id="total-users">0</span></div>
                                                         <div class="wallet-card-footer">
-                                                            <span class="iconify" data-icon="mdi:account-group"></span> Registered
+                                                            HRC-USR-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
                                                         </div>
                                                     </div>
-
                                                 </div>
                                             </div>
                                         </div>
@@ -381,21 +415,30 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                                     </div>
                                                     <!-- Quick Actions Panel -->
                                                     <div class="col-md-6 mb-24">
-                                                        <div class="wg-box">
+                                                        <div class="wg-box quick-actions-box">
                                                             <div class="title mb-12">
                                                                 <div class="label-01">Quick Actions</div>
                                                             </div>
-                                                            <div class="flex flex-column gap12">
-                                                                <button id="post-announcement-btn" class="tf-button bg-Primary text-White w-100 f12-bold">
+
+                                                            <div class="quick-actions-grid">
+
+                                                                <button id="post-announcement-btn" class="quick-action-btn bg-Primary text-White">
+                                                                    <span class="iconify" data-icon="mdi:bullhorn-outline"></span>
                                                                     Post Announcement
                                                                 </button>
-                                                                <button id="send-email-btn" class="tf-button bg-GrayLight text-Black w-100 f12-bold">
+
+                                                                <button id="send-email-btn" class="quick-action-btn bg-GrayLight text-Black">
+                                                                    <span class="iconify" data-icon="mdi:email-send-outline"></span>
                                                                     Send Email
                                                                 </button>
-                                                                <a href="/admin/transactions/pending" class="tf-button bg-Accent text-White w-100 f12-bold">
+
+                                                                <a href="/admin/transactions/pending" class="quick-action-btn bg-Accent text-Black">
+                                                                    <span class="iconify" data-icon="mdi:cash-plus"></span>
                                                                     Pending Deposits
                                                                 </a>
-                                                                <a href="/admin/withdrawals/pending" class="tf-button bg-Green text-White w-100 f12-bold">
+
+                                                                <a href="/admin/withdrawals/pending" class="quick-action-btn bg-Green text-White">
+                                                                    <span class="iconify" data-icon="mdi:bank-transfer-out"></span>
                                                                     Pending Withdrawals
                                                                 </a>
                                                             </div>
@@ -536,359 +579,5 @@ $admin_email = $_SESSION['admin_email'] ?? '';
 
 <!-- Iconify CDN -->
 <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
-
-<script>
-    // --- DOM Ready and Initial Load ---
-    document.addEventListener("DOMContentLoaded", function() {
-        // Initial load - fetches data from backend
-        loadDashboardStats();
-        loadRecentActivity();
-        loadNotifications(); // New function for notifications
-        renderActivityChart();
-        setupModalTriggers();
-        setupFormSubmissions();
-    });
-
-    // --- Function to load dashboard stats from backend ---
-    async function loadDashboardStats() {
-        try {
-            const response = await fetch('/api/admin/dashboard/overview'); // Example API endpoint
-            const data = await response.json();
-            if (data.success) {
-                // Update the DOM elements with backend data
-                document.getElementById('total-revenue').textContent = data.data.total_revenue.toFixed(2);
-                document.getElementById('total-donations').textContent = data.data.total_donations.toFixed(2);
-                document.getElementById('active-investments').textContent = data.data.active_investments;
-                document.getElementById('total-users').textContent = data.data.total_users;
-            } else {
-                console.error('API Error:', data.message);
-                showToast('Failed to load dashboard stats.', 'error');
-            }
-        } catch (error) {
-            console.error('Fetch Error:', error);
-            showToast('Network error loading dashboard stats.', 'error');
-        }
-    }
-
-    // --- Function to load recent activity from backend ---
-    async function loadRecentActivity() {
-        const tbody = document.getElementById('recent-activity');
-        // Clear existing rows before populating
-        tbody.innerHTML = '';
-
-        try {
-            const response = await fetch('/api/admin/recent_transactions?limit=5'); // Example API endpoint
-            const data = await response.json();
-            if (data.success) {
-                data.data.forEach(item => {
-                    // Create a new row element
-                    const row = document.createElement('tr');
-
-                    // Format date using JavaScript's Date object if needed
-                    const formattedDate = new Date(item.date).toLocaleString(); // Adjust format as needed
-
-                    // Determine positive/negative class for amount
-                    const amountClass = item.amount >= 0 ? 'positive' : 'negative';
-
-                    // Determine status class (assuming status values like 'completed', 'pending', 'failed')
-                    const statusClass = item.status === 'completed' ? 'text-Green' :
-                                        item.status === 'pending' ? 'text-Orange' :
-                                        item.status === 'failed' ? 'text-Red' : 'text-Gray';
-
-                    // Populate the row with data
-                    row.innerHTML = `
-                        <td class="date-activity">${formattedDate}</td>
-                        <td class="body-title-2">${item.user_id}</td>
-                        <td class="f12-bold">${item.type}</td>
-                        <td class="f12-bold ${amountClass}">${item.amount > 0 ? '+' : ''}${item.amount.toFixed(2)}</td>
-                        <td><span class="status ${statusClass} f10-bold">${item.status}</span></td>
-                    `;
-                    // Append the row to the table body
-                    tbody.appendChild(row);
-                });
-            } else {
-                console.error('API Error:', data.message);
-                showToast('Failed to load recent activity.', 'error');
-            }
-        } catch (error) {
-            console.error('Fetch Error:', error);
-            showToast('Network error loading recent activity.', 'error');
-        }
-    }
-
-    // --- Function to load notifications from backend ---
-    async function loadNotifications() {
-        const container = document.getElementById('notifications-list');
-        // Clear existing notifications
-        container.innerHTML = '';
-
-         try {
-            const response = await fetch('/api/admin/notifications'); // Example API endpoint
-            const data = await response.json();
-            if (data.success) {
-                data.data.forEach(notification => {
-                    // Format date for notification
-                    const formattedDate = new Date(notification.timestamp).toLocaleTimeString(); // Or toLocaleDateString() for date only
-
-                    // Create notification item element
-                    const item = document.createElement('div');
-                    item.className = 'update-item flex gap16 items-start mb-12';
-
-                    item.innerHTML = `
-                        <div class="update-content">
-                            <div class="f14-bold">${notification.title}</div>
-                            <div class="f12-regular text-Gainsboro">${notification.message}</div>
-                            <div class="f12-regular text-LightGray mt-2">${formattedDate}</div>
-                        </div>
-                    `;
-                    // Append the item to the container
-                    container.appendChild(item);
-                });
-            } else {
-                console.error('API Error:', data.message);
-                showToast('Failed to load notifications.', 'error');
-            }
-        } catch (error) {
-            console.error('Fetch Error:', error);
-            showToast('Network error loading notifications.', 'error');
-        }
-    }
-
-
-    // --- Function to render the activity chart from backend data ---
-    async function renderActivityChart() {
-        const ctx = document.getElementById("activityChart");
-        if (!ctx) return;
-
-        try {
-            const response = await fetch('/api/admin/dashboard/chart_data'); // Example API endpoint
-            const data = await response.json();
-            if (data.success) {
-                const chartData = data.data; // Assuming data.data contains the necessary arrays
-                const labels = chartData.labels; // e.g., ["Revenue", "Donations", "Investments", "Users"]
-                const values = chartData.values; // e.g., [35, 25, 20, 20]
-                const colors = chartData.colors || [ // Default colors if not provided by backend
-                    getComputedStyle(document.documentElement).getPropertyValue("--Primary").trim(),
-                    "#22C55E", // Green
-                    "#CADEDE", // Accent
-                    "#9FB8B8"  // Purple
-                ];
-
-                // Update legend text based on fetched values
-                if (values.length >= 4) {
-                    document.getElementById('chart-revenue').textContent = `${values[0]}%`;
-                    document.getElementById('chart-donations').textContent = `${values[1]}%`;
-                    document.getElementById('chart-investments').textContent = `${values[2]}%`;
-                    document.getElementById('chart-users').textContent = `${values[3]}%`;
-                }
-
-                // Destroy existing chart instance if it exists to prevent conflicts
-                if (window.activityChartInstance) {
-                    window.activityChartInstance.destroy();
-                }
-
-                // Create new chart
-                window.activityChartInstance = new Chart(ctx, {
-                    type: "doughnut",
-                    data: {
-                        labels,
-                        datasets: [{
-                            data: values,
-                            backgroundColor: colors,
-                            borderWidth: 0,
-                            cutout: "70%"
-                        }]
-                    },
-                    options: {
-                        responsive: false,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } }
-                    }
-                });
-            } else {
-                console.error('API Error:', data.message);
-                showToast('Failed to load chart data.', 'error');
-            }
-        } catch (error) {
-            console.error('Fetch Error:', error);
-            showToast('Network error loading chart data.', 'error');
-        }
-    }
-
-
-    // --- Function to setup modal triggers ---
-    function setupModalTriggers() {
-        // Post Announcement Button
-        document.getElementById('post-announcement-btn').addEventListener('click', function() {
-            openModal('#announcement-modal');
-        });
-
-        // Send Email Button
-        document.getElementById('send-email-btn').addEventListener('click', function() {
-            openModal('#email-modal');
-        });
-
-        // Recipient Type Change for Email Modal
-        document.getElementById('email-recipients').addEventListener('change', function(e) {
-            const specificGroup = document.getElementById('email-user-id-group');
-            if (e.target.value === 'specific') {
-                specificGroup.style.display = 'block';
-            } else {
-                specificGroup.style.display = 'none';
-            }
-        });
-
-        // Close Modal Buttons (using event delegation for efficiency)
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('button-close-modal')) {
-                const modal = e.target.closest('.modal');
-                if (modal) closeModal(modal);
-            }
-            // Close modal when clicking the overlay
-            if (e.target.classList.contains('modal-overlay')) {
-                closeModal(e.target.parentElement);
-            }
-        });
-    }
-
-    // --- Function to open modal ---
-    function openModal(modalId) {
-        const modal = document.querySelector(modalId);
-        if (modal) {
-            modal.classList.add('is-open');
-        }
-    }
-
-    // --- Function to close modal ---
-    function closeModal(modalElement) {
-        if (modalElement) {
-            modalElement.classList.remove('is-open');
-        }
-    }
-
-    // --- Function to setup form submissions (calls backend API) ---
-    function setupFormSubmissions() {
-        document.getElementById('announcement-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const formData = {
-                title: document.getElementById('announcement-title').value,
-                content: document.getElementById('announcement-content').value,
-                type: document.getElementById('announcement-type').value,
-                target: document.getElementById('announcement-target').value
-            };
-
-            try {
-                const response = await fetch('/api/admin/announcements', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${getAdminToken()}` // Example token
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                const result = await response.json();
-                if (result.success) {
-                    showToast("Announcement posted successfully!", "success");
-                    closeModal(document.querySelector('#announcement-modal'));
-                    this.reset(); // Reset form
-                    // Optionally reload notifications or activity to show the new announcement
-                    // loadNotifications();
-                } else {
-                    showToast(`Error: ${result.message}`, "error");
-                }
-            } catch (error) {
-                console.error('Submit Error:', error);
-                showToast("Network error posting announcement.", "error");
-            }
-        });
-
-        document.getElementById('email-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const formData = {
-                recipients: document.getElementById('email-recipients').value,
-                userId: document.getElementById('email-user-id').value, // Only relevant if recipients is 'specific'
-                subject: document.getElementById('email-subject').value,
-                body: document.getElementById('email-body').value,
-                priority: document.getElementById('email-priority').value
-            };
-
-            try {
-                const response = await fetch('/api/admin/send_email', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${getAdminToken()}` // Example token
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                const result = await response.json();
-                if (result.success) {
-                    showToast("Email sent successfully!", "success");
-                    closeModal(document.querySelector('#email-modal'));
-                    this.reset(); // Reset form
-                } else {
-                    showToast(`Error: ${result.message}`, "error");
-                }
-            } catch (error) {
-                console.error('Submit Error:', error);
-                showToast("Network error sending email.", "error");
-            }
-        });
-    }
-
-    // --- Helper function to get admin token (implement as needed) ---
-    function getAdminToken() {
-        // Example: return token from session storage or a hidden input
-        return localStorage.getItem('admin_token') || document.getElementById('admin-token-input')?.value;
-    }
-
-    // --- Function to refresh dashboard (calls backend) ---
-    async function refreshDashboard() {
-        // Show loader
-        document.getElementById('loader').classList.remove('hidden');
-        try {
-            // Wait for all data loading promises to resolve
-            await Promise.all([
-                loadDashboardStats(),
-                loadRecentActivity(),
-                loadNotifications(),
-                renderActivityChart()
-            ]);
-            // Show success toast
-            showToast("Dashboard refreshed successfully!", "success");
-        } catch (error) {
-            console.error("Refresh Error:", error);
-            showToast("Error refreshing dashboard.", "error");
-        } finally {
-            // Hide loader regardless of success/failure
-            document.getElementById('loader').classList.add('hidden');
-        }
-    }
-
-    // --- Toast Notification Helper (basic) ---
-    function showToast(message, type = "info") {
-        const toastContainer = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        toast.textContent = message;
-        toastContainer.appendChild(toast);
-
-        setTimeout(() => {
-            toast.remove();
-        }, 3000); // Remove after 3 seconds
-    }
-
-    // --- Logout Button Handler (example) ---
-    document.getElementById('logout-btn').addEventListener('click', function(e) {
-        e.preventDefault();
-        // Perform logout logic (e.g., call API, clear session)
-        // alert('Logout initiated!'); // Replace with actual logic
-        window.location.href = '/admin/logout'; // Redirect to logout page
-    });
-
-</script>
-
 </body>
 </html>
