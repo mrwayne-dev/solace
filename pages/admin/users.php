@@ -161,7 +161,7 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown">
                                             <span class="header-user wg-user">
                                                 <span class="image">
-                                                    <img src="/assets/images/avatar/default.png" alt="Admin">
+                                                    <img src="/assets/images/avatar/default.png" alt="Admin Profile Pic">
                                                 </span>
                                                 <span class="content flex flex-column">
                                                     <span class="label-02 text-Black name"><?= $admin_name ?></span>
