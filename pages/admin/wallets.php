@@ -127,14 +127,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                         <li class="sub-menu-item"><a href="/admin.funds/activity"><div class="text">Maintenance</div></a></li>
                                     </ul>
                                 </li>
-
-                                <!-- SETTINGS -->
-                                <li class="menu-item">
-                                    <a href="/admin.settings" class="menu-item-button">
-                                        <div class="icon"><span class="iconify" data-icon="mdi:cog-outline"></span></div>
-                                        <div class="text">Settings</div>
-                                    </a>
-                                </li>
                             </ul>
                         </div>
                     </div>

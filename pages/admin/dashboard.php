@@ -148,7 +148,7 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                     <li class="menu-item has-children">
                                         <a href="javascript:void(0);" class="menu-item-button">
                                             <div class="icon">
-                                                <span class="iconify" data-icon="mdi:shield-cash-outline"></span>
+                                                <span class="iconify" data-icon="mdi:money"></span>
                                             </div>
                                             <div class="text">Fund Management</div>
                                         </a>
@@ -185,17 +185,6 @@ $admin_email = $_SESSION['admin_email'] ?? '';
 
                                         </ul>
                                     </li>
-
-                                    <!-- SETTINGS -->
-                                    <li class="menu-item">
-                                        <a href="/admin.settings" class="menu-item-button">
-                                            <div class="icon">
-                                                <span class="iconify" data-icon="mdi:cog-outline"></span>
-                                            </div>
-                                            <div class="text">Settings</div>
-                                        </a>
-                                    </li>
-
                                 </ul>
                             </div>
 
