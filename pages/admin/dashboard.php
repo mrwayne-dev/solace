@@ -152,37 +152,12 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                             </div>
                                             <div class="text">Fund Management</div>
                                         </a>
-
                                         <ul class="sub-menu">
-
-                                            <!-- Investments -->
-                                            <li class="sub-menu-item">
-                                                <a href="/admin.funds">
-                                                    <div class="text">Investments</div>
-                                                </a>
-                                            </li>
-
-                                            <!-- Holdlock -->
-                                            <li class="sub-menu-item">
-                                                <a href="/admin.funds/deposits">
-                                                    <div class="text">Holdlock</div>
-                                                </a>
-                                            </li>
-
-                                            <!-- Infrastructure -->
-                                            <li class="sub-menu-item">
-                                                <a href="/admin.funds/withdrawals">
-                                                    <div class="text">Infrastructure</div>
-                                                </a>
-                                            </li>
-
-                                            <!-- Maintenance -->
-                                            <li class="sub-menu-item">
-                                                <a href="/admin.funds/activity">
-                                                    <div class="text">Maintenance</div>
-                                                </a>
-                                            </li>
-
+                                            <li class="sub-menu-item"><a href="/admin.funds"><div class="text">Investments</div></a></li>
+                                            <li class="sub-menu-item"><a href="/admin.funds/holdlock"><div class="text">Holdlock</div></a></li>
+                                            <li class="sub-menu-item"><a href="/admin.funds/trustfund"><div class="text">Trustfund</div></a></li>
+                                            <li class="sub-menu-item"><a href="/admin.funds/infrastructure"><div class="text">Infrastructure</div></a></li>
+                                            <li class="sub-menu-item"><a href="/admin.funds/maintenance"><div class="text">Maintenance</div></a></li>
                                         </ul>
                                     </li>
                                 </ul>

@@ -121,11 +121,12 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                         <div class="text">Fund Management</div>
                                     </a>
                                     <ul class="sub-menu">
-                                        <li class="sub-menu-item"><a href="/admin.funds"><div class="text">Investments</div></a></li>
-                                        <li class="sub-menu-item"><a href="/admin.funds/deposits"><div class="text">Holdlock</div></a></li>
-                                        <li class="sub-menu-item"><a href="/admin.funds/withdrawals"><div class="text">Infrastructure</div></a></li>
-                                        <li class="sub-menu-item"><a href="/admin.funds/activity"><div class="text">Maintenance</div></a></li>
-                                    </ul>
+                                            <li class="sub-menu-item"><a href="/admin.funds"><div class="text">Investments</div></a></li>
+                                            <li class="sub-menu-item"><a href="/admin.funds/holdlock"><div class="text">Holdlock</div></a></li>
+                                            <li class="sub-menu-item"><a href="/admin.funds/trustfund"><div class="text">Trustfund</div></a></li>
+                                            <li class="sub-menu-item"><a href="/admin.funds/infrastructure"><div class="text">Infrastructure</div></a></li>
+                                            <li class="sub-menu-item"><a href="/admin.funds/maintenance"><div class="text">Maintenance</div></a></li>
+                                        </ul>
                                 </li>
                             </ul>
                         </div>

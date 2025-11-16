@@ -194,3 +194,4 @@
 [2025-11-15 15:18:08] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
 [2025-11-15 15:18:29] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
 [2025-11-16 09:58:34] ERROR → aleruchi0987@gmail.com | SMTP Error: Could not connect to SMTP host. Failed to connect to server | Mailer: SMTP Error: Could not connect to SMTP host. Failed to connect to server SMTP server error: Failed to connect to server Additional SMTP info: php_network_getaddresses: getaddrinfo for mail.spacemail.com failed: No such host is known. 
+[2025-11-16 18:18:04] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account

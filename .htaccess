@@ -65,6 +65,11 @@ RewriteRule ^admin/?$ pages/admin/dashboard.php [L,QSA]
 RewriteRule ^admin\.(dashboard|users|wallets|donations|funds|transactions|announcements|login|register|forgotpassword|settings)/?$ pages/admin/$1.php [L,QSA]
 
 # -------------------------------
+# ADMIN FUND SUB-PAGES
+# -------------------------------
+RewriteRule ^admin\.funds/(holdlock|trustfund|infrastructure|maintenance)/?$ pages/admin/funds/$1.php [L,QSA]
+
+# -------------------------------
 # CATCH-ALL → 404
 # -------------------------------
 RewriteCond %{REQUEST_FILENAME} !-f
