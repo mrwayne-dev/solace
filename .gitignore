@@ -1,23 +1,17 @@
-# OS junk
+# ========= OS / EDITOR =========
 .DS_Store
 Thumbs.db
-
-# IDE junk
 .vscode/
 .idea/
 
-# Logs
+# ========= LOGS =========
 logs/
 api/cron/*.log
 api/cron/*.txt
 email_debug.log
 wallet_debug.log
 
-# Uploads (keep folder)
-uploads/
-!uploads/.gitkeep
-
-# Private config
+# ========= PRIVATE CONFIG =========
 config/env.php
 config/test_db.php
 config/certs/
@@ -25,5 +19,27 @@ config/certs/
 *.crt
 *.key
 
-# Composer vendor (optional)
+# ========= USER UPLOADS =========
+uploads/
+!uploads/.gitkeep
+
+# ========= COMPOSER =========
 vendor/
+
+# ========= DO NOT IGNORE (VERY IMPORTANT) =========
+!api/
+!assets/
+!config/
+!pages/
+!dbschema/
+!txt/
+!run_cron.bat
+!composer.json
+!composer.lock
+!index.php
+
+# Allow all PHP/CSS/JS/HTML files
+*.php
+*.css
+*.js
+*.html
