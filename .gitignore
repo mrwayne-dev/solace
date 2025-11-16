@@ -1,11 +1,8 @@
-# IGNORE ONLY THINGS THAT SHOULD NOT BE IN GIT
-# ==============================
-
-# OS Files
+# OS junk
 .DS_Store
 Thumbs.db
 
-# IDE
+# IDE junk
 .vscode/
 .idea/
 
@@ -16,11 +13,11 @@ api/cron/*.txt
 email_debug.log
 wallet_debug.log
 
-# Uploads
+# Uploads (keep folder)
 uploads/
 !uploads/.gitkeep
 
-# Private env files
+# Private config
 config/env.php
 config/test_db.php
 config/certs/
@@ -30,6 +27,3 @@ config/certs/
 
 # Composer vendor (optional)
 vendor/
-
-# node_modules (if any)
-node_modules/
