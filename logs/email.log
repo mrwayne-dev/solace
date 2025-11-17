@@ -199,3 +199,14 @@
 [2025-11-16 22:52:09] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
 [2025-11-16 23:27:30] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
 [2025-11-16 23:27:47] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
+[2025-11-17 02:05:13] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
+[2025-11-17 02:05:48] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
+[2025-11-17 11:33:09] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-17 11:33:13] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-17 11:54:53] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
+[2025-11-17 11:59:39] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-17 11:59:43] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-17 12:13:59] SENT → aleruchi0987@gmail.com | Template: donation_confirmed | Subject: Donation Confirmation! Thank You for Supporting Us
+[2025-11-17 12:14:03] SENT → support@healthruncare.com | Template: admin_donation_notification | Subject: New Donation Received on HealthRunCare!
+[2025-11-17 12:22:06] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
+[2025-11-17 12:22:21] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account

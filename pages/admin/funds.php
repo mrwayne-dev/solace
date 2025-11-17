@@ -78,7 +78,7 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                         <div class="text">Dashboard</div>
                                     </a>
                                     <ul class="sub-menu">
-                                        <li class="sub-menu-item"><a href="/admin/dashboard"><div class="text">Overview</div></a></li>
+                                        <li class="sub-menu-item"><a href="/admin"><div class="text">Overview</div></a></li>
                                     </ul>
                                 </li>
 
