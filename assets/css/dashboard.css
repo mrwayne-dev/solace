@@ -8995,6 +8995,18 @@ td.negative {
 .wallet-green { background: #CADEDE !important; color: var(--Black); }
 .wallet-accent { background: var(--Gray) !important; color: var(--Black); }
 .wallet-purple { background: var(--Gainsboro) !important; color: var(--Black);}
+/* First card → white icon */
+.wallet-main .iconify {
+    color: var(--White) !important;
+}
+
+/* All other cards → black icon */
+.wallet-green .iconify,
+.wallet-accent .iconify,
+.wallet-purple .iconify {
+    color: var(--Black) !important;
+}
+
 
 /* Mobile cards even shorter */
 @media (max-width: 768px) {

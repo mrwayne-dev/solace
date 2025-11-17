@@ -187,7 +187,7 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                                 <div class="wallet-card wallet-main">
                                                     <div class="wallet-card-header">Total Users</div>
                                                     <div class="wallet-card-balance"><span id="total-users">0</span></div>
-                                                    <div class="wallet-card-footer">
+                                                    <div class="wallet-card-footer"><span class="iconify" data-icon="mdi:account-group"></span>
                                                         Registered
                                                     </div>
                                                 </div>  
@@ -195,7 +195,7 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                                 <div class="wallet-card wallet-green">
                                                     <div class="wallet-card-header">Active Users</div>
                                                     <div class="wallet-card-balance"><span id="active-users">0</span></div>
-                                                    <div class="wallet-card-footer">
+                                                    <div class="wallet-card-footer"><span class="iconify" data-icon="mdi:account-clock"></span>
                                                         Online Now
                                                     </div>
                                                 </div>
@@ -203,7 +203,7 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                                 <div class="wallet-card wallet-accent">
                                                     <div class="wallet-card-header">Admins</div>
                                                     <div class="wallet-card-balance"><span id="admin-count">0</span></div>
-                                                    <div class="wallet-card-footer">
+                                                    <div class="wallet-card-footer"><span class="iconify" data-icon="mdi:shield-account"></span>
                                                         Privileged
                                                     </div>
                                                 </div>
@@ -211,7 +211,7 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                                 <div class="wallet-card wallet-purple">
                                                     <div class="wallet-card-header">New Today</div>
                                                     <div class="wallet-card-balance"><span id="new-today">0</span></div>
-                                                    <div class="wallet-card-footer">
+                                                    <div class="wallet-card-footer"><span class="iconify" data-icon="mdi:account-plus"></span>
                                                         Joined Today
                                                     </div>
                                                 </div>

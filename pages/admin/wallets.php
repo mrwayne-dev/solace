@@ -184,25 +184,25 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                             <div class="wallet-card wallet-main">
                                                 <div class="wallet-card-header">Total Wallets</div>
                                                 <div class="wallet-card-balance"><span id="total-wallets">0</span></div>
-                                                <div class="wallet-card-footer">Active</div>
+                                                <div class="wallet-card-footer"> <span class="iconify" data-icon="mdi:wallet-outline"></span> Active</div>
                                             </div>
                                             <!-- Total Balance -->
                                             <div class="wallet-card wallet-green">
                                                 <div class="wallet-card-header">Total Balance</div>
                                                 <div class="wallet-card-balance">$<span id="total-balance">0.00</span></div>
-                                                <div class="wallet-card-footer">All Users</div>
+                                                <div class="wallet-card-footer"><span class="iconify" data-icon="mdi:bank"></span> All Users</div>
                                             </div>
                                             <!-- Pending Deposits -->
                                             <div class="wallet-card wallet-accent">
                                                 <div class="wallet-card-header">Pending Deposits</div>
                                                 <div class="wallet-card-balance"><span id="pending-deposits">0</span></div>
-                                                <div class="wallet-card-footer"> Requests</div>
+                                                <div class="wallet-card-footer"> <span class="iconify" data-icon="mdi:cash-plus"></span>  Requests</div>
                                             </div>
                                             <!-- Pending Withdrawals -->
                                             <div class="wallet-card wallet-purple">
                                                 <div class="wallet-card-header">Pending Withdrawals</div>
                                                 <div class="wallet-card-balance"><span id="pending-withdrawals">0</span></div>
-                                                <div class="wallet-card-footer">Requests</div>
+                                                <div class="wallet-card-footer"><span class="iconify" data-icon="mdi:cash-minus"></span> Requests</div>
                                             </div>
                                         </div>
                                     </div>

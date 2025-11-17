@@ -179,22 +179,22 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                                 <div class="wallet-card wallet-main">
                                                     <div class="wallet-card-header">Total Transactions</div>
                                                     <div class="wallet-card-balance"><span id="total-transactions">0</span></div>
-                                                    <div class="wallet-card-footer">All Time</div>
+                                                    <div class="wallet-card-footer"> <span class="iconify" data-icon="mdi:history"></span> All Time</div>
                                                 </div>
                                                 <div class="wallet-card wallet-green">
                                                     <div class="wallet-card-header">Total Volume</div>
                                                     <div class="wallet-card-balance">$<span id="total-volume">0.00</span></div>
-                                                    <div class="wallet-card-footer">Processed</div>
+                                                    <div class="wallet-card-footer"> <span class="iconify" data-icon="mdi:chart-line"></span> Processed</div>
                                                 </div>
                                                 <div class="wallet-card wallet-accent">
                                                     <div class="wallet-card-header">Pending</div>
                                                     <div class="wallet-card-balance"><span id="pending-count">0</span></div>
-                                                    <div class="wallet-card-footer"> Awaiting Action</div>
+                                                    <div class="wallet-card-footer"> <span class="iconify" data-icon="mdi:progress-clock"></span> Awaiting Action</div>
                                                 </div>
                                                 <div class="wallet-card wallet-purple">
                                                     <div class="wallet-card-header">Today</div>
                                                     <div class="wallet-card-balance"><span id="today-count">0</span></div>
-                                                    <div class="wallet-card-footer"> Transactions</div>
+                                                    <div class="wallet-card-footer"> <span class="iconify" data-icon="mdi:calendar-today"></span> Transactions</div>
                                                 </div>
                                             </div>
                                         </div>

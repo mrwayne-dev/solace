@@ -180,33 +180,47 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                 <div class="row mb-32">
                                     <div class="col-12">
                                         <div class="wallet-cards grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap20">
+
                                             <!-- Total Campaigns -->
                                             <div class="wallet-card wallet-main">
                                                 <div class="wallet-card-header">Total Campaigns</div>
                                                 <div class="wallet-card-balance"><span id="total-campaigns">0</span></div>
-                                                <div class="wallet-card-footer">Created</div>
+                                                <div class="wallet-card-footer">
+                                                    <span class="iconify" data-icon="mdi:heart-plus"></span> Created
+                                                </div>
                                             </div>
+
                                             <!-- Active Campaigns -->
                                             <div class="wallet-card wallet-green">
                                                 <div class="wallet-card-header">Active Campaigns</div>
                                                 <div class="wallet-card-balance"><span id="active-campaigns">0</span></div>
-                                                <div class="wallet-card-footer">Running</div>
+                                                <div class="wallet-card-footer">
+                                                    <span class="iconify" data-icon="mdi:trending-up"></span> Running
+                                                </div>
                                             </div>
+
                                             <!-- Total Raised -->
                                             <div class="wallet-card wallet-accent">
                                                 <div class="wallet-card-header">Total Raised</div>
                                                 <div class="wallet-card-balance">$<span id="total-raised">0.00</span></div>
-                                                <div class="wallet-card-footer">All Time</div>
+                                                <div class="wallet-card-footer">
+                                                    <span class="iconify" data-icon="mdi:cash-multiple"></span> All Time
+                                                </div>
                                             </div>
+
                                             <!-- Top Campaign -->
                                             <div class="wallet-card wallet-purple">
                                                 <div class="wallet-card-header">Top Campaign</div>
                                                 <div class="wallet-card-balance"><span id="top-campaign-name">—</span></div>
-                                                <div class="wallet-card-footer">$<span id="top-campaign-amount">0.00</span></div>
+                                                <div class="wallet-card-footer">
+                                                    <span class="iconify" data-icon="mdi:trophy"></span> $<span id="top-campaign-amount">0.00</span>
+                                                </div>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
+
 
                                 <!-- 2. CAMPAIGN MANAGEMENT -->
                                 <div class="mb-32">
