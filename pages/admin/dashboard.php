@@ -162,7 +162,6 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                     </li>
                                 </ul>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -537,6 +536,7 @@ $admin_email = $_SESSION['admin_email'] ?? '';
 <script src="../../assets/js/countto.js" defer></script>
 <script src="../../assets/js/bootstrap-select.min.js" defer></script>
 <script src="../../assets/js/dashboard.js" defer></script>
+<script src="../../assets/js/admin/admin.js" defer></script>
 
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
