@@ -403,7 +403,7 @@
         <h4>Legal</h4>
         <ul>
           <li><a href="/about">Privacy Policy</a></li>
-          <li><a href="/about">Terms of Use</a></li
+          <li><a href="/about">Terms of Use</a></li>
         </ul>
       </div>
     </div>
