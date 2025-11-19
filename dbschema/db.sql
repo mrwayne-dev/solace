@@ -279,8 +279,21 @@ CREATE TABLE `password_resets` (
   CONSTRAINT `resets_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
-
+-- ===============================================================
+--  TABLE: announcements (For system-wide admin messages)
+-- ===============================================================
+CREATE TABLE `announcements` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `admin_id` INT NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `content` TEXT NOT NULL,
+    `type` ENUM('info','warning','critical') DEFAULT 'info',
+    `target` ENUM('all','investors','donors','active') DEFAULT 'all',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_admin_announcement` (`admin_id`),
+    CONSTRAINT `announcements_fk_admin` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 -- ===============================================================

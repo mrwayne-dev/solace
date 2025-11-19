@@ -913,6 +913,20 @@ function getEmailTemplates() {
         <p>Best regards,<br><strong>The {$appName} Team</strong></p>
     "),
 ],
+'admin_broadcast' => [
+    // Subject will be dynamically set by admin input
+    'subject' => '{{subject_line}}', 
+    'html' => $wrap("
+        <h2 style='color: {$colors['primary']}; margin-top: 0; font-size: 24px;'>{{subject_line}}</h2>
+        <p>Dear {{user_name}},</p>
+        <div style='background-color: {$colors['accent']}; padding: 18px; margin: 20px 0; border-radius: 8px; border: 1px solid {$colors['border']};'>
+            {{message_body}}
+        </div>
+        <p>This is a direct message from the HealthRunCare Administration team.</p>
+        <p>If you have questions, reply to this email or contact <a href='mailto:{$supportEmail}' style='color:{$colors['primary']}; text-decoration: none;'>{$supportEmail}</a>.</p>
+        <p>Best regards,<br>The {$appName} Administration</p>
+    "),
+],
 
     ];
 }

@@ -195,6 +195,8 @@
       $(this).data("order", isAscending ? "desc" : "asc");
     });
   };
+
+  
   /* ===================== Utilities (new) ===================== */
   // Show modal (simple) - with accessibility focus
   function showModal(selector) {

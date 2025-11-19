@@ -362,34 +362,14 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                             <div class="col-lg-6 mb-32">
                                                 <!-- Notifications & Quick Actions -->
                                                 <div class="row">
-                                                    <!-- Notifications Panel -->
-                                                    <div class="col-md-6 mb-24">
-                                                        <div class="wg-box style-1 bg-Primary shadow-none">
-                                                            <div class="title mb-10">
-                                                                <div class="label-01 text-White">Notifications</div>
-                                                            </div>
-                                                            <div class="updates-list text-White">
-                                                                <!-- Notifications will be populated by JavaScript using backend data -->
-                                                                <div id="notifications-list">
-                                                                    <!-- Notification items go here -->
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
                                                     <!-- Quick Actions Panel -->
-                                                    <div class="col-md-6 mb-24">
+                                                    <div class="col-md-12 mb-24">
                                                         <div class="wg-box quick-actions-box">
                                                             <div class="title mb-12">
                                                                 <div class="label-01">Quick Actions</div>
                                                             </div>
 
                                                             <div class="quick-actions-grid">
-
-                                                                <button id="post-announcement-btn" class="quick-action-btn bg-Primary text-White">
-                                                                    <span class="iconify" data-icon="mdi:bullhorn-outline"></span>
-                                                                    Post Announcement
-                                                                </button>
-
                                                                 <button id="send-email-btn" class="quick-action-btn bg-GrayLight text-Black">
                                                                     <span class="iconify" data-icon="mdi:email-send-outline"></span>
                                                                     Send Email
@@ -421,49 +401,6 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                     <!-- /main-content -->
 
                     <!-- Modals -->
-                    <!-- Post Announcement Modal -->
-                    <div class="modal" id="announcement-modal">
-                        <div class="modal-overlay"></div>
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h2>Post Announcement</h2>
-                                <button class="button-close-modal">&times;</button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="announcement-form">
-                                    <div class="form-group mb-3">
-                                        <label for="announcement-title" class="form-label">Title</label>
-                                        <input type="text" class="form-control" id="announcement-title" placeholder="Enter announcement title..." required>
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label for="announcement-content" class="form-label">Content</label>
-                                        <textarea class="form-control" id="announcement-content" rows="5" placeholder="Enter announcement content..." required></textarea>
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label for="announcement-type" class="form-label">Type</label>
-                                        <select class="form-control" id="announcement-type">
-                                            <option value="info">Info</option>
-                                            <option value="warning">Warning</option>
-                                            <option value="critical">Critical</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label for="announcement-target" class="form-label">Target Audience</label>
-                                        <select class="form-control" id="announcement-target">
-                                            <option value="all">All Users</option>
-                                            <option value="investors">Investors</option>
-                                            <option value="donors">Donors</option>
-                                            <option value="active">Active Users</option>
-                                        </select>
-                                    </div>
-                                    <div class="d-flex justify-content-end gap-2">
-                                        <button type="button" class="button-close-modal tf-button bg-GrayLight text-Black">Cancel</button>
-                                        <button type="submit" class="modal-confirm-btn">Post Announcement</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- Send Email Modal -->
                     <div class="modal" id="email-modal">
@@ -535,7 +472,6 @@ $admin_email = $_SESSION['admin_email'] ?? '';
 <script src="../../assets/js/bootstrap.min.js"></script>
 <script src="../../assets/js/countto.js" defer></script>
 <script src="../../assets/js/bootstrap-select.min.js" defer></script>
-<script src="../../assets/js/dashboard.js" defer></script>
 <script src="../../assets/js/admin/admin.js" defer></script>
 
 <!-- Chart.js CDN -->
