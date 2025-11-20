@@ -300,6 +300,16 @@ ADD COLUMN cash_mailing_address TEXT DEFAULT NULL,
 ADD COLUMN wallet_deposit_address TEXT DEFAULT NULL;
 
 
+CREATE TABLE settings (
+    id INT NOT NULL AUTO_INCREMENT,
+    cash_mailing_address TEXT,
+    wallet_deposit_address TEXT,
+    PRIMARY KEY(id)
+);
+
+INSERT INTO settings (id) VALUES (1);
+
+
 
 -- ===============================================================
 --  CHARITIES

@@ -19,11 +19,11 @@ if(!$method || !$value){
 try {
     $pdo = getPDO();
 
-    if($method === "cash_mailing"){
-        $stmt = $pdo->prepare("UPDATE wallets SET cash_mailing_address = :v");
-    } elseif($method === "wallet_address"){
-        $stmt = $pdo->prepare("UPDATE wallets SET wallet_deposit_address = :v");
-    } else {
+        if($method === "cash_mailing"){
+            $stmt = $pdo->prepare("UPDATE settings SET cash_mailing_address = :v WHERE id = 1");
+        } elseif($method === "wallet_address"){
+            $stmt = $pdo->prepare("UPDATE settings SET wallet_deposit_address = :v WHERE id = 1");
+        }else {
         echo json_encode(["status"=>"error","message"=>"Invalid method"]);
         exit;
     }

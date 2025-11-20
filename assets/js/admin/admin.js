@@ -390,11 +390,55 @@
             showModal('#pending-deposits-modal');
         });
 
-        // OPEN — Set Deposit Address Modal
-        $('#set-deposit-address-btn').on('click', function (e) {
+        // WHEN MODAL OPENS — Load Pending Deposit Requests
+        $('a[href="/admin/transactions/pending"]').on('click', async function (e) {
             e.preventDefault();
-            showModal('#set-deposit-address-modal');
+            showModal('#pending-deposits-modal');
+
+            try {
+                const res = await fetchApi('/api/admin/get_pending_deposits.php', {}, "GET");
+
+                const listEl = $('#pending-deposits-list');
+                const emptyEl = $('#no-pending-deposits');
+
+                listEl.empty(); // Clear old rows
+
+                if (res.status === 'success' && res.data.length > 0) {
+                    emptyEl.hide();
+
+                    res.data.forEach(dep => {
+                        listEl.append(`
+                            <tr>
+                                <td>${dep.user}</td>
+                                <td>$${Number(dep.amount).toLocaleString()}</td>
+                                <td>${dep.date}</td>
+                                <td>
+                                    <button class="complete-deposit-btn bg-Green text-White" data-id="${dep.id}">Complete</button>
+                                    <button class="cancel-deposit-btn bg-Accent text-Black" data-id="${dep.id}">Cancel</button>
+                                </td>
+                            </tr>
+                        `);
+                    });
+
+                } else {
+                    emptyEl.show();
+                }
+
+            } catch (err) {
+                showToast("Failed to load pending deposits", "error");
+            }
         });
+        $(document).on('click', '.complete-deposit-btn', function () {
+            const id = $(this).data('id');
+            showToast(`Deposit #${id} marked for completion (backend TBD)`, 'info');
+        });
+
+        $(document).on('click', '.cancel-deposit-btn', function () {
+            const id = $(this).data('id');
+            showToast(`Deposit #${id} marked for cancellation (backend TBD)`, 'warning');
+        });
+
+
 
         // SUBMIT — Save Deposit Address
         $('#set-deposit-address-form').on('submit', async function(e){
@@ -427,6 +471,27 @@
             }
         });
 
+        // OPEN — View Deposit Addresses Modal
+        $('#view-deposit-address-btn').on('click', async function (e) {
+            e.preventDefault();
+
+            try {
+                const res = await fetchApi('/api/admin/get_deposit_address.php', {}, "GET");
+
+                if (res.status === 'success') {
+                    $('#view-cash-mailing').text(res.data.cash_mailing || 'Not set yet');
+                    $('#view-wallet-address').text(res.data.wallet_address || 'Not set yet');
+
+                    showModal('#view-deposit-address-modal');
+
+                } else {
+                    showToast(res.message || "Could not load addresses", "error");
+                }
+
+            } catch (err) {
+                showToast("Server error occurred", "error");
+            }
+        });
 
         // Initial data load 
         loadAdminDashboardData(); 

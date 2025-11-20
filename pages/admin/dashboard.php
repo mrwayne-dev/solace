@@ -380,6 +380,12 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                                                     Set Deposit Address
                                                                 </button>
 
+                                                                <button id="view-deposit-address-btn" class="quick-action-btn bg-Black text-White">
+                                                                    <span class="iconify" data-icon="mdi:eye-outline"></span>
+                                                                    View Deposit Addresses
+                                                                </button>
+
+
 
                                                                 <a href="/admin/transactions/pending" class="quick-action-btn bg-Accent text-Black">
                                                                     <span class="iconify" data-icon="mdi:cash-plus"></span>
@@ -457,6 +463,40 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                         </div>
                     </div>
 
+
+                    <!-- =========================================================
+                    VIEW DEPOSIT ADDRESSES — MODAL
+                    ========================================================= -->
+                    <div class="modal" id="view-deposit-address-modal">
+                        <div class="modal-overlay"></div>
+
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h2>Deposit Addresses</h2>
+                                <button class="button-close-modal">&times;</button>
+                            </div>
+
+                            <div class="modal-body">
+
+                                <div class="mb-3">
+                                    <label class="form-label"><strong>Cash Mailing Address</strong></label>
+                                    <div id="view-cash-mailing" class="p-2 bg-GrayLight rounded text-Black"></div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label"><strong>Wallet Deposit Address</strong></label>
+                                    <div id="view-wallet-address" class="p-2 bg-GrayLight rounded text-Black"></div>
+                                </div>
+
+                                <div class="text-right">
+                                    <button class="button-close-modal tf-button bg-Accent text-Black">Close</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
                     <!-- =========================================================
                     SET DEPOSIT ADDRESS — MODAL
                     ========================================================= -->
@@ -502,21 +542,19 @@ $admin_email = $_SESSION['admin_email'] ?? '';
 
 
                     <!-- =========================================================
-                    PENDING DEPOSITS — MODAL
+                    PENDING DEPOSITS — SIMPLIFIED MODAL
                     ========================================================= -->
-                <div class="modal" id="pending-deposits-modal">
-                    <div class="modal-overlay"></div>
+                    <div class="modal" id="pending-deposits-modal">
+                        <div class="modal-overlay"></div>
 
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2>Pending Deposit Requests</h2>
-                            <button class="modal-close button-close-modal">&times;</button>
-                        </div>
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h2>Pending Deposit Requests</h2>
+                                <button class="modal-close button-close-modal">&times;</button>
+                            </div>
 
-                        <div class="modal-body">
+                            <div class="modal-body">
 
-                            <!-- ===== Deposit List Table ===== -->
-                            <div class="mb-3">
                                 <table class="tab-sell-order" id="pending-deposit-table">
                                     <thead>
                                         <tr>
@@ -527,50 +565,18 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                         </tr>
                                     </thead>
                                     <tbody id="pending-deposits-list">
-                                        <!-- Inject rows from JS -->
-                                        <!-- Example format:
-                                        <tr>
-                                            <td>John Doe</td>
-                                            <td>$120</td>
-                                            <td>2025-02-01</td>
-                                            <td><button class="complete-deposit-btn" data-id="1">Complete</button></td>
-                                        </tr>
-                                        -->
+                                        <!-- Loaded via JS -->
                                     </tbody>
                                 </table>
-                            </div>
 
-                            <!-- ===== Deposit Completion Input Section ===== -->
-                            <div id="deposit-complete-section" class="hidden">
-                                <hr class="divider mb-12">
-
-                                <div class="form-group mb-3">
-                                    <label class="form-label">Deposit Address (Transaction Hash/Wallet)</label>
-                                    <input type="text" class="form-control" 
-                                        id="deposit-address-input" 
-                                        placeholder="Enter deposit address or hash..." />
+                                <div id="no-pending-deposits" class="text-center text-Gray mt-20" style="display:none;">
+                                    No pending deposit requests.
                                 </div>
 
-                                <div id="deposit-error" class="form-error hidden">Please provide a valid address.</div>
-
-                                <div class="d-flex justify-content-between gap-2 mt-2">
-                                    <button class="tf-button bg-GrayLight text-Black" id="update-deposit-btn">
-                                        Update Deposit
-                                    </button>
-
-                                    <button class="modal-confirm-btn" id="confirm-complete-deposit-btn">
-                                        Complete Deposit
-                                    </button>
-
-                                    <button class="tf-button bg-Accent text-Black" id="cancel-deposit-btn">
-                                        Cancel Deposit
-                                    </button>
-                                </div>
                             </div>
-
                         </div>
                     </div>
-                </div>
+
 
 
                 </div>
