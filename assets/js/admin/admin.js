@@ -390,9 +390,44 @@
             showModal('#pending-deposits-modal');
         });
 
+        // OPEN — Set Deposit Address Modal
+        $('#set-deposit-address-btn').on('click', function (e) {
+            e.preventDefault();
+            showModal('#set-deposit-address-modal');
+        });
 
-        
-        
+        // SUBMIT — Save Deposit Address
+        $('#set-deposit-address-form').on('submit', async function(e){
+            e.preventDefault();
+
+            const method = $('#deposit-method').val();
+            const value = $('#deposit-value').val().trim();
+
+            if(!method || !value){
+                showToast("Please complete all fields.", "warning");
+                return;
+            }
+
+            try {
+                const res = await fetchApi('/api/admin/save_deposit_address.php', {
+                    method: method,
+                    value: value
+                }, "POST");
+
+                if(res.status === 'success'){
+                    showToast(res.message, "success");
+                    closeModal('#set-deposit-address-modal');
+                } else {
+                    showToast(res.message || "Failed to save address.", "error");
+                }
+
+            } catch(err){
+                console.error(err);
+                showToast("Network/server error occurred.", "error");
+            }
+        });
+
+
         // Initial data load 
         loadAdminDashboardData(); 
 

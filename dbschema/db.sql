@@ -295,6 +295,11 @@ CREATE TABLE `announcements` (
     CONSTRAINT `announcements_fk_admin` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+ALTER TABLE wallets 
+ADD COLUMN cash_mailing_address TEXT DEFAULT NULL,
+ADD COLUMN wallet_deposit_address TEXT DEFAULT NULL;
+
+
 
 -- ===============================================================
 --  CHARITIES

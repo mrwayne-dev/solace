@@ -375,6 +375,12 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                                                     Send Email
                                                                 </button>
 
+                                                                <button id="set-deposit-address-btn" class="quick-action-btn bg-Green text-White">
+                                                                    <span class="iconify" data-icon="mdi:cog-outline"></span>
+                                                                    Set Deposit Address
+                                                                </button>
+
+
                                                                 <a href="/admin/transactions/pending" class="quick-action-btn bg-Accent text-Black">
                                                                     <span class="iconify" data-icon="mdi:cash-plus"></span>
                                                                     Pending Deposits
@@ -450,6 +456,49 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                             </div>
                         </div>
                     </div>
+
+                    <!-- =========================================================
+                    SET DEPOSIT ADDRESS — MODAL
+                    ========================================================= -->
+                    <div class="modal" id="set-deposit-address-modal">
+                        <div class="modal-overlay"></div>
+
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h2>Set Deposit Address</h2>
+                                <button class="button-close-modal">&times;</button>
+                            </div>
+
+                            <div class="modal-body">
+                                <form id="set-deposit-address-form">
+
+                                    <!-- Deposit Type -->
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Deposit Method</label>
+                                        <select class="form-control" id="deposit-method" required>
+                                            <option value="">Select Method...</option>
+                                            <option value="cash_mailing">Cash Mailing</option>
+                                            <option value="wallet_address">Wallet Address</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Address input -->
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Deposit Address / Instructions</label>
+                                        <textarea class="form-control" id="deposit-value" rows="4"
+                                            placeholder="Enter wallet address or mailing instructions..."
+                                            required></textarea>
+                                    </div>
+
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button type="button" class="button-close-modal tf-button bg-GrayLight text-Black">Cancel</button>
+                                        <button type="submit" class="modal-confirm-btn">Save Address</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
 
 
                     <!-- =========================================================
