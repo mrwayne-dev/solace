@@ -1,103 +1,120 @@
 <?php
-// Set headers for JSON response
+// ========================================
+// ADMIN EMAIL BROADCAST API
+// Fetches recipients from DB and sends emails using system's PHPMailer setup.
+// ========================================
 header('Content-Type: application/json');
-
-// Start session to check admin status
 session_start();
 
 // --- DEPENDENCY INCLUSION ---
-// 1. Include the file that defines getEmailTemplates()
-// Corrected path for email_temps.php (located in api/utilities/)
-require_once '../utilities/email_temps.php'; 
+// 1. Core Config & Database
+require_once '../../config/constants.php';  // Provides APP_NAME, ROLE_SUPER_ADMIN, etc.
+require_once '../../config/database.php';   // Provides getPDO() for database connection
+require_once '../../config/env.php';        // Ensure constants like SMTP_HOST are defined
 
-// 2. Mock functions for admin and user data. These MUST be replaced 
-// with real database logic in a production environment.
+// 2. Email Components
+require_once '../utilities/email_temps.php'; // Provides getEmailTemplates()
+require_once '../backend/email.php';        // Provides the system's sendEmail() function
 
+/**
+ * Checks if the current session belongs to an authorized administrator.
+ * Now queries the 'admins' table and checks for admin roles.
+ * @return bool True if logged in and authorized.
+ */
 function is_admin_logged_in() {
-    // Replace with your actual admin login check logic
-    return isset($_SESSION['admin_id']);
-}
-
-function getRecipientsByGroup($group, $userId = null) {
-    // --- MOCK DATABASE FETCH ---
-    // Replace this with real database query logic to fetch user emails/names.
-    // NOTE: For testing, ensure these emails are valid and accessible by you.
-    $allUsers = [
-        ['email' => 'user1@example.com', 'name' => 'Alice Smith', 'is_investor' => false, 'id' => 1],
-        ['email' => 'user2@example.com', 'name' => 'Bob Johnson', 'is_investor' => true, 'is_donor' => false, 'id' => 2],
-        ['email' => 'user3@example.com', 'name' => 'Charlie Brown', 'is_donor' => true, 'is_investor' => true, 'id' => 3],
-        // IMPORTANT: Use a real, personal email here for successful testing
-        ['email' => 'admin_test@healthruncare.com', 'name' => 'Admin Test User', 'is_investor' => true, 'is_donor' => true, 'id' => 4],
-    ];
-
-    $recipients = [];
-
-    switch ($group) {
-        case 'all':
-            $recipients = $allUsers;
-            break;
-        case 'active':
-            // In a real app, this would query for users with recent activity
-            $recipients = $allUsers; 
-            break;
-        case 'investors':
-            $recipients = array_filter($allUsers, fn($u) => $u['is_investor'] ?? false);
-            break;
-        case 'donors':
-            $recipients = array_filter($allUsers, fn($u) => $u['is_donor'] ?? false);
-            break;
-        case 'specific':
-            if ($userId) {
-                // Find user by ID (using mock data: ID is 1-based index + 1)
-                $targetUser = array_values(array_filter($allUsers, fn($u) => ($u['id'] ?? 0) == $userId))[0] ?? null; 
-                if ($targetUser) {
-                    $recipients = [$targetUser];
-                }
-            }
-            break;
-        default:
-            $recipients = [];
+    // FIX 1: Check for the admin session ID. Assumes your admin login sets this key.
+    if (!isset($_SESSION['admin_id'])) {
+        return false;
     }
-    return $recipients;
-}
-
-// ====================================================================
-// FIX: IMPLEMENT ACTUAL EMAIL SENDING USING PHP'S mail() FUNCTION
-// ====================================================================
-function sendMail($toEmail, $subject, $htmlBody, $priority = 'normal') {
-    // IMPORTANT: For this to work, your local PHP environment (e.g., Laragon/XAMPP) 
-    // must be configured to send mail (e.g., via fake sendmail or an actual SMTP service).
     
-    $fromEmail = 'support@healthruncare.com';
-    $appName = 'HealthRunCare Administration';
-    
-    // Set headers for HTML content, UTF-8, and Sender details
-    $headers = "MIME-Version: 1.0" . "\r\n";
-    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-    
-    // Set From and Reply-To headers
-    $headers .= "From: {$appName} <{$fromEmail}>" . "\r\n";
-    $headers .= "Reply-To: {$fromEmail}" . "\r\n";
+    try {
+        $pdo = getPDO();
+        // FIX 2: Query the 'admins' table instead of 'users'
+        $stmt = $pdo->prepare("SELECT role FROM admins WHERE id = :id AND status = 'active'");
+        $stmt->execute(['id' => $_SESSION['admin_id']]);
+        $admin = $stmt->fetch();
 
-    // Handle Priority header
-    if ($priority === 'high') {
-        $headers .= "X-Priority: 1 (Highest)\r\n";
-        $headers .= "X-MSMail-Priority: High\r\n";
-        $headers .= "Importance: High\r\n";
-    }
+        // FIX 3: Check against the roles defined in the 'admins' table schema: 
+        // 'super_admin', 'manager', 'support'. 
+        // Use constants for super/support and explicit string for manager.
+        return $admin && (
+            $admin['role'] === 'manager' ||
+            ($admin['role'] === (ROLE_SUPER_ADMIN ?? 'super_admin')) ||
+            ($admin['role'] === (ROLE_SUPPORT_ADMIN ?? 'support')) 
+        );
 
-    // Use PHP's built-in mail function
-    $mail_sent = mail($toEmail, $subject, $htmlBody, $headers);
-
-    if ($mail_sent) {
-        error_log("REAL EMAIL SENT: To: {$toEmail}, Subject: {$subject}, Priority: {$priority}");
-        return true;
-    } else {
-        error_log("EMAIL SEND FAILED: To: {$toEmail}, Subject: {$subject}, Priority: {$priority}. Check PHP mail configuration!");
+    } catch (PDOException $e) {
+        error_log("DB Error in is_admin_logged_in (Admins Table Check): " . $e->getMessage());
         return false;
     }
 }
-// ====================================================================
+
+/**
+ * Fetches user recipients based on the selected group.
+ * Uses real PDO queries.
+ * @param string $group 'all', 'active', 'investors', 'donors', 'specific'
+ * @param int|null $userId Required only for 'specific' group.
+ * @return array Array of associative arrays, each with 'email' and 'name'.
+ */
+function getRecipientsByGroup($group, $userId = null) {
+    $pdo = getPDO();
+    $sql = '';
+    $params = [];
+    $baseConditions = "u.role = 'user' AND u.status = 'active'"; 
+
+    // NOTE: 'investors' and 'donors' rely on joining tables not explicitly defined 
+    // in the schema (investments/donations). Ensure these tables exist in your DB.
+    
+    switch ($group) {
+        case 'all':
+        case 'active':
+            $sql = "SELECT id, COALESCE(full_name, name) as name, email FROM users u WHERE {$baseConditions}";
+            break;
+            
+        case 'specific':
+            if (empty($userId) || !is_numeric($userId)) return [];
+            $sql = "SELECT id, COALESCE(full_name, name) as name, email FROM users u WHERE id = :id AND {$baseConditions}";
+            $params['id'] = $userId;
+            break;
+            
+        case 'investors':
+            $sql = "SELECT DISTINCT u.id, COALESCE(u.full_name, u.name) as name, u.email 
+                    FROM users u
+                    JOIN investments i ON u.id = i.user_id
+                    WHERE {$baseConditions}";
+            break;
+
+        case 'donors':
+            $sql = "SELECT DISTINCT u.id, COALESCE(u.full_name, u.name) as name, u.email 
+                    FROM users u
+                    JOIN donations d ON u.id = d.user_id
+                    WHERE {$baseConditions}";
+            break;
+            
+        default:
+            return [];
+    }
+    
+    try {
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $results = $stmt->fetchAll();
+
+        // Remap to a standard format for the email loop
+        return array_map(function($user) {
+            return [
+                'email' => $user['email'],
+                // Use full_name if available, otherwise fallback to 'name'
+                'name' => $user['name']
+            ];
+        }, $results);
+
+    } catch (PDOException $e) {
+        error_log("DB Query Error in getRecipientsByGroup for group '{$group}': " . $e->getMessage());
+        // Return empty array on DB error
+        return []; 
+    }
+}
 
 // --- INITIAL VALIDATION ---
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -116,12 +133,11 @@ $input = json_decode(file_get_contents('php://input'), true);
 
 // Get and sanitize inputs
 $recipient_group = $input['recipient_group'] ?? '';
-$user_id = $input['user_id'] ?? null; // Only for 'specific' group
+$user_id = $input['user_id'] ?? null;
 $subject = htmlspecialchars($input['subject'] ?? '');
 // Convert newlines (\n) to <br> tags so the message body respects line breaks in the HTML email
 $body = nl2br(htmlspecialchars($input['body'] ?? '')); 
-$priority = $input['priority'] ?? 'normal';
-
+$priority = $input['priority'] ?? 'normal'; // Not used in sendEmail(), but captured
 
 if (empty($recipient_group) || empty($subject) || empty($body)) {
     http_response_code(400);
@@ -138,45 +154,47 @@ if ($recipient_group === 'specific' && (empty($user_id) || !is_numeric($user_id)
 // --- CORE LOGIC ---
 
 try {
-    $templates = getEmailTemplates();
-    $template = $templates['admin_broadcast'] ?? null;
-
-    if (!$template) {
-        throw new Exception("Email template 'admin_broadcast' not found. Ensure it is defined in email_temps.php.");
+    if (!function_exists('sendEmail')) {
+        throw new Exception("System email function 'sendEmail' not found. Check inclusion path: ../backend/email.php");
     }
     
-    // 1. Get recipients
+    // 1. Get recipients from the database
     $recipients = getRecipientsByGroup($recipient_group, $user_id);
     $total_recipients = count($recipients);
 
     if ($total_recipients === 0) {
-        echo json_encode(['status' => 'error', 'message' => 'No recipients found for the selected group/ID.']);
+        echo json_encode(['status' => 'error', 'message' => 'No active user recipients found for the selected group/ID.']);
         exit;
     }
 
     $emails_sent_count = 0;
     
-    // 2. Prepare and send email to each recipient
+    // 2. Prepare and send email to each recipient using the system's sendEmail function
     foreach ($recipients as $recipient) {
-        $user_name = htmlspecialchars($recipient['name'] ?? 'Valued Customer');
+        $user_name = $recipient['name'];
         $to_email = $recipient['email'];
 
-        // Apply placeholders to the template subject and body
-        $final_subject = str_replace(
-            ['{{subject_line}}'],
-            [$subject],
-            $template['subject']
-        );
-        
-        $final_html_body = str_replace(
-            ['{{subject_line}}', '{{message_body}}', '{{user_name}}'],
-            [$subject, $body, $user_name],
-            $template['html']
-        );
+        // Build parameters for the system's sendEmail function
+        $send_params = [
+            'to' => $to_email,
+            'template' => 'admin_broadcast', // Use the pre-styled broadcast template
+            'subject' => $subject,          // Use the custom subject line directly
+            'variables' => [
+                'user_name' => $user_name,
+                // These are the placeholders defined in the email_temps.php admin_broadcast HTML:
+                'subject_line' => $subject, 
+                'message_body' => $body, 
+            ],
+        ];
 
-        // Send the email (now calling the actual mail function)
-        if (sendMail($to_email, $final_subject, $final_html_body, $priority)) {
+        // Call the system's PHPMailer-based handler
+        $send_result = sendEmail($send_params);
+        
+        if ($send_result['success']) {
             $emails_sent_count++;
+        } else {
+            // Log the specific failure for this recipient
+            error_log("Failed to send broadcast to {$to_email}: " . ($send_result['error'] ?? 'Unknown PHPMailer Error'));
         }
     }
 
@@ -184,13 +202,13 @@ try {
     if ($emails_sent_count > 0) {
         echo json_encode([
             'status' => 'success',
-            'message' => "Email broadcast successfully sent to {$emails_sent_count} of {$total_recipients} recipients. (Check your email client!)",
+            'message' => "Email broadcast successfully sent to {$emails_sent_count} of {$total_recipients} recipients.",
             'recipients' => $emails_sent_count
         ]);
     } else {
         echo json_encode([
             'status' => 'error',
-            'message' => "Failed to send email to any recipient. Check server error logs and PHP mail configuration.",
+            'message' => "All attempts failed. Check the server email logs for PHPMailer errors.",
             'recipients' => 0
         ]);
     }
