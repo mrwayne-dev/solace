@@ -451,6 +451,79 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                         </div>
                     </div>
 
+
+                    <!-- =========================================================
+                    PENDING DEPOSITS — MODAL
+                    ========================================================= -->
+                <div class="modal" id="pending-deposits-modal">
+                    <div class="modal-overlay"></div>
+
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Pending Deposit Requests</h2>
+                            <button class="modal-close button-close-modal">&times;</button>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <!-- ===== Deposit List Table ===== -->
+                            <div class="mb-3">
+                                <table class="tab-sell-order" id="pending-deposit-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="f14-regular text-Gray">User</th>
+                                            <th class="f14-regular text-Gray">Amount</th>
+                                            <th class="f14-regular text-Gray">Date</th>
+                                            <th class="f14-regular text-Gray">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pending-deposits-list">
+                                        <!-- Inject rows from JS -->
+                                        <!-- Example format:
+                                        <tr>
+                                            <td>John Doe</td>
+                                            <td>$120</td>
+                                            <td>2025-02-01</td>
+                                            <td><button class="complete-deposit-btn" data-id="1">Complete</button></td>
+                                        </tr>
+                                        -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- ===== Deposit Completion Input Section ===== -->
+                            <div id="deposit-complete-section" class="hidden">
+                                <hr class="divider mb-12">
+
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Deposit Address (Transaction Hash/Wallet)</label>
+                                    <input type="text" class="form-control" 
+                                        id="deposit-address-input" 
+                                        placeholder="Enter deposit address or hash..." />
+                                </div>
+
+                                <div id="deposit-error" class="form-error hidden">Please provide a valid address.</div>
+
+                                <div class="d-flex justify-content-between gap-2 mt-2">
+                                    <button class="tf-button bg-GrayLight text-Black" id="update-deposit-btn">
+                                        Update Deposit
+                                    </button>
+
+                                    <button class="modal-confirm-btn" id="confirm-complete-deposit-btn">
+                                        Complete Deposit
+                                    </button>
+
+                                    <button class="tf-button bg-Accent text-Black" id="cancel-deposit-btn">
+                                        Cancel Deposit
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
                 </div>
                 <!-- /section-content-right -->
             </div>

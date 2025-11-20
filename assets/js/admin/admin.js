@@ -147,6 +147,7 @@
         setTimeout(() => { modal.find('input, button, select, textarea').first().focus(); }, 10);
     }
     
+    
     /**
      * Closes a modal and resets the form if it's the email modal.
      */
@@ -380,7 +381,17 @@
         
         // Admin-specific bindings
         bindQuickActions(); 
-        bindEmailForm(); 
+        bindEmailForm();
+
+
+        // Open Pending Deposits Modal
+        $('a[href="/admin/transactions/pending"]').on('click', function (e) {
+            e.preventDefault();
+            showModal('#pending-deposits-modal');
+        });
+
+
+        
         
         // Initial data load 
         loadAdminDashboardData(); 
