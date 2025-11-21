@@ -227,3 +227,5 @@
 [2025-11-20 10:06:44] SENT → aleruchi0987@gmail.com | Template: admin_broadcast | Subject: Testing Mail
 [2025-11-20 10:06:48] SENT → davidurowayino255@gmail.com | Template: admin_broadcast | Subject: Testing Mail
 [2025-11-20 12:33:59] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
+[2025-11-20 23:17:58] ERROR → aleruchi0987@gmail.com | SMTP Error: Could not connect to SMTP host. Failed to connect to server | Mailer: SMTP Error: Could not connect to SMTP host. Failed to connect to server SMTP server error: Failed to connect to server Additional SMTP info: php_network_getaddresses: getaddrinfo for mail.spacemail.com failed: No such host is known. 
+[2025-11-20 23:21:06] ERROR → aleruchi0987@gmail.com | SMTP Error: Could not connect to SMTP host. Failed to connect to server | Mailer: SMTP Error: Could not connect to SMTP host. Failed to connect to server SMTP server error: Failed to connect to server Additional SMTP info: php_network_getaddresses: getaddrinfo for mail.spacemail.com failed: No such host is known. 

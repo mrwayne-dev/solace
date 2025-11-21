@@ -1,0 +1,357 @@
+/**
+ * ============================================================
+ * HealthRunCare Admin Users.js
+ * Purpose: Frontend logic for the Admin Users management page.
+ * Handles: Data fetching, table rendering, pagination, search/filter, and user actions (Edit/Delete/Email).
+ * ============================================================
+ */
+;(function ($) {
+    "use strict";
+
+    // Global state for pagination and filtering
+    let currentPage = 1;
+    let currentFilter = 'all';
+    let currentSearch = '';
+    const itemsPerPage = 10; // Must match the backend API's assumption
+
+    // --- Core Data Fetcher & UI Renderer ---
+    async function loadUsers(page = 1, filter = 'all', search = '') {
+        const tableBody = $('#users-table-body');
+        const paginationEl = $('#pagination');
+        tableBody.empty().html('<tr><td colspan="6" class="text-center text-Primary f14-regular">Loading users...</td></tr>');
+        paginationEl.empty();
+
+        currentPage = page;
+        currentFilter = filter;
+        currentSearch = search;
+        
+        // Show loader/disable controls if needed (optional)
+        // ...
+
+        try {
+            const res = await fetchApi('/api/admin/users.php', {
+                page: page,
+                filter: filter,
+                search: search,
+                per_page: itemsPerPage // Pass this for clarity, even if backend defaults
+            }, "GET");
+
+            if (res.status !== 'success') {
+                showToast(res.message || 'Failed to load user list.', 'error');
+                tableBody.html('<tr><td colspan="6" class="text-center text-Red f14-regular">Error loading data.</td></tr>');
+                return;
+            }
+
+            const data = res.data;
+            updateMetrics(data.metrics);
+            renderUsersTable(data.users);
+            renderPagination(data.current_page, data.total_pages);
+
+        } catch (error) {
+            console.error('API Error loading users:', error);
+            showToast('A network error occurred while fetching user data.', 'error');
+            tableBody.html('<tr><td colspan="6" class="text-center text-Red f14-regular">Network error. Check console.</td></tr>');
+        }
+    }
+
+    // --- Metric Update ---
+    function updateMetrics(m) {
+        if (!m) return;
+        $('#total-users').text(m.total_users ?? 0);
+        $('#active-users').text(m.active_users ?? 0);
+        $('#admin-count').text(m.admin_count ?? 0);
+        $('#new-today').text(m.new_today ?? 0);
+        // Recount animation if available (assuming countto.js is loaded later)
+        if (typeof counter === 'function') {
+            counter();
+        }
+    }
+
+    // --- Table Renderer ---
+    function renderUsersTable(users) {
+        const tableBody = $('#users-table-body');
+        tableBody.empty();
+
+        if (!users || users.length === 0) {
+            tableBody.html('<tr><td colspan="6" class="text-center text-Gray f14-regular">No users found matching current criteria.</td></tr>');
+            return;
+        }
+
+        users.forEach(user => {
+            const statusClass = (user.status === 'active') ? 'text-Green' : 'text-Red';
+            const roleClass = (user.role === 'admin') ? 'text-Primary f14-bold' : 'text-GrayDark';
+            const actionDropdown = `
+                <div class="dropdown default style-fill actions-dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Actions
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a href="#" class="dropdown-item action-edit" data-id="${user.id}" data-name="${user.display_name}" data-email="${user.email}" data-role="${user.role}" data-status="${user.status}">Edit User</a></li>
+                        <li><a href="#" class="dropdown-item action-email" data-id="${user.id}" data-email="${user.email}" data-name="${user.display_name}">Send Email</a></li>
+                        <li class="dropdown-divider"></li>
+                        <li><a href="#" class="dropdown-item action-delete text-Red" data-id="${user.id}" data-name="${user.display_name}">Delete User</a></li>
+                    </ul>
+                </div>
+            `;
+            
+            const row = `
+                <tr data-id="${user.id}">
+                    <td class="f14-regular">${user.display_name} (ID: ${user.id})</td>
+                    <td class="f14-regular">${user.email}</td>
+                    <td class="f14-regular ${roleClass}">${user.role.toUpperCase()}</td>
+                    <td class="f14-regular ${statusClass}">${user.status.toUpperCase()}</td>
+                    <td class="f14-regular text-Gray">${user.last_login}</td>
+                    <td class="f14-regular">${actionDropdown}</td>
+                </tr>
+            `;
+            tableBody.append(row);
+        });
+    }
+
+    // --- Pagination Renderer ---
+    function renderPagination(currentPage, totalPages) {
+        const paginationEl = $('#pagination');
+        paginationEl.empty();
+        if (totalPages <= 1) return;
+
+        // Previous button
+        paginationEl.append(`<button class="tf-button style-1 f12-bold px-3 py-1 page-link ${currentPage === 1 ? 'disabled' : ''}" data-page="${currentPage - 1}">Previous</button>`);
+
+        // Page buttons (show max 5 pages centered around current)
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, currentPage + 2);
+
+        if (currentPage <= 3) {
+            endPage = Math.min(totalPages, 5);
+            startPage = 1;
+        } else if (currentPage >= totalPages - 2) {
+            startPage = Math.max(1, totalPages - 4);
+            endPage = totalPages;
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            const activeClass = i === currentPage ? 'bg-Primary text-White' : 'bg-GrayLight text-Black';
+            paginationEl.append(`<button class="tf-button style-1 f12-bold px-3 py-1 page-link ${activeClass}" data-page="${i}">${i}</button>`);
+        }
+        
+        // Next button
+        paginationEl.append(`<button class="tf-button style-1 f12-bold px-3 py-1 page-link ${currentPage === totalPages ? 'disabled' : ''}" data-page="${currentPage + 1}">Next</button>`);
+        
+        // Bind click events
+        paginationEl.find('.page-link').on('click', function(e) {
+            e.preventDefault();
+            if ($(this).hasClass('disabled')) return;
+            const newPage = $(this).data('page');
+            loadUsers(newPage, currentFilter, currentSearch);
+        });
+    }
+
+    // --- Action Handlers ---
+
+    // 1. Edit User Modal & Form
+    function bindEditUser() {
+        $(document).on('click', '.action-edit', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // FIX: Stop event propagation to prevent Bootstrap dropdown from blocking modal
+            
+            const id = $(this).data('id');
+            const name = $(this).data('name');
+            const email = $(this).data('email');
+            const role = $(this).data('role');
+            const status = $(this).data('status');
+
+            $('#edit-user-id').val(id);
+            $('#edit-name').val(name);
+            $('#edit-email').val(email);
+            $('#edit-role').val(role);
+            
+            // Map 'disabled' to 'suspended' for the modal dropdown (as used in PHP logic)
+            $('#edit-status').val(status === 'disabled' ? 'suspended' : status);
+            
+            showModal('#edit-user-modal');
+        });
+
+        $('#edit-user-form').on('submit', async function(e) {
+            e.preventDefault();
+
+            const userId = $('#edit-user-id').val();
+            const name = $('#edit-name').val();
+            const email = $('#edit-email').val();
+            const role = $('#edit-role').val();
+
+            // Convert UI 'suspended' to backend 'disabled'
+            let status = $('#edit-status').val() === 'suspended' ? 'disabled' : $('#edit-status').val();
+
+            if (!userId || !name || !role || !status) {
+                showToast('Missing required fields for update.', 'error');
+                return;
+            }
+
+            showToast(`Updating user ID ${userId}...`, 'info', 5000);
+
+            try {
+                const res = await fetchApi('/api/admin/users.php', {
+                    action: 'edit_user',
+                    user_id: userId,
+                    name: name,
+                    email: email,
+                    role: role,
+                    status: status
+                }, "POST");
+
+                if (res.status === 'success') {
+                    showToast(res.message, 'success');
+                    closeModal('#edit-user-modal');
+                    await loadUsers(currentPage, currentFilter, currentSearch); 
+                } else {
+                    showToast(res.message || 'Update failed.', 'error');
+                }
+            } catch (error) {
+                console.error('Edit user error:', error);
+                showToast('A network error occurred or the server failed to respond.', 'error');
+            }
+        });
+
+    }
+
+    // 2. Send Email Modal & Form
+    function bindSendEmail() {
+        $(document).on('click', '.action-email', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // FIX: Stop event propagation to prevent Bootstrap dropdown from blocking modal
+            
+            const id = $(this).data('id');
+            const email = $(this).data('email');
+            const name = $(this).data('name');
+
+            $('#email-user-id').val(id);
+            $('#email-to').val(`${name} <${email}>`);
+            $('#send-email-modal h2').text(`Send Email to ${name}`);
+
+            showModal('#send-email-modal');
+        });
+
+        $('#send-email-form').on('submit', async function(e) {
+            e.preventDefault();
+
+            const userId = $('#email-user-id').val();
+            const subject = $('#email-subject').val();
+            const body = $('#email-body').val();
+
+            if (!userId || !subject || !body) {
+                showToast('Email subject and body are required.', 'error');
+                return;
+            }
+
+            showToast(`Queuing email for user ID ${userId}...`, 'info', 5000);
+
+            try {
+                // Note: We use the 'users.php' API for specific user emails from the table.
+                const res = await fetchApi('/api/admin/users.php', {
+                    action: 'send_email',
+                    user_id: userId,
+                    subject: subject,
+                    body: body
+                }, "POST");
+
+                if (res.status === 'success') {
+                    showToast(res.message, 'success');
+                    closeModal('#send-email-modal');
+                    $('#send-email-form')[0].reset(); // Reset form content
+                } else {
+                    showToast(res.message || 'Email sending failed.', 'error');
+                }
+            } catch (error) {
+                console.error('Send email error:', error);
+                showToast('A network error occurred or the server failed to respond.', 'error');
+            }
+        });
+    }
+
+    // 3. Delete User Modal & Action
+    function bindDeleteUser() {
+        let userToDeleteId = null;
+
+        $(document).on('click', '.action-delete', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // FIX: Stop event propagation to prevent Bootstrap dropdown from blocking modal
+            
+            const id = $(this).data('id');
+            const name = $(this).data('name');
+            
+            userToDeleteId = id;
+
+            $('#delete-user-name').text(`${name} (ID: ${id})`);
+            showModal('#delete-user-modal');
+        });
+
+        $('#confirm-delete').on('click', async function() {
+            if (!userToDeleteId) {
+                showToast('No user selected for deletion.', 'error');
+                return;
+            }
+
+            // Disable button and show progress
+            const originalText = $(this).text();
+            $(this).text('Deleting...').prop('disabled', true);
+            showToast(`Deleting user...`, 'warning');
+
+            try {
+                const res = await fetchApi('/api/admin/users.php', {
+                    action: 'delete_user',
+                    user_id: userToDeleteId
+                }, "POST");
+
+                if (res.status === 'success') {
+                    showToast(res.message, 'success');
+                    closeModal('#delete-user-modal');
+                    // Refresh current page. If the page is now empty, go back one page.
+                    await loadUsers(currentPage, currentFilter, currentSearch); 
+                } else {
+                    showToast(res.message || 'Deletion failed.', 'error');
+                }
+            } catch (error) {
+                console.error('Delete user error:', error);
+                showToast('A network error occurred or the server failed to respond.', 'error');
+            } finally {
+                $(this).text(originalText).prop('disabled', false);
+                userToDeleteId = null;
+            }
+        });
+    }
+    
+    // 4. Search and Filter Handlers
+    function bindSearchAndFilter() {
+        // Search form submission
+        $('.form-search').on('submit', function(e) {
+            e.preventDefault();
+            const searchVal = $('#user-search').val().trim();
+            loadUsers(1, currentFilter, searchVal);
+        });
+
+        // Filter dropdown click
+        $('.dropdown-menu a[data-filter]').on('click', function(e) {
+            e.preventDefault();
+            const filterVal = $(this).data('filter');
+            // Update the button text to show current filter
+            $(this).closest('.dropdown').find('button').html(`<span class="iconify" data-icon="mdi:filter"></span> ${$(this).text()}`);
+            loadUsers(1, filterVal, currentSearch);
+        });
+    }
+
+    // --- Initialization ---
+    $(function () {
+        // Ensure utility functions from admin.js (like showModal, closeModal, showToast) are available.
+        // Assuming the admin.js script loads first, these functions should be available globally/via closure.
+        
+        // Bind all interactive elements
+        bindEditUser();
+        bindSendEmail();
+        bindDeleteUser();
+        bindSearchAndFilter();
+
+        // Initial load of the user list
+        loadUsers(1); 
+    });
+
+})(jQuery);

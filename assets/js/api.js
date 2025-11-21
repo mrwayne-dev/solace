@@ -24,9 +24,15 @@ function getApiPath(endpoint) {
 
 
 /**
- * Universal API fetch wrapper with loader + error handling
+ * Universal API fetch wrapper (Defaults to POST, handles GET via internal routing)
  */
-async function fetchApi(endpoint, payload = {}) {
+async function fetchApi(endpoint, payload = {}, method = 'POST') {
+  // 🟢 CRITICAL: Reroute GET requests to the GET handler.
+  if (method.toUpperCase() === 'GET') {
+      return fetchApiGet(endpoint, payload);
+  }
+  
+  // --- POST Logic ---
   const loader = document.getElementById('loader');
   loader?.classList.remove('hidden');
   loader?.classList.remove('fade-out');
@@ -66,7 +72,7 @@ async function fetchApi(endpoint, payload = {}) {
     return result;
 
   } catch (error) {
-    console.error('API Error:', error);
+    console.error('API Error (POST):', error);
     return { status: 'error', message: 'Network error — please try again.' };
   } finally {
     loader?.classList.add('fade-out');
@@ -75,17 +81,24 @@ async function fetchApi(endpoint, payload = {}) {
 }
 
 
-
 /**
- * GET variant of fetchApi (no payload/body)
+ * GET variant of fetchApi (payload is converted to URL query parameters)
  */
-async function fetchApiGet(endpoint) {
+async function fetchApiGet(endpoint, params = {}) {
   const loader = document.getElementById('loader');
   loader?.classList.remove('hidden');
   loader?.classList.remove('fade-out');
 
   try {
-    const response = await fetch(endpoint, {
+    let fullEndpoint = getApiPath(endpoint);
+    
+    // 🟢 Build query string from params object
+    const queryString = new URLSearchParams(params).toString();
+    if (queryString) {
+        fullEndpoint += (fullEndpoint.includes('?') ? '&' : '?') + queryString;
+    }
+    
+    const response = await fetch(fullEndpoint, {
       method: 'GET',
       credentials: 'include',
     });
@@ -95,14 +108,27 @@ async function fetchApiGet(endpoint) {
     try {
       result = JSON.parse(raw);
     } catch (e) {
-      console.error('Invalid JSON from', endpoint, raw);
-      throw new Error('Server returned invalid response');
+      console.warn(
+        `%cInvalid JSON from ${fullEndpoint}`,
+        'color: orange; font-weight: bold;',
+        '\nRaw response:\n',
+        raw
+      );
+      return { status: 'error', message: 'Server returned invalid response', raw };
     }
 
-    if (!response.ok) throw new Error(result.message || 'Request failed');
+    // Check response status outside of response.ok to extract error message
+    if (!response.ok) {
+        return { 
+            status: 'error', 
+            message: result?.message || `Request failed (HTTP ${response.status})`
+        };
+    }
+    
     return result;
+
   } catch (error) {
-    console.error('API Error:', error);
+    console.error('API Error (GET):', error);
     return { status: 'error', message: error.message || 'Network error' };
   } finally {
     loader?.classList.add('fade-out');
@@ -228,9 +254,9 @@ if (registerForm) {
     e.preventDefault();
 
     const firstName = (document.getElementById('first_name') || registerForm.querySelector('input[name="first_name"]'))?.value.trim() || '';
-    const lastName  = (document.getElementById('last_name') || registerForm.querySelector('input[name="last_name"]'))?.value.trim() || '';
-    const email     = (document.getElementById('email') || registerForm.querySelector('input[name="email"]'))?.value.trim() || '';
-    const password  = (document.getElementById('password') || registerForm.querySelector('input[name="password"]'))?.value.trim() || '';
+    const lastName  = (document.getElementById('last_name') || registerForm.querySelector('input[name="last_name"]'))?.value.trim() || '';
+    const email     = (document.getElementById('email') || registerForm.querySelector('input[name="email"]'))?.value.trim() || '';
+    const password  = (document.getElementById('password') || registerForm.querySelector('input[name="password"]'))?.value.trim() || '';
 
     if (!firstName || !lastName || !email || !password) {
       showToast('Please complete all fields.', 'error');
@@ -324,8 +350,8 @@ if (step3Form) {
 }
 
 /* =======================================================
-   LOGOUT HANDLER (Graceful Transition)
-   ======================================================= */
+    LOGOUT HANDLER (Graceful Transition)
+    ======================================================= */
 const logoutBtn = document.getElementById('logout-btn');
 if (logoutBtn) {
   logoutBtn.addEventListener('click', (e) => {
