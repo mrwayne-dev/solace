@@ -6,6 +6,13 @@
  * ============================================================
  */
 ;(function ($) {
+    // Fix Bootstrap dropdown blocking links
+$(document).on('click', '.dropdown-menu .dropdown-item', function (e) {
+    e.preventDefault();
+    e.stopPropagation(); 
+});
+
+
     "use strict";
 
     // Global state for pagination and filtering
@@ -78,30 +85,83 @@
         }
 
         users.forEach(user => {
-            const statusClass = (user.status === 'active') ? 'text-Green' : 'text-Red';
-            const roleClass = (user.role === 'admin') ? 'text-Primary f14-bold' : 'text-GrayDark';
+            
+            // Determine Role Badge Colors/Classes
+            let roleBadgeClass;
+            if (user.role === 'admin') {
+                // Admin role uses Primary color badge
+                roleBadgeClass = 'bg-Primary text-White';
+            } else {
+                // User role uses lighter, neutral background
+                roleBadgeClass = 'bg-Primary text-White ';
+            }
+            
+            // Determine Status Badge Colors/Classes
+            let statusBadgeClass;
+            if (user.status === 'active') {
+                // Active status uses Green background
+                statusBadgeClass = 'bg-Green text-White';
+            } else { 
+                // Disabled/Suspended uses Salmon/Red background
+                statusBadgeClass = 'bg-Salmon text-White'; 
+            }
+            
             const actionDropdown = `
                 <div class="dropdown default style-fill actions-dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Actions
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a href="#" class="dropdown-item action-edit" data-id="${user.id}" data-name="${user.display_name}" data-email="${user.email}" data-role="${user.role}" data-status="${user.status}">Edit User</a></li>
-                        <li><a href="#" class="dropdown-item action-email" data-id="${user.id}" data-email="${user.email}" data-name="${user.display_name}">Send Email</a></li>
+                        <li>
+                            <button type="button" class="dropdown-item action-edit"
+                                data-id="${user.id}"
+                                data-name="${user.display_name}"
+                                data-email="${user.email}"
+                                data-role="${user.role}"
+                                data-status="${user.status}">
+                                Edit User
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button" class="dropdown-item action-email"
+                                data-id="${user.id}"
+                                data-email="${user.email}"
+                                data-name="${user.display_name}">
+                                Send Email
+                            </button>
+                        </li>
                         <li class="dropdown-divider"></li>
-                        <li><a href="#" class="dropdown-item action-delete text-Red" data-id="${user.id}" data-name="${user.display_name}">Delete User</a></li>
+                        <li>
+                            <button type="button" class="dropdown-item action-delete text-Red"
+                                data-id="${user.id}"
+                                data-name="${user.display_name}">
+                                Delete User
+                            </button>
+                        </li>
                     </ul>
                 </div>
             `;
             
+            // FIXED: Added tf-table-item class and data-label attributes for correct table rendering
             const row = `
-                <tr data-id="${user.id}">
-                    <td class="f14-regular">${user.display_name} (ID: ${user.id})</td>
-                    <td class="f14-regular">${user.email}</td>
-                    <td class="f14-regular ${roleClass}">${user.role.toUpperCase()}</td>
-                    <td class="f14-regular ${statusClass}">${user.status.toUpperCase()}</td>
-                    <td class="f14-regular text-Gray">${user.last_login}</td>
-                    <td class="f14-regular">${actionDropdown}</td>
+                <tr data-id="${user.id}" class="tf-table-item">
+                    <td class="f14-regular" data-label="Name">${user.display_name} (ID: ${user.id})</td>
+                    <td class="f14-regular" data-label="Email">${user.email}</td>
+                    
+                    <td data-label="Role">
+                        <div class="box-status ${roleBadgeClass}">
+                            ${user.role.toUpperCase()}
+                        </div>
+                    </td>
+                    
+                    <td data-label="Status">
+                        <div class="box-status ${statusBadgeClass}">
+                            ${user.status.toUpperCase()}
+                        </div>
+                    </td>
+                    
+                    <td class="f14-regular text-Gray" data-label="Last Login">${user.last_login}</td>
+                    <td class="f14-regular" data-label="Actions">${actionDropdown}</td>
                 </tr>
             `;
             tableBody.append(row);

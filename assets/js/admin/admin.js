@@ -7,6 +7,15 @@
 ;(function ($) {
     "use strict";
 
+    // Make formatCurrency globally available
+window.formatCurrency = function(amount) {
+    if (amount == null || isNaN(Number(amount))) return '0.00';
+    return Number(amount).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+};
+
     /* ===================== Core UI Behaviors (Essential Helpers) ===================== */
 
     var selectImages = function () {
@@ -145,6 +154,7 @@
         modal.addClass('is-open').attr('aria-hidden', 'false');
         modal.find('[data-modal-close], .button-close-modal, .modal-overlay').off('click').on('click', () => closeModal(selector));
         setTimeout(() => { modal.find('input, button, select, textarea').first().focus(); }, 10);
+        $('body').css('overflow', 'hidden');
     }
     
     
@@ -165,6 +175,8 @@
                  $('#email-user-id').prop('required', false);
             }
         }, 300);
+        $('body').css('overflow', 'auto');
+
     }
     
     // --- Admin Dashboard Core Functions (Data Loading) ---
@@ -497,6 +509,11 @@
         loadAdminDashboardData(); 
 
         window.refreshDashboard = loadAdminDashboardData;
+
+        // ------- Expose Global Modal Functions -------
+        window.showModal = showModal;
+        window.closeModal = closeModal;
+
     });
 
 })(jQuery);

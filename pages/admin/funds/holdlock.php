@@ -245,7 +245,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                             <div class="f12-bold text-White">Interest</div>
                                             <div class="f12-bold text-White">Lock Until</div>
                                             <div class="f12-bold text-White">Status</div>
-                                            <div class="f12-bold text-White">Actions</div>
                                         </div>
                                         <table class="list-transaction-content content-sort w-100">
                                             <tbody id="active-holdlock-body">
@@ -267,7 +266,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                             <div class="f12-bold text-White">Interest Earned</div>
                                             <div class="f12-bold text-White">Maturity Date</div>
                                             <div class="f12-bold text-White">Total Payout</div>
-                                            <div class="f12-bold text-White">Actions</div>
                                         </div>
                                         <table class="list-transaction-content content-sort w-100">
                                             <tbody id="matured-holdlock-body">
@@ -331,29 +329,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                     <button type="submit" class="modal-confirm-btn">Save Plan</button>
                                 </div>
                             </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Force Unlock HoldLock Modal -->
-                <div class="modal" id="force-unlock-holdlock-modal">
-                    <div class="modal-overlay"></div>
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2>Force Unlock HoldLock</h2>
-                            <button class="button-close-modal">×</button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Force unlock <strong id="unlock-holdlock-user"></strong>'s savings?</p>
-                            <ul class="list-unstyled mt-3">
-                                <li><strong>Principal:</strong> $<span id="unlock-principal">0.00</span></li>
-                                <li><strong>Interest:</strong> $<span id="unlock-interest">0.00</span></li>
-                                <li><strong>Total Payout:</strong> $<span id="unlock-total">0.00</span></li>
-                            </ul>
-                            <div class="d-flex justify-content-end gap-2 mt-4">
-                                <button type="button" class="button-close-modal tf-button bg-GrayLight text-Black">Cancel</button>
-                                <button type="button" id="confirm-holdlock-unlock" class="modal-confirm-btn">Unlock Now</button>
-                            </div>
                         </div>
                     </div>
                 </div>

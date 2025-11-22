@@ -226,7 +226,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                             <div class="f12-bold text-White">Amount</div>
                                             <div class="f12-bold text-White">Completed On</div>
                                             <div class="f12-bold text-White">Earnings</div>
-                                            <div class="f12-bold text-White">Actions</div>
                                         </div>
                                         <table class="list-transaction-content content-sort w-100">
                                             <tbody id="completed-maintenance-body">

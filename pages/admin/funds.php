@@ -246,7 +246,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                             <div class="f12-bold text-White">Term</div>
                                             <div class="f12-bold text-White">Status</div>
                                             <div class="f12-bold text-White">Start Date</div>
-                                            <div class="f12-bold text-White">Actions</div>
                                         </div>
                                         <table class="list-transaction-content content-sort w-100">
                                             <tbody id="active-investments-body">
@@ -268,7 +267,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                             <div class="f12-bold text-White">ROI Earned</div>
                                             <div class="f12-bold text-White">Maturity Date</div>
                                             <div class="f12-bold text-White">Total Payout</div>
-                                            <div class="f12-bold text-White">Actions</div>
                                         </div>
                                         <table class="list-transaction-content content-sort w-100">
                                             <tbody id="matured-investments-body">
@@ -408,24 +406,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                     </div>
                 </div>
 
-                <!-- Force Unlock Modal -->
-                <div class="modal" id="force-unlock-modal">
-                    <div class="modal-overlay"></div>
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2>Force Unlock Investment</h2>
-                            <button class="button-close-modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Are you sure you want to force unlock this investment for <strong id="unlock-user"></strong>?</p>
-                            <p>Total payout: <strong id="unlock-payout">$0.00</strong></p>
-                            <div class="d-flex justify-content-end gap-2 mt-4">
-                                <button type="button" class="button-close-modal tf-button bg-GrayLight text-Black">Cancel</button>
-                                <button type="button" id="confirm-unlock" class="modal-confirm-btn">Unlock Now</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
             </div>
         </div>

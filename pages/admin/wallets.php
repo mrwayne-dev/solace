@@ -219,10 +219,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                         </div>
                                     </form>
                                     <div class="right">
-                                        <a href="#" id="export-csv" class="tf-button style-2 f12-bold d-md-flex d-none">
-                                            <span class="iconify" data-icon="mdi:file-export"></span>
-                                            Export CSV
-                                        </a>
                                         <div class="dropdown default style-fill">
                                             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                                 <span class="iconify" data-icon="mdi:filter"></span> Filter
@@ -292,45 +288,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                         </div>
                     </div>
                 </div>
-
-                <!-- Pending Deposits Modal -->
-                <div class="modal" id="pending-deposits-modal">
-                    <div class="modal-overlay"></div>
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2>Pending Deposits</h2>
-                            <button class="button-close-modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <div id="pending-deposits-list" class="list-wallet-activity">
-                                <!-- JS will populate each .pending-item -->
-                            </div>
-                            <div class="mt-3 text-center">
-                                <div class="note no-pending hidden">No pending deposits.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pending Withdrawals Modal -->
-                <div class="modal" id="pending-withdrawals-modal">
-                    <div class="modal-overlay"></div>
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2>Pending Withdrawals</h2>
-                            <button class="button-close-modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <div id="pending-withdrawals-list" class="list-wallet-activity">
-                                <!-- JS will populate each .pending-item -->
-                            </div>
-                            <div class="mt-3 text-center">
-                                <div class="note no-pending hidden">No pending withdrawals.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
     </div>
@@ -347,7 +304,8 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
 <script src="../../assets/js/jquery.min.js"></script>
 <script src="../../assets/js/bootstrap.min.js"></script>
 <script src="../../assets/js/bootstrap-select.min.js" defer></script>
-<script src="../../assets/js/dashboard.js" defer></script>
+<script src="../../assets/js/admin/admin.js" defer></script>
+<script src="../../assets/js/admin/wallet.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 </body>

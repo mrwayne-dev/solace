@@ -229,7 +229,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                             <div class="f12-bold text-White">Target</div>
                                             <div class="f12-bold text-White">End Date</div>
                                             <div class="f12-bold text-White">Status</div>
-                                            <div class="f12-bold text-White">Actions</div>
                                         </div>
                                         <table class="list-transaction-content content-sort w-100">
                                             <tbody id="active-trustfund-body">
@@ -250,7 +249,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                             <div class="f12-bold text-White">Payout Amount</div>
                                             <div class="f12-bold text-White">Maturity Date</div>
                                             <div class="f12-bold text-White">Beneficiary</div>
-                                            <div class="f12-bold text-White">Actions</div>
                                         </div>
                                         <table class="list-transaction-content content-sort w-100">
                                             <tbody id="matured-trustfund-body">
@@ -311,29 +309,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                     <button type="submit" class="modal-confirm-btn">Save Scheme</button>
                                 </div>
                             </form>
-                        </div>
-                    </div>
-                </div>
-                <!-- Initiate Payout Modal -->
-                <div class="modal" id="initiate-payout-modal">
-                    <div class="modal-overlay"></div>
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2>Initiate TrustFund Payout</h2>
-                            <button class="button-close-modal">×</button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Initiate payout for <strong id="payout-user"></strong>?</p>
-                            <ul class="list-unstyled mt-3">
-                                <li><strong>Scheme:</strong> <span id="payout-scheme"></span></li>
-                                <li><strong>Total Contributed:</strong> $<span id="payout-contributed">0.00</span></li>
-                                <li><strong>Payout Amount:</strong> $<span id="payout-amount">0.00</span></li>
-                                <li><strong>Beneficiary:</strong> <span id="payout-beneficiary"></span></li>
-                            </ul>
-                            <div class="d-flex justify-content-end gap-2 mt-4">
-                                <button type="button" class="button-close-modal tf-button bg-GrayLight text-Black">Cancel</button>
-                                <button type="button" id="confirm-payout" class="modal-confirm-btn">Initiate Payout</button>
-                            </div>
                         </div>
                     </div>
                 </div>

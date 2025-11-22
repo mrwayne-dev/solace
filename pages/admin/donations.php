@@ -302,8 +302,7 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                             <div class="f12-bold text-White">Campaign</div>
                                             <div class="f12-bold text-White">Amount</div>
                                             <div class="f12-bold text-White">Date</div>
-                                            <div class="f12-bold text-White">Status</div>
-                                            <div class="f12-bold text-White">Actions</div>
+                                            <div class="f12-bold bg-Primary text-White">Status</div>
                                         </div>
                                         <table class="list-transaction-content content-sort w-100">
                                             <tbody id="donations-table-body">
@@ -379,6 +378,8 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                     </div>
                 </div>
 
+                
+
             </div>
         </div>
     </div>
@@ -395,7 +396,8 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
 <script src="../../assets/js/jquery.min.js"></script>
 <script src="../../assets/js/bootstrap.min.js"></script>
 <script src="../../assets/js/bootstrap-select.min.js" defer></script>
-<script src="../../assets/js/dashboard.js" defer></script>
+<script src="../../assets/js/admin/admin.js" defer></script>
+<script src="../../assets/js/admin/donations.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 </body>

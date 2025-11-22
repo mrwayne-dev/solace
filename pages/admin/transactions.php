@@ -270,7 +270,9 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
     <script src="../../assets/js/jquery.min.js"></script>
     <script src="../../assets/js/bootstrap.min.js"></script>
     <script src="../../assets/js/bootstrap-select.min.js" defer></script>
-    <script src="../../assets/js/dashboard.js" defer></script>
+    <script src="../../assets/js/admin/admin.js" defer></script>
+    <script src="../../assets/js/admin/transactions.js" defer></script>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 </body>

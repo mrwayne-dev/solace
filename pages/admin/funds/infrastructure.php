@@ -229,7 +229,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                             <div class="f12-bold text-White">Remaining</div>
                                             <div class="f12-bold text-White">Progress</div>
                                             <div class="f12-bold text-White">Status</div>
-                                            <div class="f12-bold text-White">Actions</div>
                                         </div>
                                         <table class="list-transaction-content content-sort w-100">
                                             <tbody id="active-infra-body">
@@ -249,7 +248,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                             <div class="f12-bold text-White">Total Spent</div>
                                             <div class="f12-bold text-White">Completion Date</div>
                                             <div class="f12-bold text-White">Outcome</div>
-                                            <div class="f12-bold text-White">Actions</div>
                                         </div>
                                         <table class="list-transaction-content content-sort w-100">
                                             <tbody id="completed-infra-body">
@@ -315,34 +313,7 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                         </div>
                     </div>
                 </div>
-                <!-- Record Expenditure Modal -->
-                <div class="modal" id="record-expenditure-modal">
-                    <div class="modal-overlay"></div>
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2>Record Expenditure</h2>
-                            <button class="button-close-modal">×</button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Record spending for <strong id="expenditure-project"></strong>?</p>
-                            <form id="expenditure-form">
-                                <input type="hidden" id="expenditure-project-id">
-                                <div class="form-group mb-3">
-                                    <label>Amount (USD) <span class="text-Red">*</span></label>
-                                    <input type="number" step="0.01" class="form-control" id="expenditure-amount" required>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <label>Description</label>
-                                    <textarea class="form-control" id="expenditure-desc" rows="3"></textarea>
-                                </div>
-                                <div class="d-flex justify-content-end gap-2">
-                                    <button type="button" class="button-close-modal tf-button bg-GrayLight text-Black">Cancel</button>
-                                    <button type="submit" class="modal-confirm-btn">Record</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>

@@ -230,17 +230,13 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                             </div>
                                         </form>
                                         <div class="right">
-                                            <a href="#" id="export-csv" class="tf-button style-2 f12-bold d-md-flex d-none">
-                                                <span class="iconify" data-icon="mdi:file-export"></span>
-                                                Export CSV
-                                            </a>
                                             <div class="dropdown default style-fill">
                                                 <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                                     <span class="iconify" data-icon="mdi:filter"></span> Filter
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-end">
                                                     <li><a href="#" data-filter="all">All Users</a></li>
-                                                    <li><a href "#" data-filter="active">Active Only</a></li>
+                                                    <li><a href = "#" data-filter="active">Active Only</a></li>
                                                     <li><a href="#" data-filter="suspended">Suspended</a></li>
                                                     <li><a href="#" data-filter="admin">Admins Only</a></li>
                                                 </ul>

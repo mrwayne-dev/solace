@@ -229,3 +229,18 @@
 [2025-11-20 12:33:59] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
 [2025-11-20 23:17:58] ERROR → aleruchi0987@gmail.com | SMTP Error: Could not connect to SMTP host. Failed to connect to server | Mailer: SMTP Error: Could not connect to SMTP host. Failed to connect to server SMTP server error: Failed to connect to server Additional SMTP info: php_network_getaddresses: getaddrinfo for mail.spacemail.com failed: No such host is known. 
 [2025-11-20 23:21:06] ERROR → aleruchi0987@gmail.com | SMTP Error: Could not connect to SMTP host. Failed to connect to server | Mailer: SMTP Error: Could not connect to SMTP host. Failed to connect to server SMTP server error: Failed to connect to server Additional SMTP info: php_network_getaddresses: getaddrinfo for mail.spacemail.com failed: No such host is known. 
+[2025-11-21 10:09:12] SENT → aleruchi0987@gmail.com | Template: admin_broadcast | Subject: Hello
+[2025-11-21 10:34:31] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
+[2025-11-21 10:45:46] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-21 10:45:50] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-21 10:45:58] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-21 10:46:03] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-21 10:50:44] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
+[2025-11-21 10:50:59] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
+[2025-11-21 23:17:21] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-21 23:17:25] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-21 23:19:04] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-21 23:19:08] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-21 23:19:37] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
+[2025-11-21 23:19:56] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
+[2025-11-21 23:24:22] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
