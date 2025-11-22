@@ -1,5 +1,5 @@
 /* =======================================================
-   investment.js — Final Production Version (Range Validation Added)
+   investment.js — Final Dynamic Version (DB + Cards)
    HealthRunCare Investments Frontend Logic
    ======================================================= */
 
@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const activeTableBody = document.querySelector('.list-transaction-content tbody');
   const maturedTableBody = document.querySelector('.unlock-plans tbody');
+  const plansGrid = document.getElementById('plans-grid'); // NEW
 
   // === INITIAL LOAD ===
   loadSummary();
@@ -26,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
   loadActiveInvestments();
   loadMaturedInvestments();
 
-  // === PLAN DETAILS (Update term, ROI, range hints) ===
+  // === PLAN DETAILS UPDATE ===
   window.updatePlanDetails = function () {
     const selectedOption = planSelect?.options[planSelect.selectedIndex];
     const id = selectedOption ? parseInt(selectedOption.value) : null;
@@ -47,7 +48,6 @@ document.addEventListener('DOMContentLoaded', function () {
       termDuration.value = cached.duration_text || cached.term || (cached.duration_days + ' days');
       expectedRoi.value = (cached.roi_percent != null) ? (cached.roi_percent + '%') : '';
 
-      // Dynamically show range limits
       if (cached.min && cached.max) {
         amountEl.min = cached.min;
         amountEl.max = cached.max;
@@ -57,7 +57,6 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    // fallback if plan info is incomplete
     const dataTerm = selectedOption?.getAttribute('data-term') || '';
     const dataRoi = selectedOption?.getAttribute('data-roi') || '';
     termDuration.value = dataTerm;
@@ -65,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
     investBtn.disabled = !!(!dataTerm || !dataRoi);
   };
 
-  // === START INVESTMENT FORM SUBMIT ===
+  // === SUBMIT INVESTMENT FORM ===
   if (investForm) {
     investForm.addEventListener('submit', async function (e) {
       e.preventDefault();
@@ -90,7 +89,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      // === New validation: enforce plan min/max range ===
       const selectedPlan = window.__hrc_plans?.find(p => p.id === planId);
       if (selectedPlan && selectedPlan.min && selectedPlan.max) {
         const min = parseFloat(selectedPlan.min);
@@ -125,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // === SUMMARY (CARDS + WALLET) ===
+  // === SUMMARY CARDS ===
   async function loadSummary() {
     toggleLoader(true);
     const res = await fetchApi('/api/backend/investment.php', { action: 'get_summary' });
@@ -140,8 +138,6 @@ document.addEventListener('DOMContentLoaded', function () {
       if (cardOngoing) cardOngoing.textContent = summary.ongoing_plans_count ?? 0;
       if (cardNextMaturity) cardNextMaturity.textContent = summary.next_maturity ?? '—';
       if (walletBalanceEl) walletBalanceEl.textContent = '$' + (wallet.balance ?? 0).toFixed(2);
-    } else {
-      console.warn('Failed to load investment summary:', res);
     }
   }
 
@@ -152,6 +148,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const plans = res.data?.plans || [];
       window.__hrc_plans = plans;
 
+      // Populate SELECT
       if (planSelect) {
         const firstOption = planSelect.querySelector('option:first-child');
         planSelect.innerHTML = '';
@@ -171,6 +168,49 @@ document.addEventListener('DOMContentLoaded', function () {
 
         planSelect.addEventListener('change', updatePlanDetails);
       }
+
+// Render Dynamic Cards (Full Styled Version)
+if (plansGrid) {
+  plansGrid.innerHTML = '';
+  plans.forEach(p => {
+    const min = parseFloat(p.min).toLocaleString();
+    const max = parseFloat(p.max).toLocaleString();
+    const amountRange = `$${min} – $${max}`;
+
+    const termText = (p.duration_days >= 365)
+      ? Math.round(p.duration_days / 365) + ' years'
+      : Math.round((p.duration_days || 0) / 30) + ' months';
+
+    const roi = p.roi_percent ? (p.roi_percent + '%') : '';
+
+    const card = document.createElement('div');
+    card.className = 'col-lg-3 col-md-6';
+    card.innerHTML = `
+      <div class="plan-card">
+        <div class="plan-header flex justify-between items-center mb-12">
+          <div class="flex items-center gap-2">
+            <h6 class="plan-title">${p.title}</h6>
+          </div>
+        </div>
+
+        <p class="f12-regular text-Gray mb-12">${p.description}</p>
+        <p class="f12-regular text-Black mb-16">${p.details}</p>
+
+        <table class="plan-features">
+          <tr><td>Investment Range</td><td>${amountRange}</td></tr>
+          <tr><td>Term</td><td>${termText}</td></tr>
+          <tr><td>ROI</td><td class="text-Green fw-bold">${roi}</td></tr>
+          <tr><td>Risk Level</td><td class="text-${p.color} fw-bold">${p.risk}</td></tr>
+          <tr><td>Income Source</td><td>${p.income}</td></tr>
+          <tr><td>Payout Option</td><td>${p.payout_option}</td></tr>
+        </table>
+      </div>
+    `;
+    plansGrid.appendChild(card);
+  });
+}
+
+
     } else {
       console.warn('Failed to load plans', res);
     }
@@ -200,8 +240,6 @@ document.addEventListener('DOMContentLoaded', function () {
         `;
         activeTableBody.appendChild(tr);
       });
-    } else {
-      console.warn('Failed to load active investments', res);
     }
   }
 
@@ -232,8 +270,6 @@ document.addEventListener('DOMContentLoaded', function () {
         `;
         maturedTableBody.appendChild(tr);
       });
-    } else {
-      console.warn('Failed to load matured investments', res);
     }
   }
 
@@ -254,6 +290,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   };
 
+  // === SELECT FROM CARD ===
+  window.selectPlanFromCard = function (planId) {
+    if (!planSelect) return;
+    planSelect.value = planId;
+    updatePlanDetails();
+    planSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    showToast('Plan selected. Enter your amount to continue.', 'info');
+  };
+
   // === UTILITIES ===
   function escapeHtml(str) {
     if (!str) return '';
@@ -271,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function () {
     loader.style.display = show ? 'flex' : 'none';
   }
 
-  // expose refreshers globally
+  // Expose refresh functions globally
   window.hrc_loadSummary = loadSummary;
   window.hrc_loadActiveInvestments = loadActiveInvestments;
   window.hrc_loadMaturedInvestments = loadMaturedInvestments;

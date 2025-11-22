@@ -61,88 +61,41 @@ function generateReference($prefix = 'HRC-INV') {
     return strtoupper($prefix . '-' . uniqid() . '-' . rand(1000, 9999));
 }
 
-// -----------------------------------------------------------------------------
-// Plans definition (server-side). Matches frontend plans (id must be stable).
-// Added: min/max validation for each plan.
-// -----------------------------------------------------------------------------
-$PLANS = [
-    1 => [
-        'id' => 1,
-        'title' => 'Healthy Future Bond Plan',
-        'plan_name' => 'Healthy Future Bond Plan',
-        'roi_percent' => 11.0,
-        'duration_days' => 18 * 30,
-        'payout_option' => 'quarterly_or_maturity',
-        'min' => 500,
-        'max' => 100000
-    ],
-    2 => [
-        'id' => 2,
-        'title' => 'Wellness Growth Real Estate Plan',
-        'plan_name' => 'Wellness Growth Real Estate Plan',
-        'roi_percent' => 16.5,
-        'duration_days' => 2 * 365,
-        'payout_option' => 'bi_annual_or_maturity',
-        'min' => 5000,
-        'max' => 250000
-    ],
-    3 => [
-        'id' => 3,
-        'title' => 'Health Innovation Venture Fund',
-        'plan_name' => 'Health Innovation Venture Fund',
-        'roi_percent' => 30.0,
-        'duration_days' => 3 * 365,
-        'payout_option' => 'maturity',
-        'min' => 10000,
-        'max' => 500000
-    ],
-    4 => [
-        'id' => 4,
-        'title' => 'Community Health Microfinance Plan',
-        'plan_name' => 'Community Health Microfinance Plan',
-        'roi_percent' => 9.0,
-        'duration_days' => 12 * 30,
-        'payout_option' => 'maturity',
-        'min' => 300,
-        'max' => 20000
-    ],
-    5 => [
-        'id' => 5,
-        'title' => 'Green Hospital Infrastructure Plan',
-        'plan_name' => 'Green Hospital Infrastructure Plan',
-        'roi_percent' => 15.0,
-        'duration_days' => 2 * 365,
-        'payout_option' => 'annual_or_maturity',
-        'min' => 2000,
-        'max' => 200000
-    ],
-    6 => [
-        'id' => 6,
-        'title' => 'Healthy Food Systems Plan',
-        'plan_name' => 'Healthy Food Systems Plan',
-        'roi_percent' => 13.5,
-        'duration_days' => 18 * 30,
-        'payout_option' => 'quarterly_or_maturity',
-        'min' => 1000,
-        'max' => 50000
-    ],
-    7 => [
-        'id' => 7,
-        'title' => 'Digital Health Access Plan',
-        'plan_name' => 'Digital Health Access Plan',
-        'roi_percent' => 20.0,
-        'duration_days' => 2 * 365,
-        'payout_option' => 'annual_or_maturity',
-        'min' => 2000,
-        'max' => 100000
-    ],
-];
 
 // --------------------- ACTION: get_plans ---------------------
 if ($action === 'get_plans') {
-    $plans_out = array_values($PLANS);
-    jsonResponse('success', 'Plans loaded.', ['plans' => $plans_out]);
+    $stmt = $pdo->query("SELECT * FROM investment_plans ORDER BY id ASC");
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $plans = [];
+    foreach ($rows as $r) {
+        $plans[] = [
+            'id' => (int)$r['id'],
+            'title' => $r['title'],
+            'description' => $r['description'],
+            'details' => $r['details'],
+            'summary' => $r['summary'],
+
+            // financials
+            'roi_percent' => (float)$r['roi_percent'],
+            'duration_days' => (int)$r['duration_days'],
+            'payout_option' => $r['payout_option'],
+
+            // ⚠️ Map DB → JS names:
+            'min' => (float)$r['min_amount'],
+            'max' => (float)$r['max_amount'],
+
+            // extras
+            'risk' => $r['risk'],
+            'income' => $r['income'],
+            'icon' => $r['icon'],
+            'color' => $r['color']
+        ];
+    }
+
+    jsonResponse('success', 'Plans loaded.', ['plans' => $plans]);
 }
+
 
 // --------------------- ACTION: get_summary ---------------------
 if ($action === 'get_summary') {

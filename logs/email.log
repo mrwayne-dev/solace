@@ -244,3 +244,11 @@
 [2025-11-21 23:19:37] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
 [2025-11-21 23:19:56] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
 [2025-11-21 23:24:22] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
+[2025-11-22 12:07:03] SENT → aleruchi0987@gmail.com | Template: investment_confirmed | Subject: Your Investment Has Been Started Successfully
+[2025-11-22 12:07:07] SENT → support@healthruncare.com | Template: admin_investment_notification | Subject: New Investment Started on HealthRunCare
+[2025-11-22 12:43:22] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
+[2025-11-22 12:43:45] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
+[2025-11-22 13:28:14] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-22 13:28:18] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-22 13:28:33] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-22 13:28:37] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In

@@ -1,315 +1,287 @@
+-- ===========================================================
+-- DATABASE: healthruncare_db
+-- PURPOSE: Core schema for HealthRunCare Platform
+-- AUTHOR: Mr Wayne (Generated from working dump)
+-- ===========================================================
 
-  -- ===============================================================
-  --  HealthRunCare — Full Database Schema (Production Deployment)
-  -- ===============================================================
-  --  Version: 1.0
-  --  Compatible with MySQL 8.0+ / MariaDB 10.6+
-  -- ===============================================================
+DROP DATABASE IF EXISTS `healthruncare_db`;
+CREATE DATABASE `healthruncare_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `healthruncare_db`;
 
-  -- CREATE DATABASE IF NOT EXISTS `healthruncare_db`
-  --   CHARACTER SET utf8mb4
-  --   COLLATE utf8mb4_unicode_ci;
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
 
-  -- USE `healthruncare_db`;
+-- ===== TABLE: users =====
+CREATE TABLE `users` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `full_name` VARCHAR(100) DEFAULT NULL,
+  `email` VARCHAR(150) NOT NULL UNIQUE,
+  `password` VARCHAR(255) NOT NULL,
+  `role` ENUM('user','admin') DEFAULT 'user',
+  `status` ENUM('active','disabled') DEFAULT 'active',
+  `profile_picture` VARCHAR(255) DEFAULT '/assets/images/avatar/default.png',
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-  -- SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-  -- SET time_zone = "+00:00";
+-- ===== TABLE: admins =====
+CREATE TABLE `admins` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `full_name` VARCHAR(150) DEFAULT NULL,
+  `email` VARCHAR(150) NOT NULL UNIQUE,
+  `password` VARCHAR(255) NOT NULL,
+  `role` ENUM('super_admin','manager','support') DEFAULT 'manager',
+  `status` ENUM('active','disabled') DEFAULT 'active',
+  `profile_picture` VARCHAR(255) DEFAULT '/assets/images/avatar/admin_default.png',
+  `last_login` DATETIME DEFAULT NULL,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-  -- ===============================================================
-  --  TABLE: users
-  -- ===============================================================
-  CREATE TABLE `users` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(100) NOT NULL,
-    `full_name` VARCHAR(100) DEFAULT NULL,
-    `email` VARCHAR(150) NOT NULL UNIQUE,
-    `password` VARCHAR(255) NOT NULL,
-    `role` ENUM('user','admin') DEFAULT 'user',
-    `status` ENUM('active','disabled') DEFAULT 'active',
-    `profile_picture` VARCHAR(255) DEFAULT '/assets/images/avatar/default.png',
-    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ===== TABLE: settings =====
+CREATE TABLE `settings` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `cash_mailing_address` TEXT,
+  `wallet_deposit_address` TEXT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-  -- ===============================================================
-  --  TABLE: admins
-  -- ===============================================================
-  CREATE TABLE `admins` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(100) NOT NULL,
-    `full_name` VARCHAR(150) DEFAULT NULL,
-    `email` VARCHAR(150) NOT NULL UNIQUE,
-    `password` VARCHAR(255) NOT NULL,
-    `role` ENUM('super_admin','manager','support') DEFAULT 'manager',
-    `status` ENUM('active','disabled') DEFAULT 'active',
-    `profile_picture` VARCHAR(255) DEFAULT '/assets/images/avatar/admin_default.png',
-    `last_login` DATETIME DEFAULT NULL,
-    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ===== TABLE: wallets =====
+CREATE TABLE `wallets` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NOT NULL,
+  `balance` DECIMAL(12,2) DEFAULT '0.00',
+  `total_deposited` DECIMAL(12,2) DEFAULT '0.00',
+  `total_withdrawn` DECIMAL(12,2) DEFAULT '0.00',
+  `total_donations` DECIMAL(12,2) DEFAULT '0.00',
+  `total_investments` DECIMAL(12,2) DEFAULT '0.00',
+  `holdlock_savings` DECIMAL(12,2) DEFAULT '0.00',
+  `total_earnings` DECIMAL(12,2) DEFAULT '0.00',
+  `pending_withdrawals` DECIMAL(12,2) DEFAULT '0.00',
+  `cash_mailing_address` TEXT,
+  `wallet_deposit_address` TEXT,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_user_wallet` (`user_id`),
+  CONSTRAINT `wallets_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-  -- ===============================================================
-  --  TABLE: wallets
-  -- ===============================================================
-  CREATE TABLE `wallets` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `user_id` INT NOT NULL,
-    `balance` DECIMAL(12,2) DEFAULT 0.00,
-    `total_deposited` DECIMAL(12,2) DEFAULT 0.00,
-    `total_withdrawn` DECIMAL(12,2) DEFAULT 0.00,
-    `total_donations` DECIMAL(12,2) DEFAULT 0.00,
-    `total_investments` DECIMAL(12,2) DEFAULT 0.00,
-    `holdlock_savings` DECIMAL(12,2) DEFAULT 0.00,
-    `total_earnings` DECIMAL(12,2) DEFAULT 0.00,
-    `pending_withdrawals` DECIMAL(12,2) DEFAULT 0.00,
-    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    KEY `idx_user_wallet` (`user_id`),
-    CONSTRAINT `wallets_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ===== TABLE: login_logs =====
+CREATE TABLE `login_logs` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_type` ENUM('user','admin') NOT NULL,
+  `user_id` INT NOT NULL,
+  `ip` VARCHAR(100) DEFAULT NULL,
+  `browser` VARCHAR(255) DEFAULT NULL,
+  `location` VARCHAR(255) DEFAULT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-  -- ===============================================================
-  --  TABLE: bank_details
-  -- ===============================================================
-  CREATE TABLE `bank_details` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `user_id` INT NOT NULL,
-    `method` ENUM('local_bank','wallet_address') NOT NULL,
-    `details` JSON NOT NULL,
-    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    KEY `idx_bank_user` (`user_id`),
-    CONSTRAINT `bank_details_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ===== TABLE: bank_details =====
+CREATE TABLE `bank_details` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NOT NULL,
+  `method` ENUM('local_bank','wallet_address') NOT NULL,
+  `details` JSON NOT NULL,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_bank_user` (`user_id`),
+  CONSTRAINT `bank_details_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-  -- ===============================================================
-  --  TABLE: charities
-  -- ===============================================================
-  CREATE TABLE `charities` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(200) NOT NULL,
-    `organization` VARCHAR(200) DEFAULT NULL,
-    `description` TEXT,
-    `image` VARCHAR(255) DEFAULT '/assets/images/charity/placeholder.jpg',
-    `goal_amount` DECIMAL(12,2) DEFAULT 0.00,
-    `raised_amount` DECIMAL(12,2) DEFAULT 0.00,
-    `status` ENUM('active','inactive') DEFAULT 'active',
-    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    KEY `idx_charity_status` (`status`)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ===== TABLE: charities =====
+CREATE TABLE `charities` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(200) NOT NULL,
+  `organization` VARCHAR(200) DEFAULT NULL,
+  `description` TEXT,
+  `image` VARCHAR(255) DEFAULT '/assets/images/charity/placeholder.jpg',
+  `goal_amount` DECIMAL(12,2) DEFAULT '0.00',
+  `raised_amount` DECIMAL(12,2) DEFAULT '0.00',
+  `status` ENUM('active','inactive') DEFAULT 'active',
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_charity_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-  -- ===============================================================
-  --  TABLE: charity_donations
-  -- ===============================================================
-  CREATE TABLE `charity_donations` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `user_id` INT NOT NULL,
-    `charity_id` INT NOT NULL,
-    `amount` DECIMAL(12,2) NOT NULL,
-    `reference` VARCHAR(100) DEFAULT NULL,
-    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    KEY `idx_donation_user` (`user_id`),
-    KEY `idx_donation_charity` (`charity_id`),
-    CONSTRAINT `donation_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-    CONSTRAINT `donation_fk_charity` FOREIGN KEY (`charity_id`) REFERENCES `charities` (`id`) ON DELETE CASCADE
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ===== TABLE: charity_donations =====
+CREATE TABLE `charity_donations` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NOT NULL,
+  `charity_id` INT NOT NULL,
+  `amount` DECIMAL(12,2) NOT NULL,
+  `reference` VARCHAR(100) DEFAULT NULL,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_donation_user` (`user_id`),
+  KEY `idx_donation_charity` (`charity_id`),
+  CONSTRAINT `donation_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `donation_fk_charity` FOREIGN KEY (`charity_id`) REFERENCES `charities` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-  -- ===============================================================
-  --  TABLE: investments
-  -- ===============================================================
-  CREATE TABLE `investments` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `user_id` INT NOT NULL,
-    `plan_name` VARCHAR(100) NOT NULL,
-    `amount` DECIMAL(12,2) NOT NULL,
-    `roi_percent` DECIMAL(5,2) DEFAULT 0.00,
-    `duration_days` INT DEFAULT 30,
-    `status` ENUM('active','completed') DEFAULT 'active',
-    `maturity_date` DATE DEFAULT NULL,
-    `roi_earned` DECIMAL(12,2) DEFAULT 0.00,
-    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    KEY `idx_invest_user` (`user_id`),
-    CONSTRAINT `investments_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ===== TABLE: investment_plans =====
+CREATE TABLE `investment_plans` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(150) NOT NULL,
+  `roi_percent` DECIMAL(5,2) NOT NULL,
+  `duration_days` INT NOT NULL,
+  `payout_option` VARCHAR(50) NOT NULL,
+  `min_amount` DECIMAL(15,2) NOT NULL,
+  `max_amount` DECIMAL(15,2) NOT NULL,
+  `description` VARCHAR(255) NOT NULL,
+  `details` TEXT NOT NULL,
+  `risk` VARCHAR(50) NOT NULL,
+  `income` VARCHAR(255) NOT NULL,
+  `summary` TEXT NOT NULL,
+  `icon` VARCHAR(50) NOT NULL,
+  `color` VARCHAR(20) NOT NULL,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-  -- ===============================================================
-  --  TABLE: holdlock
-  -- ===============================================================
-  CREATE TABLE `holdlock` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `user_id` INT NOT NULL,
-    `plan_name` VARCHAR(100) DEFAULT NULL,
-    `amount` DECIMAL(12,2) NOT NULL,
-    `roi_percent` DECIMAL(5,2) DEFAULT 0.00,
-    `duration_days` INT NOT NULL,
-    `penalty_percent` DECIMAL(5,2) DEFAULT 1.50,
-    `status` ENUM('locked','unlock_pending','matured','unlocked_early','completed') DEFAULT 'locked',
-    `maturity_date` DATE DEFAULT NULL,
-    `roi_earned` DECIMAL(12,2) DEFAULT 0.00,
-    `penalty_applied` DECIMAL(12,2) DEFAULT 0.00,
-    `payout_option` ENUM('maturity','early') DEFAULT 'maturity',
-    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    KEY `idx_hold_user` (`user_id`),
-    CONSTRAINT `holdlock_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ===== TABLE: investments =====
+CREATE TABLE `investments` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NOT NULL,
+  `plan_name` VARCHAR(100) NOT NULL,
+  `amount` DECIMAL(12,2) NOT NULL,
+  `roi_percent` DECIMAL(5,2) DEFAULT '15.00',
+  `duration_days` INT DEFAULT '30',
+  `status` ENUM('active','completed') DEFAULT 'active',
+  `maturity_date` DATE DEFAULT NULL,
+  `roi_earned` DECIMAL(12,2) DEFAULT '0.00',
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_invest_user` (`user_id`),
+  KEY `idx_invest_maturity` (`maturity_date`),
+  CONSTRAINT `investments_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-  -- ===============================================================
-  --  TABLE: trustfund
-  -- ===============================================================
-  CREATE TABLE `trustfund` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `user_id` INT NOT NULL,
-    `plan_name` VARCHAR(100) DEFAULT NULL,
-    `amount` DECIMAL(12,2) NOT NULL,
-    `roi_percent` DECIMAL(5,2) DEFAULT 0.00,
-    `duration_days` INT DEFAULT 0,
-    `penalty_percent` DECIMAL(5,2) DEFAULT 1.50,
-    `purpose` VARCHAR(255) DEFAULT NULL,
-    `maturity_date` DATE DEFAULT NULL,
-    `updated_at` DATETIME DEFAULT NULL,
-    `roi_earned` DECIMAL(12,2) DEFAULT 0.00,
-    `payout_option` ENUM('annual','maturity') DEFAULT 'maturity',
-    `status` ENUM('active','matured','unlock_pending','unlocked_early','completed') DEFAULT 'active',
-    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    KEY `idx_trust_user` (`user_id`),
-    CONSTRAINT `trustfund_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ===== TABLE: transactions =====
+CREATE TABLE `transactions` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NOT NULL,
+  `type` VARCHAR(50) NOT NULL,
+  `method` ENUM('secure_exchange','cash_mailing','wire_transfer','local_bank','wallet_address','wallet','system') DEFAULT NULL,
+  `details` JSON DEFAULT NULL,
+  `amount` DECIMAL(12,2) NOT NULL,
+  `reference` VARCHAR(100) NOT NULL UNIQUE,
+  `status` ENUM('pending','completed','failed') DEFAULT 'completed',
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_user_transaction` (`user_id`),
+  CONSTRAINT `transactions_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-  -- ===============================================================
-  --  TABLE: maintenance
-  -- ===============================================================
-  CREATE TABLE `maintenance` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `plan_id` INT DEFAULT NULL,
-    `user_id` INT NOT NULL,
-    `plan_name` VARCHAR(100) NOT NULL,
-    `amount` DECIMAL(12,2) NOT NULL,
-    `roi_earned` DECIMAL(12,2) DEFAULT 0.00,
-    `frequency` ENUM('monthly','once') DEFAULT 'monthly',
-    `status` ENUM('active','matured','unlocked','expired') DEFAULT 'active',
-    `next_payment_date` DATE DEFAULT NULL,
-    `maturity_date` DATE DEFAULT NULL,
-    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    KEY `idx_maintenance_user` (`user_id`),
-    CONSTRAINT `maintenance_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ===== TABLE: user_impacts =====
+CREATE TABLE `user_impacts` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NOT NULL UNIQUE,
+  `total_contributions` DECIMAL(12,2) DEFAULT '0.00',
+  `people_helped` INT DEFAULT '0',
+  `impact_score` DECIMAL(5,2) DEFAULT '0.00',
+  `communities_helped` INT DEFAULT '0',
+  `packages_funded` INT DEFAULT '0',
+  `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `impact_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-  -- ===============================================================
-  --  TABLE: infrastructure & contributions
-  -- ===============================================================
-  CREATE TABLE `infrastructure` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(200) NOT NULL,
-    `goal_amount` DECIMAL(12,2) DEFAULT 0.00,
-    `raised_amount` DECIMAL(12,2) DEFAULT 0.00,
-    `roi_percent` DECIMAL(5,2) DEFAULT 10.00,
-    `status` ENUM('open','funded','complete') DEFAULT 'open',
-    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ===== TABLE: maintenance =====
+CREATE TABLE `maintenance` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `plan_id` INT DEFAULT NULL,
+  `user_id` INT NOT NULL,
+  `plan_name` VARCHAR(100) NOT NULL,
+  `amount` DECIMAL(12,2) NOT NULL,
+  `roi_earned` DECIMAL(12,2) DEFAULT '0.00',
+  `frequency` ENUM('monthly','once') DEFAULT 'monthly',
+  `status` ENUM('active','matured','unlocked','expired') DEFAULT 'active',
+  `next_payment_date` DATE DEFAULT NULL,
+  `maturity_date` DATE DEFAULT NULL,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_maintenance_user` (`user_id`),
+  CONSTRAINT `maintenance_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-  CREATE TABLE `infrastructure_contributions` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `plan_id` INT DEFAULT NULL,
-    `user_id` INT NOT NULL,
-    `project_id` INT DEFAULT NULL,
-    `amount` DECIMAL(12,2) NOT NULL,
-    `roi_earned` DECIMAL(12,2) DEFAULT 0.00,
-    `status` ENUM('active','matured','unlocked') DEFAULT 'active',
-    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    KEY `idx_infra_user` (`user_id`),
-    CONSTRAINT `infra_contrib_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-    CONSTRAINT `infra_contrib_fk_project` FOREIGN KEY (`project_id`) REFERENCES `infrastructure` (`id`) ON DELETE CASCADE
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ===== TABLE: holdlock =====
+CREATE TABLE `holdlock` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NOT NULL,
+  `plan_name` VARCHAR(100) DEFAULT NULL,
+  `amount` DECIMAL(12,2) NOT NULL,
+  `roi_percent` DECIMAL(5,2) DEFAULT '0.00',
+  `duration_days` INT NOT NULL,
+  `penalty_percent` DECIMAL(5,2) DEFAULT '1.50',
+  `status` ENUM('locked','unlock_pending','matured','unlocked_early','completed') DEFAULT 'locked',
+  `maturity_date` DATE DEFAULT NULL,
+  `roi_earned` DECIMAL(12,2) DEFAULT '0.00',
+  `penalty_applied` DECIMAL(12,2) DEFAULT '0.00',
+  `payout_option` ENUM('maturity','early') DEFAULT 'maturity',
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_hold_user` (`user_id`),
+  CONSTRAINT `holdlock_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-  -- ===============================================================
-  --  TABLE: transactions
-  -- ===============================================================
-  CREATE TABLE `transactions` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `user_id` INT NOT NULL,
-    `type` VARCHAR(50) NOT NULL,
-    `method` ENUM('secure_exchange','cash_mailing','wire_transfer','local_bank','wallet_address','wallet','system') DEFAULT NULL,
-    `details` JSON DEFAULT NULL,
-    `amount` DECIMAL(12,2) NOT NULL,
-    `reference` VARCHAR(100) NOT NULL UNIQUE,
-    `status` ENUM('pending','completed','failed') DEFAULT 'completed',
-    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    KEY `idx_user_transaction` (`user_id`),
-    CONSTRAINT `transactions_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ===== TABLE: infrastructure =====
+CREATE TABLE `infrastructure` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(200) NOT NULL,
+  `goal_amount` DECIMAL(12,2) DEFAULT '0.00',
+  `raised_amount` DECIMAL(12,2) DEFAULT '0.00',
+  `roi_percent` DECIMAL(5,2) DEFAULT '10.00',
+  `status` ENUM('open','funded','complete') DEFAULT 'open',
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_infra_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-  -- ===============================================================
-  --  TABLE: user_impacts
-  -- ===============================================================
-  CREATE TABLE `user_impacts` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `user_id` INT NOT NULL UNIQUE,
-    `total_contributions` DECIMAL(12,2) DEFAULT 0.00,
-    `people_helped` INT DEFAULT 0,
-    `impact_score` DECIMAL(5,2) DEFAULT 0.00,
-    `communities_helped` INT DEFAULT 0,
-    `packages_funded` INT DEFAULT 0,
-    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    CONSTRAINT `impact_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ===== TABLE: infrastructure_contributions =====
+CREATE TABLE `infrastructure_contributions` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `plan_id` INT DEFAULT NULL,
+  `user_id` INT NOT NULL,
+  `project_id` INT DEFAULT NULL,
+  `amount` DECIMAL(12,2) NOT NULL,
+  `roi_earned` DECIMAL(12,2) DEFAULT '0.00',
+  `status` ENUM('active','matured','unlocked') NOT NULL DEFAULT 'active',
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_infra_user` (`user_id`),
+  KEY `idx_infra_project` (`project_id`),
+  CONSTRAINT `infra_contrib_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `infra_contrib_fk_project` FOREIGN KEY (`project_id`) REFERENCES `infrastructure` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-  -- ===============================================================
-  --  TABLE: password_resets
-  -- ===============================================================
-  CREATE TABLE `password_resets` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `user_id` INT NOT NULL,
-    `otp` VARCHAR(10) NOT NULL,
-    `expires_at` DATETIME NOT NULL,
-    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    CONSTRAINT `resets_fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-  -- ===============================================================
-  --  TABLE: announcements (For system-wide admin messages)
-  -- ===============================================================
-  CREATE TABLE `announcements` (
-      `id` INT NOT NULL AUTO_INCREMENT,
-      `admin_id` INT NOT NULL,
-      `title` VARCHAR(255) NOT NULL,
-      `content` TEXT NOT NULL,
-      `type` ENUM('info','warning','critical') DEFAULT 'info',
-      `target` ENUM('all','investors','donors','active') DEFAULT 'all',
-      `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      PRIMARY KEY (`id`),
-      KEY `idx_admin_announcement` (`admin_id`),
-      CONSTRAINT `announcements_fk_admin` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`) ON DELETE CASCADE
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-  ALTER TABLE wallets 
-  ADD COLUMN cash_mailing_address TEXT DEFAULT NULL,
-  ADD COLUMN wallet_deposit_address TEXT DEFAULT NULL;
+CREATE TABLE `holdlock_plans` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(150) NOT NULL,
+  `purpose` TEXT,
+  `min_amount` DECIMAL(15,2) NOT NULL,
+  `max_amount` DECIMAL(15,2) DEFAULT NULL,
+  `lock_period_text` VARCHAR(50) NOT NULL,
+  `duration_days` INT DEFAULT NULL,
+  `roi_range` VARCHAR(50) NOT NULL,
+  `risk` VARCHAR(50) NOT NULL,
+  `payout` VARCHAR(100) NOT NULL,
+  `summary` TEXT NOT NULL,
+  `icon` VARCHAR(50) NOT NULL,
+  `color` VARCHAR(20) NOT NULL,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
-  CREATE TABLE settings (
-      id INT NOT NULL AUTO_INCREMENT,
-      cash_mailing_address TEXT,
-      wallet_deposit_address TEXT,
-      PRIMARY KEY(id)
-  );
-
-  INSERT INTO settings (id) VALUES (1);
-
-
+ALTER TABLE `investment_plans`
+ADD COLUMN `status` ENUM('active','hidden') NOT NULL DEFAULT 'active' AFTER `risk`;
 
   -- ===============================================================
   --  CHARITIES
@@ -317,21 +289,117 @@
   INSERT INTO `charities`
   (`id`, `name`, `organization`, `description`, `image`, `goal_amount`, `raised_amount`, `status`, `created_at`)
   VALUES
-  (7, 'Maternal Care Initiative', 'Africa Public Health Foundation (APHF)',
+  (1, 'Maternal Care Initiative', 'Africa Public Health Foundation (APHF)',
   'Expanding access to prenatal and postnatal care for mothers in underserved African regions.',
   '/assets/images/charity/maternal-care.jpg', 80000.00, 30000.00, 'active', NOW()),
-  (8, 'Clean Water for Health Program', 'The Global Fund',
+  (2, 'Clean Water for Health Program', 'The Global Fund',
   'Installing boreholes and filtration systems in rural health centers to reduce waterborne diseases.',
   '/assets/images/charity/clean-water.jpg', 60000.00, 3000.00, 'active', NOW()),
-  (9, 'Rural Health Outreach Network', 'PharmAccess Foundation',
+  (3, 'Rural Health Outreach Network', 'PharmAccess Foundation',
   'Providing mobile clinics and telemedicine solutions to remote villages.',
   '/assets/images/charity/rural-outreach.jpg', 95000.00, 21000.00, 'active', NOW()),
-  (10, 'Child Immunization Drive', 'Against Malaria Foundation (AMF)',
+  (4, 'Child Immunization Drive', 'Against Malaria Foundation (AMF)',
   'Supporting mass vaccination programs to prevent common infectious diseases among children.',
   '/assets/images/charity/immunization.jpg', 50000.00, 36000.00, 'active', NOW()),
-  (11, 'Hospital Equipment Upgrade Fund', 'Transform Health Fund',
+  (5, 'Hospital Equipment Upgrade Fund', 'Transform Health Fund',
   'Providing critical diagnostic tools and life-saving machines to local health facilities.',
   '/assets/images/charity/equipment-upgrade.jpg', 120000.00, 129000.00, 'active', NOW()),
-  (12, 'Nutrition for Hope Program', 'Africa Humanitarian Action (AHA)',
+  (6, 'Nutrition for Hope Program', 'Africa Humanitarian Action (AHA)',
   'Delivering essential food and supplements to children and elderly populations facing malnutrition.',
   '/assets/images/charity/nutrition.jpg', 45000.00, 28000.00, 'active', NOW());
+
+  -- ===========================
+-- 📦 INVESTMENT PLANS
+-- ===========================
+INSERT INTO `investment_plans` 
+(id, title, roi_percent, duration_days, payout_option, min_amount, max_amount, description, details, risk, income, summary, icon, color) VALUES
+
+(1, 'Healthy Future Bond Plan', 11.00, 540, 'Quarterly or at maturity', 500.00, 100000.00,
+'Build Community Diagnostic Centers',
+'Supporting local health screenings and medical supplies for underserved communities.',
+'Low',
+'Fees from diagnostic tests and partnerships with hospitals & insurance providers',
+'Your money helps build diagnostic centers that earn from medical tests. As these centers generate consistent service income, you earn up to 12% in 18 months — safely and with social impact.',
+'mdi:factory', 'Green'),
+
+(2, 'Wellness Growth Real Estate Plan', 16.50, 730, 'Bi-annual or lump sum at maturity', 5000.00, 250000.00,
+'Build and Lease Wellness & Rehabilitation Facilities',
+'Your investment funds the construction of modern wellness centers leased to physiotherapy clinics, fitness brands, and recovery operators.',
+'Moderate',
+'Rental income from wellness centers and long-term lease agreements',
+'You help build wellness facilities that lease to health operators. Rental payments provide steady income that\'s shared with you as up to 18% return in 2 years.',
+'mdi:home-building', 'Blue'),
+
+(3, 'Health Innovation Venture Fund', 30.00, 1095, 'At maturity (end of term)', 10000.00, 500000.00,
+'Support High-Growth Health-Tech Startups',
+'Your capital helps scale innovative startups working on medical devices, biotech research, and digital health technologies.',
+'High',
+'Equity profit from startup growth, technology licensing, and company buyouts',
+'You back new health-tech companies. When they grow or get acquired, you share in their success — earning up to 35% within 3 years.',
+'mdi:lightning-bolt', 'Orange'),
+
+(4, 'Community Health Microfinance Plan', 9.00, 360, 'At maturity (end of 12 months)', 300.00, 20000.00,
+'Empower Small Health Businesses',
+'This plan provides microloans to rural pharmacies, small clinics, and health workers who repay with fair interest.',
+'Low',
+'Loan interest payments from local health entrepreneurs',
+'Your investment gives small loans to trusted healthcare providers. They repay with interest, and you earn up to 10% in just one year — while supporting community care.',
+'mdi:hand-extend', 'Green'),
+
+(5, 'Green Hospital Infrastructure Plan', 15.00, 730, 'Annual or at maturity', 2000.00, 200000.00,
+'Finance Eco-Friendly Hospital Upgrades',
+'Your investment enables hospitals to install solar systems, energy-saving equipment, and water recycling units.',
+'Moderate',
+'Revenue-sharing from hospitals\' reduced energy costs and green subsidies',
+'Hospitals save thousands on electricity and maintenance after green upgrades. Part of those savings is paid back to investors — giving you up to 16% return in 2 years.',
+'mdi:leaf', 'Blue'),
+
+(6, 'Healthy Food Systems Plan', 13.50, 540, 'Quarterly or at maturity', 1000.00, 50000.00,
+'Strengthen Nutrition and Food Security',
+'This plan funds farm-to-health programs and healthy meal suppliers for hospitals, schools, and wellness institutions.',
+'Moderate',
+'Profits from produce sales, supply contracts, and wholesale distribution partnerships',
+'Your money supports healthy food producers who sell to hospitals and schools. As they make profits, you earn up to 15% in 18 months.',
+'mdi:food', 'Blue'),
+
+(7, 'Digital Health Access Plan', 20.00, 730, 'Annual or at maturity', 2000.00, 100000.00,
+'Expand Online Health Platforms & Telemedicine',
+'Invest in digital platforms offering remote doctor consultations, e-prescriptions, and mobile diagnostics.',
+'Moderate to High',
+'Subscription fees, teleconsultation charges, data partnerships, and health service commissions',
+'You invest in the future of digital healthcare. As more users join and pay for services online, you earn up to 22% return in 2 years — while helping expand access to doctors worldwide.',
+'mdi:phone', 'Orange');
+
+
+INSERT INTO `holdlock_plans` 
+(`id`, `name`, `purpose`, `min_amount`, `max_amount`, `lock_period_text`, `duration_days`, `roi_range`, `risk`, `payout`, `summary`, `icon`, `color`) VALUES
+(1, 'Flexi Health Lock Plan',
+ 'A short-term plan designed for clients who want safe, quick returns while keeping their capital secure.',
+ 10000, 100000, '6 months', 180, '3–4%', 'Very Low', 'Full payout at maturity',
+ 'Ideal for clients seeking liquidity and short-term growth. Funds are safely held and paid out at the end of the term.',
+ 'mdi:clock-outline', 'Green'),
+
+(2, 'Standard Lock & Grow Plan',
+ 'A one-year plan offering predictable and consistent growth with minimal risk.',
+ 20000, 300000, '12 months', 365, '7–9%', 'Low', 'Annual or full payout at maturity',
+ 'A balanced one-year growth plan for investors who prefer stability and moderate fixed returns.',
+ 'mdi:calendar-check', 'Green'),
+
+(3, 'Executive LockPlus Plan',
+ 'A two-year plan for individuals and organizations seeking better returns from moderate-term investments.',
+ 50000, 500000, '24 months', 730, '14–18%', 'Moderate', 'Annual or full payout at maturity',
+ 'Perfect for mid- to high-level investors seeking strong, consistent growth over two years with minimal risk exposure.',
+ 'mdi:briefcase-check', 'Blue'),
+
+(4, 'Prestige Capital Hold Plan',
+ 'A premium plan for investors with large capital who seek long-term, high-yield returns.',
+ 250000, NULL, '36 months', 1095, '25–30%', 'Moderate', 'Annual, bi-annual, or full payout at maturity',
+ 'A long-term, asset-secure investment option that rewards patience with premium returns and stable growth.',
+ 'mdi:crown-outline', 'Orange'),
+
+(5, 'Lifetime Reserve Lock Plan',
+ 'A lifelong plan designed for wealth preservation and consistent annual income.',
+ 1000000, NULL, 'Lifetime (Perpetual)', 36500, '6–8% annual', 'Low',
+ 'Annual or quarterly lifetime payout',
+ 'An exclusive wealth preservation plan that guarantees lifetime income, ideal for estates, families, or organizations focused on long-term legacy.',
+ 'mdi:infinity', 'Green');

@@ -243,9 +243,9 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                             <div class="f12-bold text-White">Plan</div>
                                             <div class="f12-bold text-White">Amount</div>
                                             <div class="f12-bold text-White">ROI</div>
-                                            <div class="f12-bold text-White">Term</div>
                                             <div class="f12-bold text-White">Status</div>
                                             <div class="f12-bold text-White">Start Date</div>
+                                            <div class="f12-bold text-White">End Date</div>
                                         </div>
                                         <table class="list-transaction-content content-sort w-100">
                                             <tbody id="active-investments-body">
@@ -254,27 +254,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                         </table>
                                     </div>
                                     <div id="active-pagination" class="pagination mt-3 flex gap-2 justify-center"></div>
-                                </div>
-
-                                <!-- 5. MATURE INVESTMENTS TABLE -->
-                                <div class="mb-32">
-                                    <h5 class="label-01 mb-16">Mature / Eligible for Unlock</h5>
-                                    <div class="table-list-transaction">
-                                        <div class="list-transaction-head title-sort bg-Primary">
-                                            <div class="f12-bold text-White">User</div>
-                                            <div class="f12-bold text-White">Plan</div>
-                                            <div class="f12-bold text-White">Original Amount</div>
-                                            <div class="f12-bold text-White">ROI Earned</div>
-                                            <div class="f12-bold text-White">Maturity Date</div>
-                                            <div class="f12-bold text-White">Total Payout</div>
-                                        </div>
-                                        <table class="list-transaction-content content-sort w-100">
-                                            <tbody id="matured-investments-body">
-                                                <!-- JS populates -->
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div id="matured-pagination" class="pagination mt-3 flex gap-2 justify-center"></div>
                                 </div>
 
                             </div>
@@ -423,7 +402,8 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
 <script src="../../assets/js/jquery.min.js"></script>
 <script src="../../assets/js/bootstrap.min.js"></script>
 <script src="../../assets/js/bootstrap-select.min.js" defer></script>
-<script src="../../assets/js/dashboard.js" defer></script>
+<script src="../../assets/js/admin/admin.js" defer></script>
+<script src="../../assets/js/admin/funds.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 </body>
