@@ -1,4 +1,5 @@
     <?php
+    ob_start(); 
     /**
      * ======================================================
      * HealthRunCare — TrustFund Backend API (Final)
@@ -93,17 +94,12 @@
         2️⃣ PLANS
         ====================================== */
         case 'get_plans':
-            $plans = [
-                1 => ['name' => 'Child Education Growth Plan', 'roi_percent' => 25.0, 'duration_days' => 1095, 'payout_option' => 'annual', 'min' => 500, 'max' => 50000, 'penalty_percent' => 1.50],
-                2 => ['name' => 'Legacy Wealth Trust Plan', 'roi_percent' => 55.0, 'duration_days' => 1825, 'payout_option' => 'maturity', 'min' => 500000, 'max' => null, 'penalty_percent' => 1.50],
-                3 => ['name' => 'Business Succession Trust Plan', 'roi_percent' => 48.0, 'duration_days' => 1460, 'payout_option' => 'annual', 'min' => 5000, 'max' => 500000, 'penalty_percent' => 1.50],
-                4 => ['name' => 'Medical Protection Trust Plan', 'roi_percent' => 18.0, 'duration_days' => 1095, 'payout_option' => 'quarterly', 'min' => 300, 'max' => 25000, 'penalty_percent' => 1.50],
-                5 => ['name' => 'Future Builders Business Plan', 'roi_percent' => 38.0, 'duration_days' => 1460, 'payout_option' => 'annual', 'min' => 1000, 'max' => 100000, 'penalty_percent' => 1.50],
-                6 => ['name' => 'Guardian Trust Income Plan', 'roi_percent' => 35.0, 'duration_days' => 1825, 'payout_option' => 'annual', 'min' => 10000, 'max' => 200000, 'penalty_percent' => 1.50],
-                7 => ['name' => 'Perpetual Legacy Trust Plan', 'roi_percent' => 11.0, 'duration_days' => 9999, 'payout_option' => 'annual', 'min' => 1000000, 'max' => null, 'penalty_percent' => 1.50],
-            ];
-            respond('success', 'Plans loaded', ['plans' => array_values($plans)]);
-            break;
+        $stmt = $pdo->prepare("SELECT * FROM trustfund_plans ORDER BY id ASC");
+        $stmt->execute();
+        $plans = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        respond('success', 'Plans loaded', ['plans' => $plans]);
+        break;
+
 
         /* ======================================
         3️⃣ ACTIVE TRUSTS
@@ -346,3 +342,4 @@
         default:
             respond('error', 'Invalid action.');
     }
+ob_end_clean();

@@ -279,6 +279,55 @@ CREATE TABLE `holdlock_plans` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS trustfund_plans (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(150) NOT NULL,
+    purpose VARCHAR(300) NOT NULL,
+    min_amount DECIMAL(15,2) NOT NULL,
+    max_amount DECIMAL(15,2) DEFAULT NULL, -- NULL means unlimited
+    duration_days INT NOT NULL,
+    roi_percent DECIMAL(10,2) NOT NULL,
+    risk VARCHAR(50) NOT NULL,
+    payout_option VARCHAR(100) NOT NULL,
+    summary TEXT NOT NULL,
+    icon VARCHAR(50) NOT NULL,
+    color VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS infrastructure_plans (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    purpose TEXT,
+    min_amount DECIMAL(12,2) NOT NULL DEFAULT 0,
+    duration_days INT NOT NULL DEFAULT 0,
+    roi_percent DECIMAL(5,2) NOT NULL DEFAULT 0,
+    payout_option VARCHAR(50) DEFAULT NULL,
+    risk_level VARCHAR(50) DEFAULT NULL,
+    summary TEXT,
+    color VARCHAR(30) DEFAULT 'Green',
+    repayment_mode VARCHAR(100) DEFAULT NULL,
+    icon VARCHAR(100) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS maintenance_plans (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    purpose TEXT,
+    min_amount DECIMAL(15,2) NOT NULL,
+    max_amount DECIMAL(15,2) DEFAULT NULL,
+    duration_days INT NOT NULL,
+    roi_percent DECIMAL(5,2) NOT NULL,
+    risk VARCHAR(50),
+    payout VARCHAR(100),
+    summary TEXT,
+    color VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
 
 ALTER TABLE `investment_plans`
 ADD COLUMN `status` ENUM('active','hidden') NOT NULL DEFAULT 'active' AFTER `risk`;
@@ -403,3 +452,98 @@ INSERT INTO `holdlock_plans`
  'Annual or quarterly lifetime payout',
  'An exclusive wealth preservation plan that guarantees lifetime income, ideal for estates, families, or organizations focused on long-term legacy.',
  'mdi:infinity', 'Green');
+
+
+INSERT INTO trustfund_plans
+(name, purpose, min_amount, max_amount, duration_days, roi_percent, risk, payout_option, summary, icon, color)
+VALUES
+('Child Education Growth Plan',
+'Build a secure education fund with guaranteed growth.',
+500, 50000, 1095, 25.0, 'Low', 'Annual or at maturity',
+'A safe plan that builds education funds with secure returns.',
+'mdi:school-outline', 'Green'),
+
+('Legacy Wealth Trust Plan',
+'Generate long-term generational wealth.',
+500000, NULL, 1825, 55.0, 'Moderate', 'Annual or at maturity',
+'A premium plan for multigenerational wealth growth.',
+'mdi:family-tree', 'Blue'),
+
+('Business Succession Trust Plan',
+'Secure business growth or transition.',
+5000, 500000, 1460, 48.0, 'Moderate to High', 'Annual or at maturity',
+'Helps entrepreneurs expand while earning profitable returns.',
+'mdi:briefcase-outline', 'Orange'),
+
+('Medical Protection Trust Plan',
+'Create a secure medical reserve with capital growth.',
+300, 25000, 1095, 18.0, 'Low', 'Quarterly or at maturity',
+'A health-focused savings option supporting emergency needs.',
+'mdi:heart-pulse', 'Green'),
+
+('Future Builders Business Plan',
+'Support startups and young entrepreneurs.',
+1000, 100000, 1460, 38.0, 'Moderate', 'Annual or at maturity',
+'Capital invested into innovation projects with social impact.',
+'mdi:rocket-outline', 'Blue'),
+
+('Guardian Trust Income Plan',
+'Steady annual income for beneficiaries.',
+10000, 200000, 1825, 35.0, 'Low to Moderate', 'Annual income distribution',
+'A reliable annual income-producing plan ideal for dependents.',
+'mdi:shield-check-outline', 'Green'),
+
+('Perpetual Legacy Trust Plan',
+'Lifetime income with preserved principal.',
+1000000, NULL, 9999, 11.0, 'Low', 'Annual or quarterly for life',
+'An elite perpetual plan generating lifetime income.',
+'mdi:infinity', 'Orange');
+
+
+INSERT INTO infrastructure_plans 
+(name, purpose, min_amount, duration_days, roi_percent, payout_option, risk_level, summary, color, repayment_mode, icon)
+VALUES
+('Basic Diagnostic Plan',
+ 'To support community and mid-level hospitals with portable ultrasound diagnostic systems for early disease detection.',
+ 10000, 365, 9.0, 'quarterly', 'Very Low',
+ 'Investors fund the purchase and setup of ultrasound systems. Clinics repay from diagnostic service fees, returning your full capital plus up to 10% profit within one year.',
+ 'Green', 'Quarterly payments over 12 months', 'mdi:office-building-outline'),
+
+('Imaging Growth Plan',
+ 'To deploy digital X-ray imaging systems for regional hospitals and diagnostic centers.',
+ 20000, 540, 13.5, 'quarterly', 'Low',
+ 'Investors help hospitals acquire X-ray systems. Hospitals repay from patient scan revenue, and investors earn 12–15% total profit within 18 months.',
+ 'Green', 'Quarterly or semi-annual', 'mdi:bank-outline'),
+
+('Advanced Radiology Plan',
+ 'To enable hospitals to install CT scanners and expand access to high-precision imaging services.',
+ 50000, 730, 17.5, 'monthly', 'Moderate',
+ 'Investors finance CT equipment. HealthRunCare manages contracts and collects hospital payments, ensuring full repayment plus up to 20% ROI over 24 months.',
+ 'Blue', 'Monthly or quarterly payments', 'mdi:chart-bar'),
+
+('Dialysis Infrastructure Plan',
+ 'To expand kidney care capacity through the installation of dialysis centers and water treatment systems.',
+ 100000, 900, 20.0, 'quarterly', 'Moderate',
+ 'Your investment supports dialysis services in hospitals. Repayments come from patient treatment revenue, returning 18–22% profit over 30 months.',
+ 'Blue', 'Quarterly payments with inflation-adjusted escalation clause', 'mdi:water'),
+
+('Complete Operating Room Equipment Plan',
+ 'To establish modern operating theatres equipped for advanced surgical operations in partner hospitals.',
+ 150000, 1095, 22.5, 'monthly', 'Moderate',
+ 'Investors finance complete operating room setups. Hospitals repay from surgical revenues, providing up to 25% profit over three years.',
+ 'Blue', 'Monthly or quarterly with partial early payment options', 'mdi:needle'),
+
+('Hospital Diagnostic Wing Installation Plan',
+ 'To construct and equip an entire hospital diagnostic and imaging wing, combining MRI, CT, X-ray, ultrasound, and lab systems.',
+ 500000, 1095, 29.0, 'quarterly', 'Moderate-Low',
+ 'A high-value plan for institutional investors to fund full hospital diagnostic wings. Returns reach 30% over three years, backed by large-scale facility repayment contracts.',
+ 'Green', 'Quarterly or bi-annual', 'mdi:hospital-building');
+
+INSERT INTO maintenance_plans (name, purpose, min_amount, max_amount, duration_days, roi_percent, risk, payout, summary, color)
+VALUES
+('Maintenance Support Starter Plan', 'Entry plan for basic healthcare maintenance support.', 10000, 50000, 270, 5.5, 'Very Low', 'Full payout at maturity', 'Modest maintenance-backed returns.', 'Green'),
+('Standard Equipment Care Plan', 'One-year maintenance program for hospital devices.', 25000, 300000, 360, 9.0, 'Low', 'Annual or full payout at maturity', 'Steady returns supporting equipment upkeep.', 'Green'),
+('Infrastructure Development Plan', 'Mid-term investment into major repair infrastructure.', 50000, 500000, 720, 16.5, 'Moderate', 'Annual or full payout at maturity', 'Upgrades and modernization for better service delivery.', 'Blue'),
+('Premium Equipment Sustainability Plan', 'Top-tier maintenance pipeline for premium systems.', 250000, NULL, 1080, 22.0, 'Moderate', 'Multiple payout options', 'Long-term sustainability with high impact.', 'Blue'),
+('Lifetime Equipment Trust Plan', 'Perpetual sustainability income for healthcare assets.', 1000000, NULL, 36500, 7.0, 'Low', 'Lifetime payouts', 'Legacy plan offering continuous profits.', 'Green');
+  

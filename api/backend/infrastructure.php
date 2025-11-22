@@ -143,9 +143,11 @@ switch ($action) {
     /* ======================
        GET PLANS
        ====================== */
-    case 'get_plans':
-        respond('success','Plans loaded',['plans'=>array_values($plansRef)]);
-        break;
+case 'get_plans':
+    $stmt = $pdo->query("SELECT * FROM infrastructure_plans ORDER BY id ASC");
+    respond('success','Plans loaded',['plans'=>$stmt->fetchAll(PDO::FETCH_ASSOC)]);
+    break;
+
 
     /* ======================
        GET ACTIVE

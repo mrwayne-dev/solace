@@ -1,5 +1,5 @@
 /* =======================================================
-   holdlock.js — HealthRunCare HoldLock Frontend Logic (Final Fixed)
+   holdlock.js — HealthRunCare HoldLock Frontend Logic (Final)
    ======================================================= */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -46,48 +46,40 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const plan = window.__hrc_holdlock_plans.find(p => p.id === planId);
     if (!plan) {
-      const dataTerm = selectedOption?.getAttribute('data-lock') || '';
-      const dataRoi = selectedOption?.getAttribute('data-roi') || '';
-      lockTermEl.value = dataTerm;
-      lockRoiEl.value = dataRoi;
-      lockAmountEl.placeholder = 'Enter amount';
-      lockBtn.disabled = !dataTerm || !dataRoi;
+      lockBtn.disabled = true;
       return;
     }
 
     // Assign lock details
-    lockTermEl.value = plan.lock_period || plan.duration_text || (plan.duration_days ? plan.duration_days + ' days' : '');
-    lockRoiEl.value = plan.roi_percent ? `${plan.roi_percent}%` : (plan.roi || '');
+    lockTermEl.value = plan.lock_period_text || (plan.duration_days ? plan.duration_days + ' days' : '');
+    lockRoiEl.value = plan.roi_range || '';
 
-    // --- CLEAN FIX FOR MIN/MAX PLACEHOLDER ---
-    let minVal = plan.min || plan.min_deposit || 0;
-    let maxVal = plan.max_deposit === 'Unlimited' ? null : (plan.max || plan.max_deposit || 0);
+    // === MIN / MAX HANDLING ===
+    let minVal = plan.min_amount || 0;
+    let maxVal = plan.max_amount === null ? null : plan.max_amount;
 
-    // Strip formatting like "$10,000"
-    if (typeof minVal === 'string') minVal = parseFloat(minVal.replace(/[$,]/g, '')) || 0;
-    if (typeof maxVal === 'string' && maxVal !== 'Unlimited') maxVal = parseFloat(maxVal.replace(/[$,]/g, '')) || 0;
+    // Numeric conversion
+    minVal = parseFloat(minVal) || 0;
+    if (maxVal !== null) maxVal = parseFloat(maxVal) || 0;
 
-    // Set numeric input limits
-    if (!isNaN(minVal)) lockAmountEl.min = minVal;
-    if (!isNaN(maxVal) && maxVal > 0) lockAmountEl.max = maxVal;
+    // Set numeric input constraints
+    lockAmountEl.min = minVal;
+    if (maxVal && maxVal > 0) lockAmountEl.max = maxVal;
 
-    // Format placeholder display
-    const pmin = minVal ? `$${Number(minVal).toLocaleString()}` : '';
+    // Placeholder text formatting
+    const pmin = `$${Number(minVal).toLocaleString()}`;
     const pmax = maxVal ? `$${Number(maxVal).toLocaleString()}` : 'Unlimited';
-    lockAmountEl.placeholder = pmax === 'Unlimited' ? `Min: ${pmin}` : `${pmin} - ${pmax}`;
+    lockAmountEl.placeholder = maxVal ? `${pmin} - ${pmax}` : `Min: ${pmin}`;
 
-    // ✅ Autofill the minimum value for convenience
-    lockAmountEl.value = minVal || '';
-
+    // Autofill min amount
+    lockAmountEl.value = minVal;
     lockBtn.disabled = false;
   };
 
-  // === START HOLDLOCK FORM SUBMIT ===
+  // === START HOLDLOCK SUBMIT ===
   if (lockForm) {
     lockForm.addEventListener('submit', async function (e) {
       e.preventDefault();
-      if (!lockBtn) return;
-
       lockBtn.disabled = true;
       toggleLoader(true);
 
@@ -107,13 +99,11 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
+      // Range validation (frontend safety)
       const selectedPlan = window.__hrc_holdlock_plans.find(p => p.id === planId);
       if (selectedPlan) {
-        let min = selectedPlan.min || selectedPlan.min_deposit || 0;
-        let max = selectedPlan.max_deposit === 'Unlimited' ? Infinity : (selectedPlan.max || selectedPlan.max_deposit || Infinity);
-
-        if (typeof min === 'string') min = parseFloat(min.replace(/[$,]/g, '')) || 0;
-        if (typeof max === 'string' && max !== 'Unlimited') max = parseFloat(max.replace(/[$,]/g, '')) || Infinity;
+        const min = parseFloat(selectedPlan.min_amount || 0);
+        const max = selectedPlan.max_amount === null ? Infinity : parseFloat(selectedPlan.max_amount);
 
         if (amount < min) {
           showToast(`Minimum amount for this plan is $${min.toLocaleString()}.`, 'error');
@@ -129,7 +119,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
 
-      // API request
       const res = await fetchApi('/api/backend/holdlock.php', {
         action: 'start_holdlock',
         plan_id: planId,
@@ -154,51 +143,38 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // === SUMMARY (CARDS + WALLET) ===
-async function loadSummary() {
-  toggleLoader(true);
-  const res = await fetchApi('/api/backend/holdlock.php', { action: 'get_summary' });
-  toggleLoader(false);
+  // === SUMMARY DATA (CARDS) ===
+  async function loadSummary() {
+    toggleLoader(true);
+    const res = await fetchApi('/api/backend/holdlock.php', { action: 'get_summary' });
+    toggleLoader(false);
 
-  if (res.status === 'success') {
-    const summary = res.data?.summary || {};
-    const wallet = res.data?.wallet || {};
+    if (res.status === 'success') {
+      const summary = res.data?.summary || {};
+      const wallet = res.data?.wallet || {};
 
-    cardActiveLocks.textContent = summary.active_locks_count ?? 0;
-    cardTotalLocked.textContent = '$' + Number(summary.total_locked || 0).toFixed(2);
-    cardRoiEarned.textContent = '$' + Number(summary.total_roi || 0).toFixed(2);
+      cardActiveLocks.textContent = summary.active_locks_count ?? 0;
+      cardTotalLocked.textContent = '$' + Number(summary.total_locked || 0).toFixed(2);
+      cardRoiEarned.textContent = '$' + Number(summary.total_roi || 0).toFixed(2);
 
-    // ✅ Format the next maturity date nicely
-    if (summary.next_maturity) {
-      const date = new Date(summary.next_maturity);
-      const formattedDate = date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
-      });
-      cardNextUnlock.textContent = formattedDate;
-    } else {
-      cardNextUnlock.textContent = '—';
+      // Format next maturity
+      cardNextUnlock.textContent = summary.next_maturity
+        ? new Date(summary.next_maturity).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        : '—';
+
+      walletBalanceEl.textContent = '$' + Number(wallet.balance || 0).toFixed(2);
     }
-
-    walletBalanceEl.textContent = '$' + Number(wallet.balance || 0).toFixed(2);
-  } else {
-    console.warn('Failed to load holdlock summary:', res);
   }
-}
 
-
-  // === LOAD PLANS ===
+  // === LOAD PLANS + GRID RENDER ===
   async function loadPlans() {
     const res = await fetchApi('/api/backend/holdlock.php', { action: 'get_plans' });
-    if (res.status !== 'success') {
-      console.warn('Failed to load holdlock plans:', res);
-      return;
-    }
+    if (res.status !== 'success') return;
 
     const plans = res.data?.plans || [];
     window.__hrc_holdlock_plans = plans;
 
+    // Populate select
     const firstOption = planSelect.querySelector('option:first-child');
     planSelect.innerHTML = '';
     if (firstOption) planSelect.appendChild(firstOption);
@@ -207,14 +183,40 @@ async function loadSummary() {
       const opt = document.createElement('option');
       opt.value = p.id;
       opt.textContent = p.name || ('Plan ' + p.id);
-      opt.setAttribute('data-lock', p.lock_period || '');
-      opt.setAttribute('data-roi', p.roi_percent ? p.roi_percent + '%' : (p.roi || ''));
       planSelect.appendChild(opt);
     });
 
     planSelect.addEventListener('change', updateHoldlockDetails);
     planSelect.selectedIndex = 0;
     updateHoldlockDetails();
+
+    // === RENDER PLAN CARDS GRID ===
+    const grid = document.getElementById('holdlock-plans-grid');
+    grid.innerHTML = '';
+
+    plans.forEach(p => {
+      grid.innerHTML += `
+        <div class="col-lg-3 col-md-6">
+          <div class="plan-card">
+            <div class="plan-header flex justify-between items-center mb-12">
+              <div class="flex items-center gap-2">
+                <h6 class="plan-title">${escapeHtml(p.name)}</h6>
+              </div>
+            </div>
+            <p class="f12-regular text-Gray mb-12">${escapeHtml(p.purpose)}</p>
+
+            <table class="plan-features">
+              <tr><td>Min Deposit</td><td>$${Number(p.min_amount).toLocaleString()}</td></tr>
+              <tr><td>Lock Period</td><td>${escapeHtml(p.lock_period_text)}</td></tr>
+              <tr><td>ROI</td><td class="text-Green fw-bold">${escapeHtml(p.roi_range)}</td></tr>
+              <tr><td>Max Deposit</td><td>${p.max_amount ? '$' + Number(p.max_amount).toLocaleString() : 'Unlimited'}</td></tr>
+              <tr><td>Payout</td><td>${escapeHtml(p.payout)}</td></tr>
+            </table>
+
+            <p class="f12-regular text-Gray italic mt-12">${escapeHtml(p.summary)}</p>
+          </div>
+        </div>`;
+    });
   }
 
   // === LOAD ACTIVE LOCKS ===
@@ -229,9 +231,9 @@ async function loadSummary() {
     if (!locks.length) {
       document.getElementById('no-active-holdlocks')?.classList.remove('hidden');
       return;
-    } else {
-      document.getElementById('no-active-holdlocks')?.classList.add('hidden');
     }
+
+    document.getElementById('no-active-holdlocks')?.classList.add('hidden');
 
     locks.forEach(l => {
       const tr = document.createElement('tr');
@@ -240,11 +242,10 @@ async function loadSummary() {
         <td data-label="Plan Name">${escapeHtml(l.plan_name)}</td>
         <td data-label="Amount Locked">$${Number(l.amount).toFixed(2)}</td>
         <td data-label="ROI (%)" class="text-Green">${Number(l.roi_percent || 0).toFixed(2)}%</td>
-        <td data-label="Lock Period">${escapeHtml(l.duration_days ? l.duration_days + ' days' : l.lock_period || '—')}</td>
+        <td data-label="Lock Period">${escapeHtml(l.duration_days ? l.duration_days + ' days' : '—')}</td>
         <td data-label="Payout Option">${escapeHtml(l.payout_option || 'maturity')}</td>
         <td data-label="Status"><div class="box-status ${l.status === 'locked' ? 'bg-Green' : 'bg-Gray'}"><span>${l.status}</span></div></td>
-        <td data-label="Start Date">${l.created_at || '—'}</td>
-      `;
+        <td data-label="Start Date">${l.created_at || '—'}</td>`;
       activeLocksTbody.appendChild(tr);
     });
   }
@@ -258,9 +259,9 @@ async function loadSummary() {
     if (!matured.length) {
       document.getElementById('matured-holdlocks-empty')?.classList.remove('hidden');
       return;
-    } else {
-      document.getElementById('matured-holdlocks-empty')?.classList.add('hidden');
     }
+
+    document.getElementById('matured-holdlocks-empty')?.classList.add('hidden');
 
     matured.forEach(m => {
       const payout = (parseFloat(m.amount) + parseFloat(m.roi_earned || 0)).toFixed(2);
@@ -273,14 +274,14 @@ async function loadSummary() {
         <td data-label="Maturity Date">${m.maturity_date || '—'}</td>
         <td data-label="Total Payout">$${payout}</td>
         <td data-label="Actions">
-          <button class="tf-button bg-Green text-White f12-regular hover:bg-Primary" onclick="initiateHoldlockUnlock(${m.id}, false)">Unlock</button>
-        </td>
-      `;
+          <button class="tf-button bg-Green text-White f12-regular hover:bg-Primary"
+            onclick="initiateHoldlockUnlock(${m.id}, false)">Unlock</button>
+        </td>`;
       maturedLocksTbody.appendChild(tr);
     });
   }
 
-  // === UNLOCK FUNCTION ===
+  // === UNLOCK HOLDLOCK ===
   window.initiateHoldlockUnlock = async function (holdlockId, earlyFlag = false) {
     const confirmMsg = earlyFlag
       ? 'This will perform an early unlock and apply penalty. Proceed?'
@@ -320,7 +321,7 @@ async function loadSummary() {
     loader.classList.toggle('hidden', !show);
   }
 
-  // === AUTO REFRESH EVERY 60s ===
+  // === AUTO REFRESH (60s) ===
   setInterval(() => {
     loadSummary();
     loadActiveLocks();

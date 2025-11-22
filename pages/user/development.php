@@ -18,75 +18,6 @@ $user_name = htmlspecialchars($_SESSION['full_name'] ?? 'User'); // Fallback to 
 $user_id = $_SESSION['user_id'] ?? null;
 $user_email = $_SESSION['email'] ?? null;
 $user_role = $_SESSION['role'] ?? 'user';
-
-// Placeholder data for development plans
-$plans = [
-    [
-        'id' => 1,
-        'name' => 'Maintenance Support Starter Plan',
-        'purpose' => 'An entry-level plan for individuals seeking both community impact and short-term, reliable returns.',
-        'min_deposit' => '$10,000',
-        'max_deposit' => '$50,000',
-        'duration' => '9 months',
-        'roi' => '5–6%',
-        'risk' => 'Very Low',
-        'payout' => 'Full payout at maturity',
-        'summary' => 'A short-term plan ideal for investors looking to earn modest returns while supporting the upkeep of vital community healthcare assets.',
-        'color' => 'Green'
-    ],
-    [
-        'id' => 2,
-        'name' => 'Standard Equipment Care Plan',
-        'purpose' => 'A one-year plan designed to maintain essential hospital assets and ensure continuous medical operations.',
-        'min_deposit' => '$25,000',
-        'max_deposit' => '$300,000',
-        'duration' => '12 months',
-        'roi' => '8–10%',
-        'risk' => 'Low',
-        'payout' => 'Annual or full payout at maturity',
-        'summary' => 'Investors in this plan help healthcare centers maintain key operational tools, earning steady returns from predictable maintenance and renewal income streams.',
-        'color' => 'Green'
-    ],
-    [
-        'id' => 3,
-        'name' => 'Infrastructure Development Plan',
-        'purpose' => 'A mid-term investment for clients supporting the maintenance and modernization of healthcare infrastructure and utilities.',
-        'min_deposit' => '$50,000',
-        'max_deposit' => '$500,000',
-        'duration' => '24 months',
-        'roi' => '15–18%',
-        'risk' => 'Moderate',
-        'payout' => 'Annual or full payout at maturity',
-        'summary' => 'This plan supports large-scale repair and development projects with measurable social and financial benefits.',
-        'color' => 'Blue'
-    ],
-    [
-        'id' => 4,
-        'name' => 'Premium Equipment Sustainability Plan',
-        'purpose' => 'A premium, long-term plan focusing on advanced medical system upkeep and modernization.',
-        'min_deposit' => '$250,000',
-        'max_deposit' => 'Unlimited',
-        'duration' => '36 months',
-        'roi' => '22–28%',
-        'risk' => 'Moderate',
-        'payout' => 'Annual, bi-annual, or full payout at maturity',
-        'summary' => 'Designed for investors seeking high-value, long-term impact and returns from advanced healthcare sustainability programs.',
-        'color' => 'Blue'
-    ],
-    [
-        'id' => 5,
-        'name' => 'Lifetime Equipment Trust Plan',
-        'purpose' => 'A perpetual plan offering lifetime income while funding continuous maintenance operations for healthcare facilities.',
-        'min_deposit' => '$1,000,000',
-        'max_deposit' => 'Unlimited',
-        'duration' => 'Lifetime (Perpetual)',
-        'roi' => '6–8% annual',
-        'risk' => 'Low',
-        'payout' => 'Annual or quarterly lifetime payout',
-        'summary' => 'A legacy plan ensuring long-term financial returns while maintaining the efficiency and reliability of healthcare systems for generations.',
-        'color' => 'Green'
-    ]
-];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -364,51 +295,7 @@ $plans = [
                                                     <div class="label-01 text-Primary">Maintenance & Development Plans</div>
                                                 </div>
 
-                                                <div class="content">
-                                                    <div class="row g-4">
-                                                        <?php foreach ($plans as $plan): ?>
-                                                        <div class="col-lg-3 col-md-6">
-                                                            <div class="plan-card">
-                                                                <div class="plan-header flex justify-between items-center mb-12">
-                                                                    <div class="flex items-center gap-2">
-                                                                        <h6 class="plan-title"><?php echo htmlspecialchars($plan['name']); ?></h6>
-                                                                    </div>
-                                                                </div>
-
-                                                                <p class="f12-regular text-Gray mb-12">
-                                                                    <?php echo htmlspecialchars($plan['purpose']); ?>
-                                                                </p>
-
-                                                                <table class="plan-features">
-                                                                    <tr>
-                                                                        <td>Min Investment</td>
-                                                                        <td><?php echo $plan['min_deposit']; ?></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Duration</td>
-                                                                        <td><?php echo $plan['duration']; ?></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>ROI</td>
-                                                                        <td class="text-Green fw-bold"><?php echo $plan['roi']; ?></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Risk Level</td>
-                                                                        <td class="text-<?php echo $plan['color']; ?> fw-bold"><?php echo $plan['risk']; ?></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Payout Option</td>
-                                                                        <td><?php echo $plan['payout']; ?></td>
-                                                                    </tr>
-                                                                </table>
-
-                                                                <p class="f12-regular text-Gray italic mt-12">
-                                                                    <?php echo htmlspecialchars($plan['summary']); ?>
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                        <?php endforeach; ?>
-                                                    </div>
+                                                <div class="row g-4" id="maintenance-plan-grid"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -428,20 +315,10 @@ $plans = [
                                                         <!-- Select Plan -->
                                                         <div class="mb-20">
                                                             <label class="f14-regular text-Black mb-8">Select Plan</label>
-                                                            <select class="form-select custom-select" id="plan-select" onchange="updatePlanDetails()">
-                                                                <option>Select a Plan</option>
-                                                                <?php foreach ($plans as $plan): ?>
-                                                                <option
-                                                                    value="<?php echo $plan['id']; ?>"
-                                                                    data-min="<?php echo str_replace('$', '', $plan['min_deposit']); ?>"
-                                                                    data-max="<?php echo $plan['max_deposit'] === 'Unlimited' ? '' : str_replace('$', '', $plan['max_deposit']); ?>"
-                                                                    data-duration="<?php echo $plan['duration']; ?>"
-                                                                    data-roi="<?php echo $plan['roi']; ?>"
-                                                                >
-                                                                    <?php echo htmlspecialchars($plan['name']); ?>
-                                                                </option>
-                                                                <?php endforeach; ?>
+                                                           <select class="form-select custom-select" id="plan-select">
+                                                                <option value="">Select a Plan</option>
                                                             </select>
+
                                                         </div>
 
                                                         <!-- Investment Amount -->

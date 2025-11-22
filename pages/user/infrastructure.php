@@ -394,52 +394,7 @@ $infraPlans = [
                                                     <div class="label-01 text-Primary">Infrastructure Pay-Off Plans</div>
                                                 </div>
 
-                                                <div class="content">
-                                                    <div class="row g-4">
-                                                        <?php foreach ($plans as $plan): ?>
-                                                        <div class="col-lg-3 col-md-6">
-                                                            <div class="plan-card">
-                                                                <div class="plan-header flex justify-between items-center mb-12">
-                                                                    <div class="flex items-center gap-2">
-                                                                        <h6 class="plan-title"><?php echo htmlspecialchars($plan['name']); ?></h6>
-                                                                    </div>
-                                                                </div>
-
-                                                                <p class="f12-regular text-Gray mb-12">
-                                                                    <?php echo htmlspecialchars($plan['purpose']); ?>
-                                                                </p>
-
-                                                                <table class="plan-features">
-                                                                    <tr>
-                                                                        <td>Min Investment</td>
-                                                                        <td><?php echo $plan['min_deposit']; ?></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Pay-Off Period</td>
-                                                                        <td><?php echo $plan['payoff_period']; ?></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>ROI</td>
-                                                                        <td class="text-Green fw-bold"><?php echo $plan['roi']; ?></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Risk Level</td>
-                                                                        <td class="text-<?php echo $plan['color']; ?> fw-bold"><?php echo $plan['risk']; ?></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Repayment Mode</td>
-                                                                        <td><?php echo $plan['repayment']; ?></td>
-                                                                    </tr>
-                                                                </table>
-
-                                                                <p class="f12-regular text-Gray italic mt-12">
-                                                                    <?php echo htmlspecialchars($plan['summary']); ?>
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                        <?php endforeach; ?>
-                                                    </div>
-                                                </div>
+                                                <div class="row g-4" id="infra-plans-grid"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -458,19 +413,8 @@ $infraPlans = [
                                                         <!-- Select Plan -->
                                                         <div class="mb-20">
                                                             <label class="f14-regular text-Black mb-8">Select Plan</label>
-                                                            <select class="form-select custom-select" id="plan-select" onchange="updatePlanDetails()">
-                                                                <option>Select a Plan</option>
-                                                                <?php foreach ($plans as $plan): ?>
-                                                                <option
-                                                                    value="<?php echo $plan['id']; ?>"
-                                                                    data-min="<?php echo str_replace('$', '', $plan['min_deposit']); ?>"
-                                                                    data-max=""
-                                                                    data-payoff="<?php echo $plan['payoff_period']; ?>"
-                                                                    data-roi="<?php echo $plan['roi']; ?>"
-                                                                >
-                                                                    <?php echo htmlspecialchars($plan['name']); ?>
-                                                                </option>
-                                                                <?php endforeach; ?>
+                                                            <select class="form-select custom-select" id="plan-select">
+                                                                <option value="">Select a Plan</option>
                                                             </select>
                                                         </div>
 

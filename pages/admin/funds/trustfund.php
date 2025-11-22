@@ -226,7 +226,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                             <div class="f12-bold text-White">User</div>
                                             <div class="f12-bold text-White">Scheme</div>
                                             <div class="f12-bold text-White">Contributed</div>
-                                            <div class="f12-bold text-White">Target</div>
                                             <div class="f12-bold text-White">End Date</div>
                                             <div class="f12-bold text-White">Status</div>
                                         </div>
@@ -237,26 +236,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                         </table>
                                     </div>
                                     <div id="active-trustfund-pagination" class="pagination mt-3 flex gap-2 justify-center"></div>
-                                </div>
-                                <!-- 4. MATURED / PAYOUT-READY TRUSTFUND -->
-                                <div class="mb-32">
-                                    <h5 class="label-01 mb-16">Matured / Ready for Payout</h5>
-                                    <div class="table-list-transaction">
-                                        <div class="list-transaction-head title-sort bg-Primary">
-                                            <div class="f12-bold text-White">User</div>
-                                            <div class="f12-bold text-White">Scheme</div>
-                                            <div class="f12-bold text-White">Total Contributed</div>
-                                            <div class="f12-bold text-White">Payout Amount</div>
-                                            <div class="f12-bold text-White">Maturity Date</div>
-                                            <div class="f12-bold text-White">Beneficiary</div>
-                                        </div>
-                                        <table class="list-transaction-content content-sort w-100">
-                                            <tbody id="matured-trustfund-body">
-                                                <!-- JS populates -->
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div id="matured-trustfund-pagination" class="pagination mt-3 flex gap-2 justify-center"></div>
                                 </div>
                             </div>
                         </div>
@@ -326,7 +305,8 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
 <script src="../../assets/js/jquery.min.js"></script>
 <script src="../../assets/js/bootstrap.min.js"></script>
 <script src="../../assets/js/bootstrap-select.min.js" defer></script>
-<script src="../../assets/js/dashboard.js" defer></script>
+<script src="../../assets/js/admin/admin.js" defer></script>
+<script src="../../assets/js/admin/funds_trustfund.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 </body>

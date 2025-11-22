@@ -19,129 +19,6 @@ $user_id = $_SESSION['user_id'] ?? null;
 $user_email = $_SESSION['email'] ?? null;
 $user_role = $_SESSION['role'] ?? 'user';
 
-// Placeholder data for trust fund plans
-$plans = [
-    [
-        'id' => 1,
-        'name' => 'Child Education Growth Plan',
-        'purpose' => 'To help parents and guardians build a secure education fund for their children’s future, with guaranteed growth and flexible payout options.',
-        'min_deposit' => '$500',
-        'max_deposit' => '$50,000',
-        'lock_period' => '3 years',
-        'roi' => '20–28%',
-        'risk' => 'Low',
-        'payout' => 'Annual payout or at maturity',
-        'summary' => 'A safe and steady plan that allows parents to prepare for their children’s education needs. Funds grow through secure, education-focused investments with short-term profitability.',
-        'icon' => 'mdi:school-outline',
-        'color' => 'Green'
-    ],
-    [
-        'id' => 2,
-        'name' => 'Legacy Wealth Trust Plan',
-        'purpose' => 'To help high-net-worth individuals and families build long-term generational wealth through sustainable, asset-backed investments.',
-        'min_deposit' => '$500,000',
-        'max_deposit' => 'Unlimited',
-        'lock_period' => '5 years',
-        'roi' => '45–60%',
-        'risk' => 'Moderate',
-        'payout' => 'Annual or full payout at maturity',
-        'summary' => 'A premium trust plan for investors who want to establish multi-generational wealth. Funds are allocated into stable, high-yield ventures in healthcare and infrastructure, ensuring significant compounded returns.',
-        'icon' => 'mdi:family-tree',
-        'color' => 'Blue'
-    ],
-    [
-        'id' => 3,
-        'name' => 'Business Succession Trust Plan',
-        'purpose' => 'To help business owners secure and grow their assets while creating a smooth transition or expansion strategy.',
-        'min_deposit' => '$5,000',
-        'max_deposit' => '$500,000',
-        'lock_period' => '4 years',
-        'roi' => '40–55%',
-        'risk' => 'Moderate to High',
-        'payout' => 'Annual or full payout at maturity',
-        'summary' => 'This plan empowers entrepreneurs to expand or stabilize their businesses while earning profitable returns through diversified investments in growth industries.',
-        'icon' => 'mdi:briefcase-outline',
-        'color' => 'Orange'
-    ],
-    [
-        'id' => 4,
-        'name' => 'Medical Protection Trust Plan',
-        'purpose' => 'To create a secure health reserve that earns profit while providing access to emergency medical funds.',
-        'min_deposit' => '$300',
-        'max_deposit' => '$25,000',
-        'lock_period' => '3 years',
-        'roi' => '15–20%',
-        'risk' => 'Low',
-        'payout' => 'Quarterly, annual, or at maturity',
-        'summary' => 'A health-focused savings and investment plan that offers financial security for medical needs while maintaining capital growth through health sector investments.',
-        'icon' => 'mdi:heart-pulse',
-        'color' => 'Green'
-    ],
-    [
-        'id' => 5,
-        'name' => 'Future Builders Business Plan',
-        'purpose' => 'To help young professionals and entrepreneurs grow startup capital or long-term business project funds.',
-        'min_deposit' => '$1,000',
-        'max_deposit' => '$100,000',
-        'lock_period' => '4 years',
-        'roi' => '30–45%',
-        'risk' => 'Moderate',
-        'payout' => 'Annual or full payout at maturity',
-        'summary' => 'This plan provides growth opportunities for future business leaders. HealthRunCare invests your capital into profitable startups and innovation projects that deliver measurable social and financial impact.',
-        'icon' => 'mdi:rocket-outline',
-        'color' => 'Blue'
-    ],
-    [
-        'id' => 6,
-        'name' => 'Guardian Trust Income Plan',
-        'purpose' => 'To provide steady, reliable annual income for beneficiaries such as children, dependents, or retirees.',
-        'min_deposit' => '$10,000',
-        'max_deposit' => '$200,000',
-        'lock_period' => '5 years',
-        'roi' => '35% total (approx. 7% yearly)',
-        'risk' => 'Low to Moderate',
-        'payout' => 'Annual income distribution',
-        'summary' => 'A dependable, income-generating plan that ensures steady annual payouts while preserving your trust capital — ideal for long-term dependents and family income planning.',
-        'icon' => 'mdi:shield-check-outline',
-        'color' => 'Green'
-    ],
-    [
-        'id' => 7,
-        'name' => 'Perpetual Legacy Trust Plan',
-        'purpose' => 'To establish a lifetime trust that pays continuous annual income while keeping the principal amount permanently invested.',
-        'min_deposit' => '$1,000,000',
-        'max_deposit' => 'Unlimited',
-        'lock_period' => 'Lifetime (Perpetual)',
-        'roi' => '10–12% annual',
-        'risk' => 'Low',
-        'payout' => 'Annual or quarterly for life',
-        'summary' => 'An elite trust for individuals or institutions seeking permanent wealth and lifetime income. The principal remains preserved within HealthRunCare’s managed assets, generating annual returns indefinitely.',
-        'icon' => 'mdi:infinity',
-        'color' => 'Orange'
-    ]
-];
-
-// Placeholder data for user's trust fund plans
-$trustPlans = [
-    [
-        'plan' => 'Child Education Growth Plan',
-        'amount' => 2500.00,
-        'roi' => '25%',
-        'term_duration' => '3 years',
-        'payout' => 'Annual',
-        'status' => 'Active',
-        'start_date' => 'Sep 1, 2025'
-    ],
-    [
-        'plan' => 'Medical Protection Trust Plan',
-        'amount' => 10000.00,
-        'roi' => '18%',
-        'term_duration' => '3 years',
-        'payout' => 'Quarterly',
-        'status' => 'Active',
-        'start_date' => 'Aug 15, 2025'
-    ]
-];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -419,54 +296,7 @@ $trustPlans = [
                                                 <div class="label-01 text-Primary">Available TrustFund Plans</div>
                                             </div>
 
-                                            <div class="content">
-                                                <div class="row g-4">
-                                                <?php foreach ($plans as $plan): ?>
-                                                <div class="col-lg-3 col-md-6">
-                                                    <div class="plan-card">
-                                                    <div class="plan-header flex justify-between items-center mb-12">
-                                                        <div class="flex items-center gap-2">
-                                                        <h6 class="plan-title"><?php echo htmlspecialchars($plan['name']); ?></h6>
-                                                        </div>
-                                                    </div>
-
-                                                    <p class="f12-regular text-Gray mb-12">
-                                                        <?php echo htmlspecialchars($plan['purpose']); ?>
-                                                    </p>
-
-                                                    <table class="plan-features">
-                                                        <tr>
-                                                        <td>Min Investment</td>
-                                                        <td><?php echo $plan['min_deposit']; ?></td>
-                                                        </tr>
-                                                        <tr>
-                                                        <td>Term</td>
-                                                        <td><?php echo $plan['lock_period']; ?></td>
-                                                        </tr>
-                                                        <tr>
-                                                        <td>ROI</td>
-                                                        <td class="text-Green fw-bold"><?php echo $plan['roi']; ?></td>
-                                                        </tr>
-                                                        <tr>
-                                                        <td>Risk Level</td>
-                                                        <td class="text-<?php echo $plan['color'] ?? 'Gray'; ?> fw-bold">
-                                                            <?php echo $plan['risk']; ?>
-                                                        </td>
-                                                        </tr>
-                                                        <tr>
-                                                        <td>Payout Option</td>
-                                                        <td><?php echo $plan['payout']; ?></td>
-                                                        </tr>
-                                                    </table>
-
-                                                    <p class="f12-regular text-Gray italic mt-12">
-                                                        <?php echo htmlspecialchars($plan['summary']); ?>
-                                                    </p>
-                                                    </div>
-                                                </div>
-                                                <?php endforeach; ?>
-                                                </div>
-                                            </div>
+                                            <div class="row g-4" id="trustfund-plans-grid"></div>
                                             </div>
                                         </div>
                                         </div>
@@ -489,17 +319,8 @@ $trustPlans = [
                                                                         <label class="f14-regular text-Black mb-8">Select Plan</label>
                                                                         <select class="form-select custom-select" id="plan-select">
                                                                             <option value="">Select a Plan</option>
-                                                                            <?php foreach ($plans as $plan): ?>
-                                                                            <option
-                                                                                value="<?php echo $plan['id']; ?>"
-                                                                                data-min="<?php echo str_replace('$', '', $plan['min_deposit']); ?>"
-                                                                                data-term="<?php echo $plan['lock_period']; ?>"
-                                                                                data-roi="<?php echo $plan['roi']; ?>"
-                                                                            >
-                                                                                <?php echo htmlspecialchars($plan['name']); ?>
-                                                                            </option>
-                                                                            <?php endforeach; ?>
                                                                         </select>
+
                                                                         </div>
 
 

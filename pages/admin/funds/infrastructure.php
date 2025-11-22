@@ -238,25 +238,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                     </div>
                                     <div id="active-infra-pagination" class="pagination mt-3 flex gap-2 justify-center"></div>
                                 </div>
-                                <!-- 4. COMPLETED / ARCHIVED PROJECTS -->
-                                <div class="mb-32">
-                                    <h5 class="label-01 mb-16">Completed / Archived Projects</h5>
-                                    <div class="table-list-transaction">
-                                        <div class="list-transaction-head title-sort bg-Primary">
-                                            <div class="f12-bold text-White">Project</div>
-                                            <div class="f12-bold text-White">Total Budget</div>
-                                            <div class="f12-bold text-White">Total Spent</div>
-                                            <div class="f12-bold text-White">Completion Date</div>
-                                            <div class="f12-bold text-White">Outcome</div>
-                                        </div>
-                                        <table class="list-transaction-content content-sort w-100">
-                                            <tbody id="completed-infra-body">
-                                                <!-- JS populates -->
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div id="completed-infra-pagination" class="pagination mt-3 flex gap-2 justify-center"></div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -328,7 +309,8 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
 <script src="../../assets/js/jquery.min.js"></script>
 <script src="../../assets/js/bootstrap.min.js"></script>
 <script src="../../assets/js/bootstrap-select.min.js" defer></script>
-<script src="../../assets/js/dashboard.js" defer></script>
+<script src="../../assets/js/admin/admin.js" defer></script>
+<script src="../../assets/js/admin/funds_infrastructure.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 </body>

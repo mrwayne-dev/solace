@@ -359,8 +359,8 @@ var loadDashboardData = async function () {
       $('#total-deposited').text(formatCurrency(parseNum(w.total_deposited ?? 0)));
       $('#total-withdrawn').text(formatCurrency(parseNum(w.total_withdrawn ?? 0)));
       $('#total-donations').text(formatCurrency(parseNum(w.donations ?? w.total_donations ?? 0)));
-      $('#total-investments').text(formatCurrency(parseNum(w.investments ?? w.total_investments ?? 0)));
-      $('#holdlock-savings').text(formatCurrency(parseNum(w.holdlock_savings ?? 0)));
+      $('#total-investments').text(formatCurrency(parseNum(w.total_investments ?? w.investments ?? 0)));
+      $('#total-holdlock').text(formatCurrency(parseNum(w.holdlock_savings ?? 0)));
       $('#total-earnings').text(formatCurrency(parseNum(w.total_earnings ?? 0)));
 
       // --- Wallet Activity List (wallet.php) ---

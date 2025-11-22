@@ -1,7 +1,7 @@
 <?php
 /**
  * ==========================================================
- * HealthRunCare — HoldLock Backend API (Fixed)
+ * HealthRunCare — HoldLock Backend API (DYNAMIC VERSION)
  * ==========================================================
  * Handles:
  *  - get_summary
@@ -13,263 +13,260 @@
  * ==========================================================
  */
 
+session_start([
+    'cookie_lifetime' => 86400,
+    'cookie_httponly' => true,
+    'cookie_secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on',
+    'cookie_samesite' => 'Strict',
+]);
+
+header('Content-Type: application/json');
+
+// Auth check
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
+    exit;
+}
+
+// Load dependencies
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../config/constants.php';
 require_once __DIR__ . '/../utilities/email_temps.php';
 require_once __DIR__ . '/email.php';
 
-session_start();
-header('Content-Type: application/json; charset=utf-8');
-
-// Auth check
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Unauthorized.']);
-    exit;
-}
-
-$user_id = $_SESSION['user_id'];
-// Prefer JSON body first (works for fetch with JSON)
-// fallback to $_POST/$_GET if needed
+$user_id = intval($_SESSION['user_id']);
 $raw = file_get_contents('php://input');
 $input = json_decode($raw, true) ?? $_POST ?? $_GET;
-$action = $input['action'] ?? $_POST['action'] ?? $_GET['action'] ?? null;
+$action = $input['action'] ?? null;
 
-try {
-    $pdo = getPDO();
-} catch (Exception $e) {
-    // Do not expose DB details
-    echo json_encode(['status' => 'error', 'message' => 'DB connection failed.']);
-    exit;
-}
-
-
-// Simple response helper
+// Quick response helper
 function respond($status, $message, $data = [])
 {
     echo json_encode(['status' => $status, 'message' => $message, 'data' => $data]);
     exit;
 }
 
+// Connect to DB
+try {
+    $pdo = getPDO();
+} catch (Exception $e) {
+    respond('error', 'Database connection failed.');
+}
+
 if (!$action) respond('error', 'No action specified.');
 
-switch ($action) {
 
-    /* =====================================================
-       1️⃣ SUMMARY
-       ===================================================== */
-    case 'get_summary':
-        $summaryStmt = $pdo->prepare("
-            SELECT 
-                COUNT(*) AS active_locks_count,
-                COALESCE(SUM(amount), 0) AS total_locked,
-                COALESCE(SUM(roi_earned), 0) AS total_roi,
-                MIN(maturity_date) AS next_maturity
-            FROM holdlock 
-            WHERE user_id = ? AND status = 'locked'
-        ");
-        $summaryStmt->execute([$user_id]);
-        $summary = $summaryStmt->fetch(PDO::FETCH_ASSOC) ?: ['active_locks_count' => 0, 'total_locked' => 0, 'total_roi' => 0, 'next_maturity' => null];
+/* =====================================================
+   1️⃣ SUMMARY
+   ===================================================== */
+if ($action === 'get_summary') {
+    $stmt = $pdo->prepare("
+        SELECT 
+            COUNT(*) AS active_locks_count,
+            COALESCE(SUM(amount), 0) AS total_locked,
+            COALESCE(SUM(roi_earned), 0) AS total_roi,
+            MIN(maturity_date) AS next_maturity
+        FROM holdlock 
+        WHERE user_id = ? AND status = 'locked'
+    ");
+    $stmt->execute([$user_id]);
+    $summary = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $walletStmt = $pdo->prepare("SELECT balance, total_earnings FROM wallets WHERE user_id = ?");
-        $walletStmt->execute([$user_id]);
-        $wallet = $walletStmt->fetch(PDO::FETCH_ASSOC) ?: ['balance' => 0, 'total_earnings' => 0];
+    $wallet = $pdo->prepare("SELECT balance, total_earnings FROM wallets WHERE user_id = ?");
+    $wallet->execute([$user_id]);
+    $walletData = $wallet->fetch(PDO::FETCH_ASSOC);
 
-        respond('success', 'Summary loaded.', ['summary' => $summary, 'wallet' => $wallet]);
-        break;
-
-    /* =====================================================
-       2️⃣ PLANS
-       ===================================================== */
-    case 'get_plans':
-        $plans = [
-            ['id' => 1, 'name' => 'Flexi Health Lock Plan', 'roi_percent' => 3.5, 'duration_days' => 180, 'min_deposit' => 10000, 'max_deposit' => 100000, 'lock_period' => '6 months', 'payout_option' => 'At maturity'],
-            ['id' => 2, 'name' => 'Standard Lock & Grow Plan', 'roi_percent' => 8.0, 'duration_days' => 365, 'min_deposit' => 20000, 'max_deposit' => 300000, 'lock_period' => '12 months', 'payout_option' => 'Annual or at maturity'],
-            ['id' => 3, 'name' => 'Executive LockPlus Plan', 'roi_percent' => 16.0, 'duration_days' => 730, 'min_deposit' => 50000, 'max_deposit' => 500000, 'lock_period' => '24 months', 'payout_option' => 'Annual or at maturity'],
-            ['id' => 4, 'name' => 'Prestige Capital Hold Plan', 'roi_percent' => 28.0, 'duration_days' => 1095, 'min_deposit' => 250000, 'max_deposit' => null, 'lock_period' => '36 months', 'payout_option' => 'Flexible'],
-            ['id' => 5, 'name' => 'Lifetime Reserve Lock Plan', 'roi_percent' => 7.0, 'duration_days' => 3650, 'min_deposit' => 1000000, 'max_deposit' => null, 'lock_period' => 'Lifetime', 'payout_option' => 'Annual']
-        ];
-        respond('success', 'Plans loaded.', ['plans' => $plans]);
-        break;
-
-    /* =====================================================
-       3️⃣ ACTIVE LOCKS
-       ===================================================== */
-    case 'get_active':
-        $stmt = $pdo->prepare("SELECT * FROM holdlock WHERE user_id = ? AND status = 'locked' ORDER BY created_at DESC");
-        $stmt->execute([$user_id]);
-        $locks = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        respond('success', 'Active locks loaded.', ['locks' => $locks]);
-        break;
-
-    /* =====================================================
-       4️⃣ MATURED LOCKS
-       ===================================================== */
-    case 'get_matured':
-        $stmt = $pdo->prepare("SELECT * FROM holdlock WHERE user_id = ? AND status = 'matured' ORDER BY maturity_date ASC");
-        $stmt->execute([$user_id]);
-        $matured = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        respond('success', 'Matured locks loaded.', ['matured' => $matured]);
-        break;
-
-    /* =====================================================
-       5️⃣ START HOLDLOCK
-       ===================================================== */
-    case 'start_holdlock':
-        // Use $input (JSON) values primarily
-        $planId = intval($input['plan_id'] ?? $input['planId'] ?? ($_POST['plan_id'] ?? 0));
-        $amount = floatval($input['amount'] ?? ($_POST['amount'] ?? 0));
-        if ($planId <= 0 || $amount <= 0) respond('error', 'Invalid plan or amount.');
-
-        // Check wallet balance
-        $wallet = $pdo->prepare("SELECT balance FROM wallets WHERE user_id = ?");
-        $wallet->execute([$user_id]);
-        $walletData = $wallet->fetch(PDO::FETCH_ASSOC);
-        if (!$walletData || floatval($walletData['balance']) < $amount) respond('error', 'Insufficient wallet balance.');
-
-        // Plans (server-side source of truth)
-        $plans = [
-            1 => ['name' => 'Flexi Health Lock Plan', 'roi_percent' => 3.5, 'duration_days' => 180],
-            2 => ['name' => 'Standard Lock & Grow Plan', 'roi_percent' => 8.0, 'duration_days' => 365],
-            3 => ['name' => 'Executive LockPlus Plan', 'roi_percent' => 16.0, 'duration_days' => 730],
-            4 => ['name' => 'Prestige Capital Hold Plan', 'roi_percent' => 28.0, 'duration_days' => 1095],
-            5 => ['name' => 'Lifetime Reserve Lock Plan', 'roi_percent' => 7.0, 'duration_days' => 3650]
-        ];
-        $plan = $plans[$planId] ?? null;
-        if (!$plan) respond('error', 'Invalid plan.');
-
-        $roi = $plan['roi_percent'];
-        $duration = $plan['duration_days'];
-        // maturity_date as YYYY-MM-DD
-        $maturity_date = (new DateTime())->add(new DateInterval("P{$duration}D"))->format('Y-m-d');
-
-        try {
-            $pdo->beginTransaction();
-
-            // Deduct funds
-            $upd = $pdo->prepare("UPDATE wallets SET balance = balance - ? WHERE user_id = ?");
-            $upd->execute([$amount, $user_id]);
-
-            // Create record in holdlock
-            $stmt = $pdo->prepare("
-                INSERT INTO holdlock (user_id, plan_name, amount, roi_percent, duration_days, maturity_date, status, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, 'locked', NOW())
-            ");
-            $stmt->execute([$user_id, $plan['name'], $amount, $roi, $duration, $maturity_date]);
-            $holdlockId = $pdo->lastInsertId();
-
-            // Transaction record (standardized type + structured details)
-            $ref = 'HLD-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 10));
-
-            $txn = $pdo->prepare("
-                INSERT INTO transactions (user_id, type, amount, reference, status, method, details)
-                VALUES (?, 'holdlock', ?, ?, 'completed', 'wallet',
-                    JSON_OBJECT(
-                        'subtype', 'start',
-                        'plan', ?,
-                        'roi_percent', ?,
-                        'duration_days', ?,
-                        'maturity_date', ?
-                    )
-                )
-            ");
-            $txn->execute([$user_id, $amount, $ref, $plan['name'], $roi, $duration, $maturity_date]);
-
-
-            $pdo->commit();
-        } catch (Exception $e) {
-            if ($pdo->inTransaction()) $pdo->rollBack();
-            // log and return generic error
-            error_log("HoldLock start error: " . $e->getMessage());
-            respond('error', 'Failed to start holdlock. Try again later.');
-        }
-
-        // ==================================================
-        // EMAIL NOTIFICATION LOGIC
-        // ==================================================
-        try {
-            $userStmt = $pdo->prepare("SELECT full_name, name, email FROM users WHERE id = ?");
-            $userStmt->execute([$user_id]);
-            $user = $userStmt->fetch(PDO::FETCH_ASSOC) ?: null;
-
-            if ($user && !empty($user['email'])) {
-                $displayName = !empty($user['full_name']) ? $user['full_name'] : ($user['name'] ?? 'User');
-
-                // User email (using template + variables)
-                $uResult = sendEmail([
-                    'to'       => $user['email'],
-                    'template' => 'holdlock_started',
-                    'variables'=> [
-                        'user_name'     => $displayName,
-                        'plan_name'     => $plan['name'],
-                        'amount'        => number_format($amount, 2),
-                        'roi_percent'   => $roi,
-                        'duration_days' => $duration,
-                        'penalty_percent'=> '10',
-                        'maturity_date' => $maturity_date,
-                        'reference'     => $ref
-                    ]
-                ]);
-                if (!$uResult) {
-                    error_log("HoldLock email to user failed for user_id {$user_id} ({$user['email']})");
-                    file_put_contents(__DIR__ . '/../../logs/email.log', "[".date('Y-m-d H:i:s')."] HoldLock user email FAILED: user_id {$user_id} | email: {$user['email']}\n", FILE_APPEND);
-                } else {
-                    file_put_contents(__DIR__ . '/../../logs/email.log', "[".date('Y-m-d H:i:s')."] HoldLock user email SENT: user_id {$user_id} | email: {$user['email']} | ref: {$ref}\n", FILE_APPEND);
-                }
-
-                // Admin email
-                $aResult = sendEmail([
-                    'to'       => ADMIN_CONTACT_EMAIL,
-                    'template' => 'admin_holdlock_notification',
-                    'variables'=> [
-                        'user_name' => $displayName,
-                        'user_email'=> $user['email'],
-                        'plan_name' => $plan['name'],
-                        'amount'    => number_format($amount, 2),
-                        'reference' => $ref
-                    ]
-                ]);
-                if (!$aResult) {
-                    error_log("HoldLock admin email failed for ref {$ref}");
-                    file_put_contents(__DIR__ . '/../../logs/email.log', "[".date('Y-m-d H:i:s')."] HoldLock admin email FAILED: ref {$ref}\n", FILE_APPEND);
-                } else {
-                    file_put_contents(__DIR__ . '/../../logs/email.log', "[".date('Y-m-d H:i:s')."] HoldLock admin email SENT: ref {$ref}\n", FILE_APPEND);
-                }
-            } else {
-                // Missing user email - log
-                error_log("HoldLock: user not found or missing email for user_id {$user_id}");
-                file_put_contents(__DIR__ . '/../../logs/email.log', "[".date('Y-m-d H:i:s')."] HoldLock: missing user email for user_id {$user_id}\n", FILE_APPEND);
-            }
-        } catch (Exception $e) {
-            // Log but don't break API flow
-            error_log("HoldLock email step error: " . $e->getMessage());
-            file_put_contents(__DIR__ . '/../../logs/email.log', "[".date('Y-m-d H:i:s')."] HoldLock email exception: " . $e->getMessage() . "\n", FILE_APPEND);
-        }
-
-        respond('success', 'HoldLock started successfully.', ['reference' => $ref, 'holdlock_id' => $holdlockId ?? null]);
-        break;
-
-
-    /* =====================================================
-       6️⃣ UNLOCK REQUEST
-       ===================================================== */
-    case 'unlock':
-        $lockId = intval($input['holdlock_id'] ?? $input['holdlockId'] ?? ($_POST['holdlock_id'] ?? 0));
-        $early = intval($input['early'] ?? ($_POST['early'] ?? 0));
-
-        if ($lockId <= 0) respond('error', 'Invalid holdlock id.');
-
-        $stmt = $pdo->prepare("SELECT * FROM holdlock WHERE id = ? AND user_id = ?");
-        $stmt->execute([$lockId, $user_id]);
-        $lock = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (!$lock) respond('error', 'HoldLock not found.');
-
-        // Update status to unlock_pending (consistent with DB enum)
-        $upd = $pdo->prepare("UPDATE holdlock SET status = 'unlock_pending', updated_at = NOW() WHERE id = ?");
-        $upd->execute([$lockId]);
-
-        respond('success', $early ? 'Early unlock initiated.' : 'Unlock request successful.');
-        break;
-
-    default:
-        respond('error', 'Invalid action.');
+    respond('success', 'Summary loaded.', [
+        'summary' => $summary,
+        'wallet' => $walletData ?: ['balance' => 0, 'total_earnings' => 0]
+    ]);
 }
+
+
+/* =====================================================
+   2️⃣ GET PLANS (FROM DATABASE)
+   ===================================================== */
+if ($action === 'get_plans') {
+    $stmt = $pdo->query("
+        SELECT 
+            id, name, purpose, min_amount, max_amount, 
+            lock_period_text, duration_days, roi_range, 
+            risk, payout, summary, icon, color
+        FROM holdlock_plans
+        ORDER BY id ASC
+    ");
+    $plans = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    respond('success', 'Plans loaded.', ['plans' => $plans]);
+}
+
+
+/* =====================================================
+   3️⃣ ACTIVE LOCKS
+   ===================================================== */
+if ($action === 'get_active') {
+    $stmt = $pdo->prepare("SELECT * FROM holdlock WHERE user_id = ? AND status = 'locked' ORDER BY created_at DESC");
+    $stmt->execute([$user_id]);
+    respond('success', 'Active locks loaded.', ['locks' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+}
+
+
+/* =====================================================
+   4️⃣ MATURED LOCKS (ELIGIBLE FOR UNLOCK)
+   ===================================================== */
+if ($action === 'get_matured') {
+    $stmt = $pdo->prepare("
+        SELECT id, plan_name, amount, roi_earned, maturity_date 
+        FROM holdlock 
+        WHERE user_id = ? AND status = 'matured' 
+        ORDER BY maturity_date ASC
+    ");
+    $stmt->execute([$user_id]);
+    $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($records as &$r) {
+        if ((float)$r['roi_earned'] <= 0) {
+            $r['roi_earned'] = round($r['amount'] * 0.01, 2); // Default small earnings safeguard
+        }
+        $r['total_payout'] = round($r['roi_earned'] + $r['amount'], 2);
+        $r['maturity_date'] = date('M d, Y', strtotime($r['maturity_date']));
+    }
+
+    respond('success', 'Matured locks loaded.', ['matured' => $records]);
+}
+
+
+/* =====================================================
+   5️⃣ START HOLDLOCK (DYNAMIC VALIDATION)
+   ===================================================== */
+if ($action === 'start_holdlock') {
+    $planId = intval($input['plan_id'] ?? 0);
+    $amount = floatval($input['amount'] ?? 0);
+    if ($planId <= 0 || $amount <= 0) respond('error', 'Invalid plan or amount.');
+
+    // Wallet Balance Check
+    $wallet = $pdo->prepare("SELECT balance FROM wallets WHERE user_id = ?");
+    $wallet->execute([$user_id]);
+    $bal = floatval($wallet->fetchColumn());
+    if ($bal < $amount) respond('error', 'Insufficient wallet balance.');
+
+    // Fetch plan from DB
+    $stmt = $pdo->prepare("
+        SELECT name, roi_range, duration_days, min_amount, max_amount
+        FROM holdlock_plans WHERE id = ? LIMIT 1
+    ");
+    $stmt->execute([$planId]);
+    $plan = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$plan) respond('error', 'Invalid plan selected.');
+
+    // Validate deposit range
+    $min = floatval($plan['min_amount']);
+    $max = $plan['max_amount'] === null ? null : floatval($plan['max_amount']);
+
+    if ($amount < $min) respond('error', "Minimum deposit is $$min.");
+    if ($max !== null && $amount > $max) respond('error', "Maximum deposit is $$max.");
+
+    // Parse ROI % from "3–4%"
+    preg_match('/([\d.]+)/', $plan['roi_range'], $match);
+    $roi_percent = isset($match[1]) ? floatval($match[1]) : 0;
+
+    $duration = intval($plan['duration_days']);
+    $maturity = $duration > 0 ? (new DateTime())->add(new DateInterval("P{$duration}D"))->format('Y-m-d') : null;
+
+    try {
+        $pdo->beginTransaction();
+
+        // Deduct wallet
+        $pdo->prepare("UPDATE wallets SET balance = balance - ?, total_investments = total_investments + ? WHERE user_id = ?")
+            ->execute([$amount, $amount, $user_id]);
+
+        // Create holdlock record
+        $ps = $pdo->prepare("
+            INSERT INTO holdlock (user_id, plan_name, amount, roi_percent, duration_days, maturity_date, status, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, 'locked', NOW())
+        ");
+        $ps->execute([$user_id, $plan['name'], $amount, $roi_percent, $duration, $maturity]);
+        $lockId = $pdo->lastInsertId();
+
+        // Add transaction record
+        $ref = "HLD-" . strtoupper(substr(md5(uniqid(true)), 0, 10));
+        $txn = $pdo->prepare("
+            INSERT INTO transactions (user_id, type, amount, reference, status, method, details)
+            VALUES (?, 'holdlock', ?, ?, 'completed', 'wallet',
+            JSON_OBJECT('subtype','start','plan',?,'roi_percent',?,'duration_days',?,'maturity_date',?,'holdlock_id',?))
+        ");
+        $txn->execute([$user_id, $amount, $ref, $plan['name'], $roi_percent, $duration, $maturity, $lockId]);
+
+        $pdo->commit();
+    } catch (Exception $e) {
+        if ($pdo->inTransaction()) $pdo->rollBack();
+        respond('error', 'Failed to start HoldLock.');
+    }
+
+
+    // ============ SEND EMAIL NOTIFICATION ============
+    $userQ = $pdo->prepare("SELECT name, email FROM users WHERE id = ? LIMIT 1");
+    $userQ->execute([$user_id]);
+    $user = $userQ->fetch(PDO::FETCH_ASSOC);
+
+    sendEmail([
+        'to' => $user['email'],
+        'template' => 'holdlock_started',
+        'variables' => [
+            'user_name' => $user['name'],
+            'plan_name' => $plan['name'],
+            'amount' => number_format($amount, 2),
+            'roi_percent' => $roi_percent,
+            'duration_days' => $duration,
+            'penalty_percent' => 0, // change if you’ll support early penalty later
+            'maturity_date' => $maturity,
+            'reference' => $ref
+        ],
+        'cc_admin' => true, // send admin a copy
+        'admin_template' => 'admin_holdlock_notification'
+    ]);
+
+    respond('success', 'HoldLock started.', ['reference' => $ref, 'holdlock_id' => $lockId]);
+}
+
+
+/* =====================================================
+   6️⃣ UNLOCK REQUEST
+   ===================================================== */
+if ($action === 'unlock') {
+    $lockId = intval($input['holdlock_id'] ?? 0);
+    $early = intval($input['early'] ?? 0);
+
+    if ($lockId <= 0) respond('error', 'Invalid Lock ID.');
+
+    $stmt = $pdo->prepare("SELECT id FROM holdlock WHERE id = ? AND user_id = ?");
+    $stmt->execute([$lockId, $user_id]);
+    if (!$stmt->fetch()) respond('error', 'HoldLock not found.');
+
+    $stmt = $pdo->prepare("SELECT amount, roi_percent FROM holdlock WHERE id = ? AND user_id = ?");
+    $stmt->execute([$lockId, $user_id]);
+    $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $amount = floatval($data['amount']);
+    $roi = floatval($data['roi_percent']);
+    $earned = round($amount * ($roi/100), 2);
+    $payout = $amount + $earned;
+
+    $pdo->beginTransaction();
+
+    $pdo->prepare("UPDATE holdlock SET status = 'unlocked', roi_earned = ?, updated_at = NOW() WHERE id = ?")
+        ->execute([$earned, $lockId]);
+
+    $pdo->prepare("UPDATE wallets SET balance = balance + ?, total_earnings = total_earnings + ? WHERE user_id = ?")
+        ->execute([$payout, $earned, $user_id]);
+
+    $pdo->commit();
+
+    respond('success', 'HoldLock unlocked and funds credited.', [
+        'payout' => $payout,
+        'earned' => $earned
+    ]);
+
+}
+
+
+respond('error', 'Invalid action.');

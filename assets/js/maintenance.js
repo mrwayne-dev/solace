@@ -87,6 +87,56 @@ async function loadMaintenancePlans() {
     console.error("Load Plans Error:", err);
   }
 }
+async function loadMaintenancePlans() {
+  const planSelect = document.getElementById("plan-select");
+  const grid = document.getElementById("maintenance-plan-grid");
+
+  if (!planSelect || !grid) return;
+
+  try {
+    const res = await callMaintenanceAPI("get_plans");
+    if (res.status === "success" && res.data?.plans?.length) {
+      const plans = res.data.plans;
+
+      // Populate dropdown
+      planSelect.innerHTML = '<option value="">Select a Plan</option>';
+      plans.forEach((p) => {
+        const opt = document.createElement("option");
+        opt.value = p.id;
+        opt.dataset.min = p.min_amount;
+        opt.dataset.roi = p.roi_percent;
+        opt.dataset.duration = p.duration_days;
+        opt.textContent = p.name;
+        planSelect.appendChild(opt);
+      });
+
+      // Render grid
+      grid.innerHTML = "";
+      plans.forEach(p => {
+        grid.innerHTML += `
+          <div class="col-lg-3 col-md-6">
+            <div class="plan-card">
+              <div class="plan-header flex justify-between items-center mb-12">
+                <h6 class="plan-title">${escapeHtml(p.name)}</h6>
+              </div>
+              <p class="f12-regular text-Gray mb-12">${escapeHtml(p.purpose)}</p>
+              <table class="plan-features">
+                <tr><td>Min Investment</td><td>$${Number(p.min_amount).toLocaleString()}</td></tr>
+                <tr><td>Duration</td><td>${p.duration_days ? Math.round(p.duration_days / 30) + " months" : "Lifetime"}</td></tr>
+                <tr><td>ROI</td><td class="text-Green fw-bold">${Number(p.roi_percent)}%</td></tr>
+                <tr><td>Risk Level</td><td class="fw-bold text-${p.color}">${escapeHtml(p.risk)}</td></tr>
+                <tr><td>Payout</td><td>${escapeHtml(p.payout)}</td></tr>
+              </table>
+              <p class="f12-regular text-Gray italic mt-12">${escapeHtml(p.summary)}</p>
+            </div>
+          </div>`;
+      });
+    }
+  } catch (err) {
+    console.error("Load Maintenance Plans Error:", err);
+  }
+}
+
 
 /* =======================================================
    UPDATE PLAN DETAILS
@@ -98,9 +148,9 @@ function updatePlanDetails() {
   const selected = planSelect.options[planSelect.selectedIndex];
   const min = parseFloat(selected.dataset.min || 0);
   const roi = selected.dataset.roi || "";
-  const payoff = selected.dataset.duration
+  const payoff = selected.dataset.duration && selected.dataset.duration !== "0"
     ? `${Math.round(selected.dataset.duration / 30)} months`
-    : "";
+    : "Lifetime";
 
   const durationEl = document.getElementById("duration");
   const roiEl = document.getElementById("expected-roi");
@@ -189,8 +239,9 @@ async function loadActiveMaintenance() {
         <td>${escapeHtml(item.plan_name || "—")}</td>
         <td>$${Number(item.amount).toFixed(2)}</td>
         <td class="text-Green">${Number(item.roi_percent || 0).toFixed(2)}%</td>
-        <td>${item.duration_days ? `${item.duration_days} days` : "—"}</td>
-        <td>${item.maturity_date || "—"}</td>
+        <td>${item.duration_days ? `${item.duration_days} days` : "Lifetime"}</td>
+        <td>${item.maturity_date && item.duration_days ? item.maturity_date : "Lifetime"}</td>
+
         <td>
           <div class="box-status ${
             item.status === "active" ? "bg-Green" : "bg-Gray"

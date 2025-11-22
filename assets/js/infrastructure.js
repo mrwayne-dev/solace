@@ -64,28 +64,66 @@
   /* =======================================================
     LOAD PLANS (optional; for dynamic UI)
     ======================================================= */
-  async function loadInfrastructurePlans() {
-    const planSelect = document.getElementById('plan-select');
-    if (!planSelect) return;
+async function loadInfrastructurePlans() {
+  const planSelect = document.getElementById('plan-select');
+  if (!planSelect) return;
 
-    try {
-      const res = await callInfrastructureAPI('get_plans');
-      if (res.status === 'success' && res.data?.plans?.length) {
-        planSelect.innerHTML = '<option value="">Select a Plan</option>';
-        res.data.plans.forEach(plan => {
-          const opt = document.createElement('option');
-          opt.value = plan.id;
-          opt.dataset.min = plan.min;
-          opt.dataset.roi = plan.roi_percent;
-          opt.dataset.duration = plan.duration_days;
-          opt.textContent = plan.name;
-          planSelect.appendChild(opt);
-        });
-      }
-    } catch (err) {
-      console.error('Load Plans Error:', err);
-    }
+  try {
+    const res = await callInfrastructureAPI('get_plans');
+    const plans = res.data?.plans || [];
+
+    // Populate dropdown
+    planSelect.innerHTML = '<option value="">Select a Plan</option>';
+    plans.forEach(plan => {
+      const opt = document.createElement('option');
+      opt.value = plan.id;
+      opt.dataset.min = plan.min_amount;
+      opt.dataset.roi = plan.roi_percent;
+      opt.dataset.duration = plan.duration_days;
+      opt.textContent = plan.name;
+      planSelect.appendChild(opt);
+    });
+
+    // Render cards dynamically
+    renderInfraPlanCards(plans);
+
+  } catch (err) {
+    console.error('Load Plans Error:', err);
   }
+}
+
+
+function renderInfraPlanCards(plans) {
+  const grid = document.getElementById('infra-plans-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  plans.forEach(p => {
+    grid.innerHTML += `
+      <div class="col-lg-3 col-md-6">
+        <div class="plan-card">
+          <div class="plan-header flex justify-between items-center mb-12">
+            <div class="flex items-center gap-2">
+              <h6 class="plan-title">${escapeHtml(p.name)}</h6>
+            </div>
+          </div>
+
+          <p class="f12-regular text-Gray mb-12">${escapeHtml(p.purpose)}</p>
+
+          <table class="plan-features">
+            <tr><td>Min Investment</td><td>$${Number(p.min_amount).toLocaleString()}</td></tr>
+            <tr><td>Pay-Off Period</td><td>${Math.round(p.duration_days / 30)} months</td></tr>
+            <tr><td>ROI</td><td class="text-Green fw-bold">${p.roi_percent}%</td></tr>
+            <tr><td>Risk Level</td><td class="text-${p.color} fw-bold">${escapeHtml(p.risk_level ?? '')}</td></tr>
+            <tr><td>Repayment Mode</td><td>${escapeHtml(p.repayment_mode ?? '')}</td></tr>
+          </table>
+
+          <p class="f12-regular text-Gray italic mt-12">${escapeHtml(p.summary)}</p>
+        </div>
+      </div>`;
+  });
+}
+
 
   /* =======================================================
     UPDATE PLAN DETAILS

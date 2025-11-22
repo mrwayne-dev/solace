@@ -1,10 +1,11 @@
 /* =======================================================
-   HealthRunCare - TrustFund.js (Final Production Version)
+   HealthRunCare - TrustFund.js (Dynamic Final Version)
    Purpose: Handles TrustFund page UI + API logic
    ======================================================= */
 
 document.addEventListener('DOMContentLoaded', () => {
   loadTrustFundSummary();
+  loadPlans();              // 👈 NEW
   loadActiveTrusts();
   loadMaturedTrusts();
 
@@ -24,11 +25,78 @@ document.addEventListener('DOMContentLoaded', () => {
    1️⃣ API WRAPPER
    ======================================================= */
 async function callTrustFundAPI(action, data = {}) {
-  return await fetchApi('/api/backend/trustfund.php', { ...data, action });
+  return await fetchApi('/api/backend/trustfund.php', { ...(data), action });
+}
+
+
+/* =======================================================
+   2️⃣ LOAD PLANS (Dynamic Rendering)
+   ======================================================= */
+async function loadPlans() {
+  try {
+    const res = await callTrustFundAPI('get_plans');
+    if (res.status !== 'success') return showToast('Failed to load plans', 'error');
+
+    const plans = res.data.plans || [];
+    renderPlans(plans);
+    updatePlanSelect(plans);
+
+  } catch (err) {
+    console.error('Load Plans Error:', err);
+    showToast('Network error while loading plans', 'error');
+  }
+}
+
+function renderPlans(plans) {
+  const container = document.getElementById('trustfund-plans-grid');
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  plans.forEach(plan => {
+    container.innerHTML += `
+      <div class="col-lg-3 col-md-6">
+        <div class="plan-card">
+          <div class="plan-header flex justify-between items-center mb-12">
+            <div class="flex items-center gap-2">
+              <h6 class="plan-title">${escapeHtml(plan.name)}</h6>
+            </div>
+          </div>
+
+          <p class="f12-regular text-Gray mb-12">${escapeHtml(plan.purpose)}</p>
+
+          <table class="plan-features">
+            <tr><td>Min Investment</td><td>$${Number(plan.min_amount).toLocaleString()}</td></tr>
+            <tr><td>Term</td><td>${plan.duration_days} days</td></tr>
+            <tr><td>ROI</td><td class="text-Green fw-bold">${plan.roi_percent}%</td></tr>
+            <tr><td>Risk Level</td><td class="text-${plan.color} fw-bold">${escapeHtml(plan.risk)}</td></tr>
+            <tr><td>Payout Option</td><td>${escapeHtml(plan.payout_option)}</td></tr>
+          </table>
+
+          <p class="f12-regular text-Gray italic mt-12">${escapeHtml(plan.summary)}</p>
+        </div>
+      </div>`;
+  });
+}
+
+function updatePlanSelect(plans) {
+  const select = document.getElementById('plan-select');
+  if (!select) return;
+
+  select.innerHTML = `<option value="">Select a Plan</option>`;
+  plans.forEach(p => {
+    select.innerHTML += `
+      <option
+        value="${p.id}"
+        data-min="${p.min_amount}"
+        data-term="${p.duration_days}"
+        data-roi="${p.roi_percent}"
+      >${escapeHtml(p.name)}</option>`;
+  });
 }
 
 /* =======================================================
-   2️⃣ SUMMARY
+   3️⃣ SUMMARY
    ======================================================= */
 async function loadTrustFundSummary() {
   try {
@@ -55,11 +123,11 @@ function updateSummaryUI(summary, wallet) {
   el('trust_total_invested', `$${parseFloat(summary.total_invested || 0).toFixed(2)}`);
   el('trust_total_roi', `$${parseFloat(summary.total_roi || 0).toFixed(2)}`);
   el('trust_next_payout', summary.next_payout || '—');
-  el('wallet_balance', `$${parseFloat(wallet.balance || 0).toFixed(2)}`);
+  el('wallet-balance', `$${parseFloat(wallet.balance || 0).toFixed(2)}`);
 }
 
 /* =======================================================
-   3️⃣ PLAN SELECT HANDLER
+   4️⃣ PLAN SELECT HANDLER
    ======================================================= */
 function updatePlanDetails() {
   const planSelect = document.getElementById('plan-select');
@@ -69,39 +137,31 @@ function updatePlanDetails() {
   const id = parseInt(selectedOption.value);
   const planName = selectedOption.textContent.trim();
 
-  // ✅ Clean min value (handles commas, dollar signs)
   const rawMin = selectedOption.dataset.min || "0";
   const min = parseFloat(rawMin.replace(/[^0-9.]/g, "")) || 0;
-
   const term = selectedOption.dataset.term || '';
   const roi = selectedOption.dataset.roi || '';
 
   const form = document.getElementById('trustfundForm');
   if (!form) return;
 
-  // Hidden fields
   form.querySelector('[name="plan_id"]').value = id || '';
   form.querySelector('[name="plan_name"]').value = planName || '';
 
-  // Visible
-  document.getElementById('term-duration').value = term;
-  document.getElementById('expected-roi').value = roi;
+  document.getElementById('term-duration').value = `${term} days`;
+  document.getElementById('expected-roi').value = `${roi}%`;
 
-  // Amount Input
   const amountInput = document.getElementById('invest-amount');
   if (amountInput) {
     amountInput.min = min || 1;
     amountInput.placeholder = `Minimum: $${min.toLocaleString()}`;
   }
 
-  // Enable/disable button
-  const btn = document.getElementById('invest-btn');
-  btn.disabled = !id;
+  document.getElementById('invest-btn').disabled = !id;
 }
 
-
 /* =======================================================
-   4️⃣ START TRUSTFUND
+   5️⃣ START TRUSTFUND
    ======================================================= */
 async function startTrustFund() {
   const form = document.getElementById('trustfundForm');
@@ -140,7 +200,7 @@ async function startTrustFund() {
 }
 
 /* =======================================================
-   5️⃣ ACTIVE TRUSTS
+   6️⃣ ACTIVE TRUSTS
    ======================================================= */
 async function loadActiveTrusts() {
   try {
@@ -180,7 +240,7 @@ async function loadActiveTrusts() {
 }
 
 /* =======================================================
-   6️⃣ MATURED TRUSTS
+   7️⃣ MATURED TRUSTS
    ======================================================= */
 async function loadMaturedTrusts() {
   try {
@@ -218,7 +278,7 @@ async function loadMaturedTrusts() {
 }
 
 /* =======================================================
-   7️⃣ UNLOCK
+   8️⃣ UNLOCK
    ======================================================= */
 async function unlockTrustFund(trust_id, early = false) {
   const confirmMsg = early

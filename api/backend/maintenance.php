@@ -93,13 +93,12 @@ if (isset($_GET['schema_check']) && $_GET['schema_check'] == '1') {
 /* ----------------------------------------------------------
    Plans reference — matches UI plans in development.php
 -----------------------------------------------------------*/
-$plansRef = [
-    1 => ['id'=>1, 'name'=>'Maintenance Support Starter Plan', 'roi_percent'=>5.5,  'duration_days'=>9 * 30,   'min'=>10000],
-    2 => ['id'=>2, 'name'=>'Standard Equipment Care Plan',   'roi_percent'=>9.0,  'duration_days'=>12 * 30,  'min'=>25000],
-    3 => ['id'=>3, 'name'=>'Infrastructure Development Plan', 'roi_percent'=>16.5, 'duration_days'=>24 * 30,  'min'=>50000],
-    4 => ['id'=>4, 'name'=>'Premium Equipment Sustainability Plan','roi_percent'=>25.0,'duration_days'=>36 * 30,'min'=>250000],
-    5 => ['id'=>5, 'name'=>'Lifetime Equipment Trust Plan', 'roi_percent'=>7.0,  'duration_days'=>365 * 100, 'min'=>1000000]
-];
+function getPlanById($pdo, $id) {
+    $stmt = $pdo->prepare("SELECT * FROM maintenance_plans WHERE id = ?");
+    $stmt->execute([$id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
 
 if (!$action) respond('error', 'No action specified.');
 
@@ -126,10 +125,13 @@ switch ($action) {
             foreach ($rows as $r) {
                 if (!empty($r['maturity_date'])) {
                     if ($next_maintenance === null || $r['maturity_date'] < $next_maintenance) $next_maintenance = $r['maturity_date'];
-                } else if (!empty($r['created_at']) && !empty($r['plan_id']) && isset($plansRef[$r['plan_id']])) {
-                    $m = add_days($r['created_at'], $plansRef[$r['plan_id']]['duration_days']);
+                }else if (!empty($r['created_at']) && !empty($r['plan_id'])) {
+                     $plan = getPlanById($pdo, $r['plan_id']);
+                if ($plan && !empty($plan['duration_days'])) {
+                    $m = add_days($r['created_at'], $plan['duration_days']);
                     if ($next_maintenance === null || $m < $next_maintenance) $next_maintenance = $m;
                 }
+            }
             }
 
             $next_maintenance = $next_maintenance ? date('M j, Y', strtotime($next_maintenance)) : '—';
@@ -155,9 +157,16 @@ switch ($action) {
     /* ======================
        GET PLANS
        ====================== */
-    case 'get_plans':
-        respond('success','Plans loaded',['plans'=>array_values($plansRef)]);
-        break;
+case 'get_plans':
+    try {
+        $stmt = $pdo->query("SELECT * FROM maintenance_plans ORDER BY id ASC");
+        $plans = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        respond('success','Plans loaded',['plans'=>$plans]);
+    } catch (Exception $e) {
+        respond('error','Failed to load plans.');
+    }
+    break;
+
 
     /* ======================
        GET ACTIVE
@@ -170,16 +179,16 @@ switch ($action) {
 
             $out = [];
             foreach ($rows as $r) {
-                $plan = $plansRef[$r['plan_id']] ?? null;
+                $plan = getPlanById($pdo, $r['plan_id']);
                 $maturity = $r['maturity_date'] ?? ($plan ? add_days($r['created_at'], $plan['duration_days']) : null);
                 $out[] = [
                     'id' => $r['id'],
                     'plan_name' => $plan['name'] ?? ($r['plan_name'] ?? 'Unknown'),
                     'amount' => $r['amount'],
                     'roi_percent' => $plan['roi_percent'] ?? 0,
-                    'duration_days' => $plan['duration_days'] ?? null,
+                    'duration_days' => $plan['duration_days'] ?: null,
                     'created_at' => date('M j, Y', strtotime($r['created_at'])),
-                    'maturity_date' => $maturity ? date('M j, Y', strtotime($maturity)) : '—',
+                   'maturity_date' => $plan && $plan['duration_days'] ? date('M j, Y', strtotime($maturity)) : 'Lifetime',
                     'status' => $r['status'] ?? 'active'
                 ];
             }
@@ -228,9 +237,9 @@ switch ($action) {
         $planId = intval($input['plan_id'] ?? 0);
         $amount = floatval($input['amount'] ?? 0);
         if ($planId <= 0 || $amount <= 0) respond('error','Invalid plan or amount.');
-        $plan = $plansRef[$planId] ?? null;
+        $plan = getPlanById($pdo, $planId);
         if (!$plan) respond('error','Invalid plan.');
-        if ($amount < $plan['min']) respond('error',"Minimum for {$plan['name']} is $" . number_format($plan['min']));
+       if ($amount < $plan['min_amount']) respond('error',"Minimum for {$plan['name']} is $" . number_format($plan['min_amount']));
 
         try {
             $pdo->beginTransaction();
@@ -247,7 +256,8 @@ switch ($action) {
                 ->execute([$amount, $amount, $user_id]);
 
             $created_at = now_iso();
-            $maturity_date = add_days(date('Y-m-d'), $plan['duration_days']);
+            $maturity_date = !empty($plan['duration_days']) ? add_days(date('Y-m-d'), $plan['duration_days']) : null;
+
 
             $ins = $pdo->prepare("INSERT INTO maintenance (user_id, plan_id, plan_name, amount, roi_earned, frequency, status, maturity_date, created_at)
                                   VALUES (?, ?, ?, ?, 0, 'once', 'active', ?, ?)");
@@ -320,8 +330,14 @@ switch ($action) {
             $c = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$c) { $pdo->rollBack(); respond('error','Not found.'); }
 
-            $plan = $plansRef[$c['plan_id']] ?? null;
+            $plan = getPlanById($pdo, $c['plan_id']);
             if (!$plan) { $pdo->rollBack(); respond('error','Missing plan data.'); }
+
+            if (empty($plan['duration_days'])) {
+    $pdo->rollBack();
+    respond('error','Lifetime plan cannot be unlocked automatically.');
+}
+
 
             $amount = $c['amount'];
             $maturity_date = $c['maturity_date'] ?? add_days($c['created_at'], $plan['duration_days']);

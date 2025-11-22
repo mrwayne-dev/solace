@@ -19,79 +19,6 @@ $user_id = $_SESSION['user_id'] ?? null;
 $user_email = $_SESSION['email'] ?? null;
 $user_role = $_SESSION['role'] ?? 'user';
 
-// Placeholder data for plans
-$plans = [
-    [
-        'id' => 1,
-        'name' => 'Flexi Health Lock Plan',
-        'purpose' => 'A short-term plan designed for clients who want safe, quick returns while keeping their capital secure.',
-        'min_deposit' => '$10,000',
-        'max_deposit' => '$100,000',
-        'lock_period' => '6 months',
-        'roi' => '3–4%',
-        'risk' => 'Very Low',
-        'payout' => 'Full payout at maturity',
-        'summary' => 'Ideal for clients seeking liquidity and short-term growth. Funds are safely held and paid out at the end of the term.',
-        'icon' => 'mdi:clock-outline',
-        'color' => 'Green'
-    ],
-    [
-        'id' => 2,
-        'name' => 'Standard Lock & Grow Plan',
-        'purpose' => 'A one-year plan offering predictable and consistent growth with minimal risk.',
-        'min_deposit' => '$20,000',
-        'max_deposit' => '$300,000',
-        'lock_period' => '12 months',
-        'roi' => '7–9%',
-        'risk' => 'Low',
-        'payout' => 'Annual or full payout at maturity',
-        'summary' => 'A balanced one-year growth plan for investors who prefer stability and moderate fixed returns.',
-        'icon' => 'mdi:calendar-check',
-        'color' => 'Green'
-    ],
-    [
-        'id' => 3,
-        'name' => 'Executive LockPlus Plan',
-        'purpose' => 'A two-year plan for individuals and organizations seeking better returns from moderate-term investments.',
-        'min_deposit' => '$50,000',
-        'max_deposit' => '$500,000',
-        'lock_period' => '24 months',
-        'roi' => '14–18%',
-        'risk' => 'Moderate',
-        'payout' => 'Annual or full payout at maturity',
-        'summary' => 'Perfect for mid- to high-level investors seeking strong, consistent growth over two years with minimal risk exposure.',
-        'icon' => 'mdi:briefcase-check',
-        'color' => 'Blue'
-    ],
-    [
-        'id' => 4,
-        'name' => 'Prestige Capital Hold Plan',
-        'purpose' => 'A premium plan for investors with large capital who seek long-term, high-yield returns.',
-        'min_deposit' => '$250,000',
-        'max_deposit' => 'Unlimited',
-        'lock_period' => '36 months',
-        'roi' => '25–30%',
-        'risk' => 'Moderate',
-        'payout' => 'Annual, bi-annual, or full payout at maturity',
-        'summary' => 'A long-term, asset-secure investment option that rewards patience with premium returns and stable growth.',
-        'icon' => 'mdi:crown-outline',
-        'color' => 'Orange'
-    ],
-    [
-        'id' => 5,
-        'name' => 'Lifetime Reserve Lock Plan',
-        'purpose' => 'A lifelong plan designed for wealth preservation and consistent annual income.',
-        'min_deposit' => '$1,000,000',
-        'max_deposit' => 'Unlimited',
-        'lock_period' => 'Lifetime (Perpetual)',
-        'roi' => '6–8% annual',
-        'risk' => 'Low',
-        'payout' => 'Annual or quarterly lifetime payout',
-        'summary' => 'An exclusive wealth preservation plan that guarantees lifetime income, ideal for estates, families, or organizations focused on long-term legacy.',
-        'icon' => 'mdi:infinity',
-        'color' => 'Green'
-    ]
-];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -370,48 +297,8 @@ $plans = [
                                             </div>
 
                                             <div class="content">
-                                                <div class="row g-4">
-                                                <?php foreach ($plans as $plan): ?>
-                                                <div class="col-lg-3 col-md-6">
-                                                    <div class="plan-card">
-                                                    <div class="plan-header flex justify-between items-center mb-12">
-                                                        <div class="flex items-center gap-2">
-                                                        <h6 class="plan-title"><?php echo htmlspecialchars($plan['name']); ?></h6>
-                                                        </div>
-                                                    </div>
-
-                                                    <p class="f12-regular text-Gray mb-12"><?php echo htmlspecialchars($plan['purpose']); ?></p>
-
-                                                    <table class="plan-features">
-                                                        <tr>
-                                                        <td>Min Deposit</td>
-                                                        <td><?php echo $plan['min_deposit']; ?></td>
-                                                        </tr>
-                                                        <tr>
-                                                        <td>Lock Period</td>
-                                                        <td><?php echo $plan['lock_period']; ?></td>
-                                                        </tr>
-                                                        <tr>
-                                                        <td>ROI</td>
-                                                        <td class="text-Green fw-bold"><?php echo $plan['roi']; ?></td>
-                                                        </tr>
-                                                        <tr>
-                                                        <td>Max Deposit</td>
-                                                        <td><?php echo $plan['max_deposit']; ?></td>
-                                                        </tr>
-                                                        <tr>
-                                                        <td>Payout</td>
-                                                        <td><?php echo $plan['payout']; ?></td>
-                                                        </tr>
-                                                    </table>
-
-                                                    <p class="f12-regular text-Gray italic mt-12">
-                                                        <?php echo htmlspecialchars($plan['summary']); ?>
-                                                    </p>
-                                                    </div>
-                                                </div>
-                                                <?php endforeach; ?>
-                                                </div>
+                                                <div class="row g-4" id="holdlock-plans-grid">
+                                                <!-- Plans dynamically injected by holdlock.js -->
                                             </div>
                                             </div>
                                         </div>
@@ -434,21 +321,10 @@ $plans = [
                                                                     <!-- Select Plan -->
                                                                     <div class="mb-20">
                                                                         <label class="f14-regular text-Black mb-8">Select Plan</label>
-                                                                        <select class="form-select custom-select" id="plan-select" onchange="updateHoldlockDetails()"
->
-                                                                        <option>Select a Plan</option>
-                                                                        <?php foreach ($plans as $plan): ?>
-                                                                        <option
-                                                                            value="<?php echo $plan['id']; ?>"
-                                                                            data-min="<?php echo str_replace('$', '', $plan['min_deposit']); ?>"
-                                                                            data-max="<?php echo $plan['max_deposit'] === 'Unlimited' ? '' : str_replace('$', '', $plan['max_deposit']); ?>"
-                                                                            data-lock="<?php echo $plan['lock_period']; ?>"
-                                                                            data-roi="<?php echo $plan['roi']; ?>"
-                                                                        >
-                                                                            <?php echo htmlspecialchars($plan['name']); ?>
-                                                                        </option>
-                                                                        <?php endforeach; ?>
+                                                                        <select class="form-select custom-select" id="plan-select">
+                                                                            <option value="">Select a Plan</option>
                                                                         </select>
+
                                                                     </div>
 
                                                                     <!-- Lock Amount -->
@@ -556,10 +432,7 @@ $plans = [
                                             </tbody>
                                             </table>
 
-                                            <!-- Empty state message (optional) -->
-                                            <div id="no-active-holdlocks" class="text-center py-20 hidden">
-                                            <p class="f14-regular text-Gray">No active HoldLock plans yet. Start one above.</p>
-                                            </div>
+                                            
                                         </div>
                                         </div>
                                         </div>
@@ -589,9 +462,7 @@ $plans = [
                                         <!-- Dynamically loaded via JS -->
                                     </tbody>
                                     </table>
-                                    <div id="matured-holdlocks-empty" class="text-center py-20 hidden">
-                                    <p class="f14-regular text-Gray">No mature plans available for unlock at this time.</p>
-                                </div>
+                                    
                                 </div>
                                 </div>
                                 </div>
