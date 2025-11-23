@@ -115,6 +115,7 @@ function renderInfraPlanCards(plans) {
             <tr><td>Pay-Off Period</td><td>${Math.round(p.duration_days / 30)} months</td></tr>
             <tr><td>ROI</td><td class="text-Green fw-bold">${p.roi_percent}%</td></tr>
             <tr><td>Risk Level</td><td class="text-${p.color} fw-bold">${escapeHtml(p.risk_level ?? '')}</td></tr>
+            <tr><td>Income Source</td><td>${escapeHtml(p.income_source ?? '')}</td></tr>
             <tr><td>Repayment Mode</td><td>${escapeHtml(p.repayment_mode ?? '')}</td></tr>
           </table>
 

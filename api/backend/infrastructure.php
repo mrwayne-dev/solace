@@ -144,8 +144,15 @@ switch ($action) {
        GET PLANS
        ====================== */
 case 'get_plans':
-    $stmt = $pdo->query("SELECT * FROM infrastructure_plans ORDER BY id ASC");
-    respond('success','Plans loaded',['plans'=>$stmt->fetchAll(PDO::FETCH_ASSOC)]);
+    $stmt = $pdo->query("
+        SELECT 
+            id, name, purpose, income_source, min_amount, duration_days, 
+            roi_percent, payout_option, risk_level, summary, color, 
+            repayment_mode, icon
+        FROM infrastructure_plans
+        ORDER BY id ASC
+    ");
+    respond('success', 'Plans loaded', ['plans' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
     break;
 
 

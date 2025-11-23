@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 22, 2025 at 12:32 PM
+-- Generation Time: Nov 23, 2025 at 03:33 PM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.26
 
@@ -45,7 +45,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `name`, `full_name`, `email`, `password`, `role`, `status`, `profile_picture`, `last_login`, `created_at`) VALUES
-(1, 'mr wayne', 'mr wayne', 'aleruchi0987@gmail.com', '$2y$10$tssRL/rKOgDPKtFCs5w6MetlAM3fF2FBTMO0S4mkRD6iwjdkZHLKC', 'manager', 'active', '/assets/images/avatar/admin_default.png', '2025-11-22 00:24:17', '2025-11-12 15:22:41');
+(1, 'mr wayne', 'mr wayne', 'aleruchi0987@gmail.com', '$2y$10$tssRL/rKOgDPKtFCs5w6MetlAM3fF2FBTMO0S4mkRD6iwjdkZHLKC', 'manager', 'active', '/assets/images/avatar/admin_default.png', '2025-11-23 00:25:05', '2025-11-12 15:22:41');
 
 -- --------------------------------------------------------
 
@@ -84,12 +84,12 @@ CREATE TABLE `charities` (
 --
 
 INSERT INTO `charities` (`id`, `name`, `organization`, `description`, `image`, `goal_amount`, `raised_amount`, `status`, `created_at`) VALUES
-(1, 'Maternal Care Initiative', 'Africa Public Health Foundation (APHF)', 'Expanding access to prenatal and postnatal care for mothers in underserved African regions.', '/assets/images/charity/maternal-care.jpg', 80000.00, 60050.00, 'active', '2025-11-08 23:15:57'),
-(2, 'Clean Water for Health Program', 'The Global Fund', 'Installing boreholes and filtration systems in rural health centers to reduce waterborne diseases.', '/assets/images/charity/clean-water.jpg', 60000.00, 30000.00, 'active', '2025-11-08 23:15:57'),
-(3, 'Rural Health Outreach Network', 'PharmAccess Foundation', 'Providing mobile clinics and telemedicine solutions to remote villages.', '/assets/images/charity/rural-outreach.jpg', 95000.00, 80750.00, 'active', '2025-11-08 23:15:57'),
-(4, 'Child Immunization Drive', 'Against Malaria Foundation (AMF)', 'Supporting mass vaccination programs to prevent common infectious diseases among children.', '/assets/images/charity/immunization.jpg', 50000.00, 15000.00, 'active', '2025-11-08 23:15:57'),
-(5, 'Hospital Equipment Upgrade Fund', 'Transform Health Fund', 'Providing diagnostic tools and life-saving machines to health facilities.', '/assets/images/charity/equipment-upgrade.jpg', 120000.00, 10000.00, 'active', '2025-11-08 23:15:57'),
-(6, 'Nutrition for Hope Program', 'Africa Humanitarian Action (AHA)', 'Delivering essential food and supplements to children and the elderly facing malnutrition.', '/assets/images/charity/nutrition.jpg', 45000.00, 18000.00, 'active', '2025-11-08 23:15:57');
+(1, 'Maternal Care Initiative', 'Africa Public Health Foundation (APHF)', 'Expanding access to prenatal and postnatal care for mothers in underserved African regions.', '/assets/images/charity/maternal-care.png', 80000.00, 60050.00, 'active', '2025-11-08 23:15:57'),
+(2, 'Clean Water for Health Program', 'The Global Fund', 'Installing boreholes and filtration systems in rural health centers to reduce waterborne diseases.', '/assets/images/charity/clean-water.png', 60000.00, 30000.00, 'active', '2025-11-08 23:15:57'),
+(3, 'Rural Health Outreach Network', 'PharmAccess Foundation', 'Providing mobile clinics and telemedicine solutions to remote villages.', '/assets/images/charity/rural-outreach.png', 95000.00, 80750.00, 'active', '2025-11-08 23:15:57'),
+(4, 'Child Immunization Drive', 'Against Malaria Foundation (AMF)', 'Supporting mass vaccination programs to prevent common infectious diseases among children.', '/assets/images/charity/immunization.png', 50000.00, 15000.00, 'active', '2025-11-08 23:15:57'),
+(5, 'Hospital Equipment Upgrade Fund', 'Transform Health Fund', 'Providing diagnostic tools and life-saving machines to health facilities.', '/assets/images/charity/equipment-upgrade.png', 120000.00, 10000.00, 'active', '2025-11-08 23:15:57'),
+(6, 'Nutrition for Hope Program', 'Africa Humanitarian Action (AHA)', 'Delivering essential food and supplements to children and the elderly facing malnutrition.', '/assets/images/charity/nutrition.png', 45000.00, 18000.00, 'active', '2025-11-08 23:15:57');
 
 -- --------------------------------------------------------
 
@@ -105,15 +105,6 @@ CREATE TABLE `charity_donations` (
   `reference` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `charity_donations`
---
-
-INSERT INTO `charity_donations` (`id`, `user_id`, `charity_id`, `amount`, `reference`, `created_at`) VALUES
-(1, 1, 1, 20.00, 'HRC-DON-69132514CBF8C-7265', '2025-11-11 10:59:16'),
-(2, 1, 1, 20.00, 'HRC-DON-69150EDB2C5F2-9564', '2025-11-12 21:48:59'),
-(3, 1, 1, 10.00, 'HRC-DON-691B1183523E8-1453', '2025-11-17 11:13:55');
 
 -- --------------------------------------------------------
 
@@ -137,6 +128,40 @@ CREATE TABLE `holdlock` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `holdlock_plans`
+--
+
+CREATE TABLE `holdlock_plans` (
+  `id` int NOT NULL,
+  `name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `purpose` text COLLATE utf8mb4_unicode_ci,
+  `min_amount` decimal(15,2) NOT NULL,
+  `max_amount` decimal(15,2) DEFAULT NULL,
+  `lock_period_text` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `duration_days` int DEFAULT NULL,
+  `roi_range` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `risk` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payout` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `summary` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `icon` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `color` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `holdlock_plans`
+--
+
+INSERT INTO `holdlock_plans` (`id`, `name`, `purpose`, `min_amount`, `max_amount`, `lock_period_text`, `duration_days`, `roi_range`, `risk`, `payout`, `summary`, `icon`, `color`, `created_at`) VALUES
+(1, 'Flexi Health Lock Plan', 'A short-term plan designed for clients who want safe, quick returns while keeping their capital secure.', 10000.00, 99999999.99, '180 days', 180, '2.00%', 'Very Low', 'Full payout at maturity', 'Ideal for clients seeking liquidity and short-term growth. Funds are safely held and paid out at the end of the term. This option delivers competitive returns without locking you in for the long haul. It’s perfect for individuals or organizations that want reliable growth while maintaining access to their capital.', 'mdi:clock-outline', 'Green', '2025-11-22 13:42:57'),
+(2, 'Standard Lock & Grow Plan', 'A one-year plan offering predictable and consistent growth with minimal risk.', 20000.00, 300000.00, '12 months', 365, '7–9%', 'Low', 'Annual or full payout at maturity', 'A balanced one-year growth plan for investors who prefer stability and moderate fixed returns. Designed to protect your capital while steadily increasing its value over time. It offers predictable earnings without the volatility of short-term market shifts. Ideal for individuals and organizations looking to grow funds responsibly, with reliable year-end payouts.', 'mdi:calendar-check', 'Green', '2025-11-22 13:42:57'),
+(3, 'Executive LockPlus Plan', 'A two-year plan for individuals and organizations seeking better returns from moderate-term investments.', 50000.00, 500000.00, '24 months', 730, '14–18%', 'Moderate', 'Annual or full payout at maturity', 'Perfect for mid- to high-level investors seeking strong, consistent growth over two years with minimal risk exposure. This plan focuses on building wealth steadily through secure, well-managed allocations. It delivers higher returns than shorter-term options without sacrificing safety or predictability. Ideal for individuals and institutions looking to maximize gains over a longer horizon while keeping their capital protected.', 'mdi:briefcase-check', 'Blue', '2025-11-22 13:42:57'),
+(4, 'Prestige Capital Hold Plan', 'A premium plan for investors with large capital who seek long-term, high-yield returns.', 250000.00, NULL, '36 months', 1095, '25–30%', 'Moderate', 'Annual, bi-annual, or full payout at maturity', 'A long-term, asset-secure investment option that rewards patience with premium returns and stable growth. Designed for investors who value strong protection of capital while building significant wealth over time. This plan leverages extended compounding benefits to deliver higher, more reliable earnings. Ideal for those who prioritize security yet still aim for ambitious growth targets.', 'mdi:crown-outline', 'Orange', '2025-11-22 13:42:57'),
+(5, 'Lifetime Reserve Lock Plan', 'A lifelong plan designed for wealth preservation and consistent annual income.', 1000000.00, NULL, 'Lifetime (Perpetual)', 36500, '6–8% annual', 'Low', 'Annual or quarterly lifetime payout', 'An exclusive wealth preservation plan that guarantees lifetime income, ideal for estates, families, or organizations focused on long-term legacy. Built to protect high-value assets while delivering consistent financial strength across generations. This option ensures stable earnings, even in changing market conditions, while safeguarding the core value of your capital.', 'mdi:infinity', 'Green', '2025-11-22 13:42:57');
 
 -- --------------------------------------------------------
 
@@ -175,6 +200,41 @@ CREATE TABLE `infrastructure_contributions` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `infrastructure_plans`
+--
+
+CREATE TABLE `infrastructure_plans` (
+  `id` int NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `purpose` text COLLATE utf8mb4_unicode_ci,
+  `min_amount` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `duration_days` int NOT NULL DEFAULT '0',
+  `roi_percent` decimal(5,2) NOT NULL DEFAULT '0.00',
+  `payout_option` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `risk_level` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `summary` text COLLATE utf8mb4_unicode_ci,
+  `color` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT 'Green',
+  `repayment_mode` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `icon` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `infrastructure_plans`
+--
+
+INSERT INTO `infrastructure_plans` (`id`, `name`, `purpose`, `min_amount`, `duration_days`, `roi_percent`, `payout_option`, `risk_level`, `summary`, `color`, `repayment_mode`, `icon`, `created_at`, `updated_at`) VALUES
+(1, 'Basic Diagnostic Plan', 'To support community and mid-level hospitals with portable ultrasound diagnostic systems for early disease detection.', 10000.00, 365, 9.00, 'quarterly', 'Very Low', 'A foundational infrastructure plan supporting community and mid-level hospitals with portable ultrasound systems for early detection. Investments directly equip clinics with diagnostic tools that generate continuous service revenue. Capital is repaid from ultrasound scan fees, ensuring predictable quarterly returns. Ideal for investors seeking stable, low-risk healthcare income anchored in essential medical services.', 'Green', 'Quarterly payments over 12 months', 'mdi:office-building-outline', '2025-11-22 18:38:18', '2025-11-23 15:22:06'),
+(2, 'Imaging Growth Plan', 'To deploy digital X-ray imaging systems for regional hospitals and diagnostic centers.', 20000.00, 540, 13.50, 'quarterly', 'Low', 'This plan finances the installation of digital X-ray imaging systems in hospitals and diagnostic centers. Patient scan revenue powers structured repayments, creating reliable cash flow for investors. Designed to expand diagnostic access in underserved regions while yielding 12–15% total profit within 18 months. A strong option for low-risk investors supporting scalable healthcare growth with guaranteed demand.', 'Green', 'Quarterly or semi-annual', 'mdi:bank-outline', '2025-11-22 18:38:18', '2025-11-23 15:22:06'),
+(3, 'Advanced Radiology Plan', 'To enable hospitals to install CT scanners and expand access to high-precision imaging services.', 50000.00, 730, 17.50, 'monthly', 'Moderate', 'A strategic infrastructure investment enabling hospitals to install CT scanners for advanced radiology diagnostics. HealthRunCare manages procurement, installation, and hospital repayment contracts to ensure secure returns. Investors receive up to 20% ROI over two years through dependable monthly or quarterly payments. A moderate-risk plan backed by strong medical service demand and critical imaging needs.', 'Blue', 'Monthly or quarterly payments', 'mdi:chart-bar', '2025-11-22 18:38:18', '2025-11-23 15:22:06'),
+(4, 'Dialysis Infrastructure Plan', 'To expand kidney care capacity through the installation of dialysis centers and water treatment systems.', 100000.00, 900, 20.00, 'quarterly', 'Moderate', 'This plan expands kidney care capacity by funding dialysis center installations and water treatment systems. Hospitals repay using revenue generated from consistent patient treatment cycles. Investors earn 18–22% profit over 30 months, supported by strong market demand and rising chronic kidney disease care needs. A sustainable moderate-growth option driven by essential life-saving services.', 'Blue', 'Quarterly payments with inflation-adjusted escalation clause', 'mdi:water', '2025-11-22 18:38:18', '2025-11-23 15:22:06'),
+(5, 'Complete Operating Room Equipment Plan', 'To establish modern operating theatres equipped for advanced surgical operations in partner hospitals.', 150000.00, 1095, 22.50, 'monthly', 'Moderate', 'A high-value investment that finances complete operating room equipment for advanced surgical procedures. Hospitals repay using surgical revenue streams while generating up to 25% profit over three years. The plan includes optional early payment features for increased liquidity and control. Ideal for investors seeking consistent returns from an essential, high-demand healthcare service sector.', 'Blue', 'Monthly or quarterly with partial early payment options', 'mdi:needle', '2025-11-22 18:38:18', '2025-11-23 15:22:06'),
+(6, 'Hospital Diagnostic Wing Installation Plan', 'To construct and equip an entire hospital diagnostic and imaging wing, combining MRI, CT, X-ray, ultrasound, and lab systems.', 500000.00, 1095, 29.00, 'quarterly', 'Moderate-Low', 'An elite infrastructure plan for institutional investors funding full diagnostic wings, including MRI, CT, X-ray, ultrasound, and lab systems. Revenue from multi-department diagnostic services ensures robust repayment contracts. Investors earn up to 30% returns over three years, backed by large-scale, long-term facility agreements. A premium opportunity for substantial impact, high demand coverage, and strong capital growth.', 'Green', 'Quarterly or bi-annual', 'mdi:hospital-building', '2025-11-22 18:38:18', '2025-11-23 15:22:06');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `investments`
 --
 
@@ -190,14 +250,6 @@ CREATE TABLE `investments` (
   `roi_earned` decimal(12,2) DEFAULT '0.00',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `investments`
---
-
-INSERT INTO `investments` (`id`, `user_id`, `plan_name`, `amount`, `roi_percent`, `duration_days`, `status`, `maturity_date`, `roi_earned`, `created_at`) VALUES
-(1, 1, 'Healthy Future Bond Plan', 500.00, 11.00, 540, 'active', '2027-05-03', 0.00, '2025-11-09 08:38:58'),
-(2, 1, 'Healthy Future Bond Plan', 500.00, 11.00, 540, 'active', '2027-05-16', 0.00, '2025-11-22 11:06:56');
 
 -- --------------------------------------------------------
 
@@ -217,6 +269,7 @@ CREATE TABLE `investment_plans` (
   `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `details` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `risk` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` enum('active','hidden') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'active',
   `income` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `summary` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `icon` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -227,14 +280,15 @@ CREATE TABLE `investment_plans` (
 -- Dumping data for table `investment_plans`
 --
 
-INSERT INTO `investment_plans` (`id`, `title`, `roi_percent`, `duration_days`, `payout_option`, `min_amount`, `max_amount`, `created_at`, `description`, `details`, `risk`, `income`, `summary`, `icon`, `color`) VALUES
-(1, 'Healthy Future Bond Plan', 11.00, 540, 'Quarterly or at maturity', 500.00, 100000.00, '2025-11-22 12:22:52', 'Build Community Diagnostic Centers', 'Supporting local health screenings and medical supplies for underserved communities.', 'Low', 'Fees from diagnostic tests and partnerships with hospitals & insurance providers', 'Your money helps build diagnostic centers that earn from medical tests. As these centers generate consistent service income, you earn up to 12% in 18 months — safely and with social impact.', 'mdi:factory', 'Green'),
-(2, 'Wellness Growth Real Estate Plan', 16.50, 730, 'Bi-annual or lump sum at maturity', 5000.00, 250000.00, '2025-11-22 12:22:52', 'Build and Lease Wellness & Rehabilitation Facilities', 'Your investment funds the construction of modern wellness centers leased to physiotherapy clinics, fitness brands, and recovery operators.', 'Moderate', 'Rental income from wellness centers and long-term lease agreements', 'You help build wellness facilities that lease to health operators. Rental payments provide steady income that\'s shared with you as up to 18% return in 2 years.', 'mdi:home-building', 'Blue'),
-(3, 'Health Innovation Venture Fund', 30.00, 1095, 'At maturity (end of term)', 10000.00, 500000.00, '2025-11-22 12:22:52', 'Support High-Growth Health-Tech Startups', 'Your capital helps scale innovative startups working on medical devices, biotech research, and digital health technologies.', 'High', 'Equity profit from startup growth, technology licensing, and company buyouts', 'You back new health-tech companies. When they grow or get acquired, you share in their success — earning up to 35% within 3 years.', 'mdi:lightning-bolt', 'Orange'),
-(4, 'Community Health Microfinance Plan', 9.00, 360, 'At maturity (end of 12 months)', 300.00, 20000.00, '2025-11-22 12:22:52', 'Empower Small Health Businesses', 'This plan provides microloans to rural pharmacies, small clinics, and health workers who repay with fair interest.', 'Low', 'Loan interest payments from local health entrepreneurs', 'Your investment gives small loans to trusted healthcare providers. They repay with interest, and you earn up to 10% in just one year — while supporting community care.', 'mdi:hand-extend', 'Green'),
-(5, 'Green Hospital Infrastructure Plan', 15.00, 730, 'Annual or at maturity', 2000.00, 200000.00, '2025-11-22 12:22:52', 'Finance Eco-Friendly Hospital Upgrades', 'Your investment enables hospitals to install solar systems, energy-saving equipment, and water recycling units.', 'Moderate', 'Revenue-sharing from hospitals\' reduced energy costs and green subsidies', 'Hospitals save thousands on electricity and maintenance after green upgrades. Part of those savings is paid back to investors — giving you up to 16% return in 2 years.', 'mdi:leaf', 'Blue'),
-(6, 'Healthy Food Systems Plan', 13.50, 540, 'Quarterly or at maturity', 1000.00, 50000.00, '2025-11-22 12:22:52', 'Strengthen Nutrition and Food Security', 'This plan funds farm-to-health programs and healthy meal suppliers for hospitals, schools, and wellness institutions.', 'Moderate', 'Profits from produce sales, supply contracts, and wholesale distribution partnerships', 'Your money supports healthy food producers who sell to hospitals and schools. As they make profits, you earn up to 15% in 18 months.', 'mdi:food', 'Blue'),
-(7, 'Digital Health Access Plan', 20.00, 730, 'Annual or at maturity', 2000.00, 100000.00, '2025-11-22 12:22:52', 'Expand Online Health Platforms & Telemedicine', 'Invest in digital platforms offering remote doctor consultations, e-prescriptions, and mobile diagnostics.', 'Moderate to High', 'Subscription fees, teleconsultation charges, data partnerships, and health service commissions', 'You invest in the future of digital healthcare. As more users join and pay for services online, you earn up to 22% return in 2 years — while helping expand access to doctors worldwide.', 'mdi:phone', 'Orange');
+INSERT INTO `investment_plans` (`id`, `title`, `roi_percent`, `duration_days`, `payout_option`, `min_amount`, `max_amount`, `created_at`, `description`, `details`, `risk`, `status`, `income`, `summary`, `icon`, `color`) VALUES
+(1, 'Healthy Future Bond Plan', 11.00, 540, 'Quarterly or at maturity', 500.00, 100000.00, '2025-11-22 12:22:52', 'Build Community Diagnostic Centers', 'Supporting local health screenings and medical supplies for underserved communities.', 'Low', 'active', 'Fees from diagnostic tests and partnerships with hospitals & insurance providers', 'Your money helps build diagnostic centers that earn from medical tests. As these centers generate consistent service income, you earn up to 12% in 18 months — safely and with social impact.', 'mdi:factory', 'Green'),
+(2, 'Wellness Growth Real Estate Plan', 16.50, 730, 'Bi-annual or lump sum at maturity', 5000.00, 250000.00, '2025-11-22 12:22:52', 'Build and Lease Wellness & Rehabilitation Facilities', 'Your investment funds the construction of modern wellness centers leased to physiotherapy clinics, fitness brands, and recovery operators.', 'Moderate', 'active', 'Rental income from wellness centers and long-term lease agreements', 'You help build wellness facilities that lease to health operators. Rental payments provide steady income that\'s shared with you as up to 18% return in 2 years.', 'mdi:home-building', 'Blue'),
+(3, 'Health Innovation Venture Fund', 30.00, 1095, 'At maturity (end of term)', 10000.00, 500000.00, '2025-11-22 12:22:52', 'Support High-Growth Health-Tech Startups', 'Your capital helps scale innovative startups working on medical devices, biotech research, and digital health technologies.', 'High', 'active', 'Equity profit from startup growth, technology licensing, and company buyouts', 'You back new health-tech companies. When they grow or get acquired, you share in their success — earning up to 35% within 3 years.', 'mdi:lightning-bolt', 'Orange'),
+(4, 'Community Health Microfinance Plan', 9.00, 360, 'At maturity (end of 12 months)', 300.00, 20000.00, '2025-11-22 12:22:52', 'Empower Small Health Businesses', 'This plan provides microloans to rural pharmacies, small clinics, and health workers who repay with fair interest.', 'Low', 'active', 'Loan interest payments from local health entrepreneurs', 'Your investment gives small loans to trusted healthcare providers. They repay with interest, and you earn up to 10% in just one year — while supporting community care.', 'mdi:hand-extend', 'Green'),
+(5, 'Green Hospital Infrastructure Plan', 15.00, 730, 'Annual or at maturity', 2000.00, 200000.00, '2025-11-22 12:22:52', 'Finance Eco-Friendly Hospital Upgrades', 'Your investment enables hospitals to install solar systems, energy-saving equipment, and water recycling units.', 'Moderate', 'active', 'Revenue-sharing from hospitals\' reduced energy costs and green subsidies', 'Hospitals save thousands on electricity and maintenance after green upgrades. Part of those savings is paid back to investors — giving you up to 16% return in 2 years.', 'mdi:leaf', 'Blue'),
+(6, 'Healthy Food Systems Plan', 13.50, 540, 'Quarterly or at maturity', 1000.00, 50000.00, '2025-11-22 12:22:52', 'Strengthen Nutrition and Food Security', 'This plan funds farm-to-health programs and healthy meal suppliers for hospitals, schools, and wellness institutions.', 'Moderate', 'active', 'Profits from produce sales, supply contracts, and wholesale distribution partnerships', 'Your money supports healthy food producers who sell to hospitals and schools. As they make profits, you earn up to 15% in 18 months.', 'mdi:food', 'Blue'),
+(7, 'Digital Health Access Plan', 20.00, 730, 'Annual or at maturity', 2000.00, 100000.00, '2025-11-22 12:22:52', 'Expand Online Health Platforms & Telemedicine', 'Invest in digital platforms offering remote doctor consultations, e-prescriptions, and mobile diagnostics.', 'Moderate to High', 'active', 'Subscription fees, teleconsultation charges, data partnerships, and health service commissions', 'You invest in the future of digital healthcare. As more users join and pay for services online, you earn up to 22% return in 2 years — while helping expand access to doctors worldwide.', 'mdi:phone', 'Orange'),
+(8, 'testing plan', 25.50, 365, 'maturity', 1.00, 9999999.00, '2025-11-22 13:24:06', 'Investment plan description.', 'Detailed plan features.', 'low', 'active', 'General investment returns.', 'Summary of the plan.', 'mdi:chart-line', 'Blue');
 
 -- --------------------------------------------------------
 
@@ -257,46 +311,8 @@ CREATE TABLE `login_logs` (
 --
 
 INSERT INTO `login_logs` (`id`, `user_type`, `user_id`, `ip`, `browser`, `location`, `created_at`) VALUES
-(1, 'user', 1, '127.0.0.1', 'Firefox 144.0 on Windows', 'Localhost / Internal Network', '2025-11-12 20:46:31'),
-(2, 'user', 1, '127.0.0.1', 'Firefox 144.0 on Windows', 'Localhost / Internal Network', '2025-11-12 20:51:15'),
-(3, 'user', 1, '127.0.0.1', 'Firefox 144.0 on Windows', 'Localhost / Internal Network', '2025-11-12 20:51:42'),
-(4, 'user', 1, '127.0.0.1', 'Firefox 144.0 on Windows', 'Localhost / Internal Network', '2025-11-12 20:53:52'),
-(5, 'user', 1, '127.0.0.1', 'Firefox 144.0 on Windows', 'Localhost / Internal Network', '2025-11-12 20:54:09'),
-(6, 'user', 1, '127.0.0.1', 'Firefox 144.0 on Windows', 'Localhost / Internal Network', '2025-11-12 20:54:58'),
-(7, 'user', 1, '127.0.0.1', 'Firefox 144.0 on Windows', 'Localhost / Internal Network', '2025-11-12 20:58:53'),
-(8, 'user', 1, '127.0.0.1', 'Firefox 144.0 on Windows', 'Localhost / Internal Network', '2025-11-12 20:59:05'),
-(9, 'user', 1, '127.0.0.1', 'Firefox 144.0 on Windows', 'Localhost / Internal Network', '2025-11-12 21:07:16'),
-(10, 'user', 1, '127.0.0.1', 'Firefox 144.0 on Windows', 'Localhost / Internal Network', '2025-11-12 21:07:32'),
-(11, 'user', 1, '127.0.0.1', 'Firefox 144.0 on Windows', 'Localhost / Internal Network', '2025-11-12 21:12:05'),
-(12, 'user', 1, '127.0.0.1', 'Firefox 144.0 on Windows', 'Localhost / Internal Network', '2025-11-12 21:20:57'),
-(13, 'user', 1, '127.0.0.1', 'Firefox 144.0 on Windows', 'Localhost / Internal Network', '2025-11-12 21:26:16'),
-(14, 'user', 1, '127.0.0.1', 'Firefox 144.0 on Windows', 'Localhost / Internal Network', '2025-11-12 23:47:44'),
-(15, 'admin', 1, '127.0.0.1', 'Firefox 144.0 on Windows', 'Localhost / Internal Network', '2025-11-13 11:19:13'),
-(16, 'admin', 1, '127.0.0.1', 'Firefox 144.0 on Windows', 'Localhost / Internal Network', '2025-11-13 11:20:17'),
-(17, 'user', 1, '127.0.0.1', 'Firefox 144.0 on Windows', 'Localhost / Internal Network', '2025-11-13 11:21:49'),
-(18, 'user', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-15 01:17:56'),
-(19, 'admin', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-15 01:54:27'),
-(20, 'admin', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-16 10:58:34'),
-(21, 'admin', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-16 23:51:26'),
-(22, 'user', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-16 23:56:06'),
-(23, 'admin', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-17 03:05:48'),
-(24, 'user', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-17 12:33:13'),
-(25, 'user', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-17 12:59:43'),
-(26, 'admin', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-17 13:22:21'),
-(27, 'admin', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-20 11:01:26'),
-(28, 'admin', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-20 11:06:05'),
-(29, 'admin', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-20 13:33:59'),
-(30, 'user', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-20 22:14:51'),
-(31, 'admin', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-21 00:21:06'),
-(32, 'admin', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-21 11:34:31'),
-(33, 'user', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-21 11:45:50'),
-(34, 'user', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-21 11:46:03'),
-(35, 'admin', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-21 11:50:59'),
-(36, 'user', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-22 00:17:25'),
-(37, 'user', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-22 00:19:08'),
-(38, 'admin', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-22 00:19:56'),
-(39, 'admin', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-22 00:24:22'),
-(40, 'user', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-22 03:15:30');
+(1, 'admin', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-23 00:25:10'),
+(2, 'user', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-23 15:25:02');
 
 -- --------------------------------------------------------
 
@@ -318,6 +334,38 @@ CREATE TABLE `maintenance` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `maintenance_plans`
+--
+
+CREATE TABLE `maintenance_plans` (
+  `id` int NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `purpose` text COLLATE utf8mb4_unicode_ci,
+  `min_amount` decimal(15,2) NOT NULL,
+  `max_amount` decimal(15,2) DEFAULT NULL,
+  `duration_days` int DEFAULT NULL,
+  `roi_percent` decimal(5,2) NOT NULL,
+  `risk` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `payout` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `summary` text COLLATE utf8mb4_unicode_ci,
+  `color` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `maintenance_plans`
+--
+
+INSERT INTO `maintenance_plans` (`id`, `name`, `purpose`, `min_amount`, `max_amount`, `duration_days`, `roi_percent`, `risk`, `payout`, `summary`, `color`, `created_at`) VALUES
+(1, 'Maintenance Support Starter Plan', 'Entry plan for basic healthcare maintenance support.', 10000.00, 50000.00, 270, 5.50, 'Very Low', 'Full payout at maturity', 'A beginner-friendly investment that supports routine maintenance for essential healthcare devices and systems. Returns are generated from hospital service contracts that rely on continuous operational uptime. Ideal for low-risk investors seeking modest growth backed by predictable maintenance income. A secure way to participate in healthcare sustainability with guaranteed service demand.', 'Green', '2025-11-22 20:19:10'),
+(2, 'Standard Equipment Care Plan', 'One-year maintenance program for hospital devices.', 25000.00, 300000.00, 360, 9.00, 'Low', 'Annual or full payout at maturity', 'A one-year maintenance investment that supports the longevity and efficiency of hospital diagnostic equipment. Healthcare facilities repay using funds allocated for technical servicing and calibration cycles, ensuring steady investor returns. Designed for low-risk growth tied directly to essential upkeep needs. A stable annual plan for investors supporting reliable healthcare operations.', 'Green', '2025-11-22 20:19:10'),
+(3, 'Infrastructure Development Plan', 'Mid-term investment into major repair infrastructure.', 50000.00, 500000.00, 720, 16.50, 'Moderate', 'Annual or full payout at maturity', 'A mid-term investment designed to fund major repair and modernization projects across hospital infrastructure. Returns are backed by facility upgrade contracts tied to improved service capacity. Offers moderate growth for investors seeking impactful contributions to facility performance and safety. A strategic plan supporting high-value maintenance that enhances patient care delivery.', 'Blue', '2025-11-22 20:19:10'),
+(4, 'Premium Equipment Sustainability Plan', 'Top-tier maintenance pipeline for premium systems.', 250000.00, NULL, 1080, 22.00, 'Moderate', 'Multiple payout options', 'A premium maintenance plan funding long-term sustainability of high-end diagnostic and treatment equipment. Hospitals commit to structured repayment cycles based on servicing and uptime requirements for advanced systems. Investors benefit from increased returns tied to equipment criticality and high operational demand. A strong option for those seeking moderate risk, high impact, and multi-payout flexibility.', 'Blue', '2025-11-22 20:19:10'),
+(5, 'Lifetime Equipment Trust Plan', 'Perpetual sustainability income for healthcare assets.', 1000000.00, NULL, NULL, 7.00, 'Low', 'Lifetime payouts', 'An elite perpetual trust that generates lifetime maintenance income from healthcare asset servicing. Designed to safeguard equipment performance across generations, with continuous payouts funded by recurring maintenance contracts. Ideal for long-term investors, estates, or institutions seeking ongoing passive income. A legacy-centric plan that secures sustainable healthcare operations and enduring financial returns.', 'Green', '2025-11-22 20:19:10');
 
 -- --------------------------------------------------------
 
@@ -345,13 +393,6 @@ CREATE TABLE `settings` (
   `wallet_deposit_address` text COLLATE utf8mb4_unicode_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `settings`
---
-
-INSERT INTO `settings` (`id`, `cash_mailing_address`, `wallet_deposit_address`) VALUES
-(1, 'new address', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -369,19 +410,6 @@ CREATE TABLE `transactions` (
   `status` enum('pending','completed','failed') COLLATE utf8mb4_unicode_ci DEFAULT 'completed',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `transactions`
---
-
-INSERT INTO `transactions` (`id`, `user_id`, `type`, `method`, `details`, `amount`, `reference`, `status`, `created_at`) VALUES
-(1, 1, 'deposit', 'secure_exchange', '{\"method\": \"secure_exchange\", \"provider\": \"nowpayments\", \"initiated_at\": \"2025-11-09 00:09:34\", \"provider_response\": {\"id\": \"4804426065\", \"source\": null, \"order_id\": \"HRC-DEP-690FDBBE365D5-6351\", \"token_id\": \"5490326139\", \"cancel_url\": \"https://healthruncare.com/pages/user/wallet.php?deposit=cancel&ref=HRC-DEP-690FDBBE365D5-6351\", \"created_at\": \"2025-11-09T00:09:39.512Z\", \"updated_at\": \"2025-11-09T00:09:39.512Z\", \"invoice_url\": \"https://nowpayments.io/payment/?iid=4804426065\", \"success_url\": \"https://healthruncare.com/pages/user/wallet.php?deposit=success&ref=HRC-DEP-690FDBBE365D5-6351\", \"pay_currency\": null, \"price_amount\": \"10000\", \"is_fixed_rate\": false, \"customer_email\": null, \"price_currency\": \"USD\", \"payout_currency\": null, \"ipn_callback_url\": \"https://healthruncare.com/api/payments/now_webhook.php\", \"collect_user_data\": false, \"order_description\": \"HealthRunCare deposit: HRC-DEP-690FDBBE365D5-6351\", \"partially_paid_url\": null, \"is_fee_paid_by_user\": false}, \"invoice_created_at\": \"2025-11-09 00:09:35\", \"created_invoice_url\": \"https://nowpayments.io/payment/?iid=4804426065\", \"provider_payment_id\": \"4804426065\"}', 10000.00, 'HRC-DEP-690FDBBE365D5-6351', 'pending', '2025-11-08 23:09:34'),
-(2, 1, 'investment', NULL, '{\"plan_id\": 1, \"plan_name\": \"Healthy Future Bond Plan\", \"investment_id\": 1}', 500.00, 'HRC-INV-69106132121B1-1362', 'completed', '2025-11-09 08:38:58'),
-(3, 1, 'donation', NULL, '{\"note\": \"\", \"charity_id\": 1}', 20.00, 'HRC-DON-69132514CBF8C-7265', 'completed', '2025-11-11 10:59:16'),
-(4, 1, 'donation', NULL, '{\"note\": \"\", \"charity_id\": 1}', 20.00, 'HRC-DON-69150EDB2C5F2-9564', 'completed', '2025-11-12 21:48:59'),
-(5, 1, 'trustfund', 'wallet_address', '{\"plan_name\": \"Child Education Growth Plan\", \"roi_percent\": 25, \"duration_days\": 1095, \"maturity_date\": \"2028-11-11\", \"penalty_percent\": 1.5}', 500.00, 'TRF-778EF18CBC', 'completed', '2025-11-12 22:50:19'),
-(6, 1, 'donation', NULL, '{\"note\": \"\", \"charity_id\": 1}', 10.00, 'HRC-DON-691B1183523E8-1453', 'completed', '2025-11-17 11:13:55'),
-(8, 1, 'investment', NULL, '{\"plan_id\": 1, \"plan_name\": \"Healthy Future Bond Plan\", \"investment_id\": 2}', 500.00, 'HRC-INV-6921A76016415-6643', 'completed', '2025-11-22 11:06:56');
 
 -- --------------------------------------------------------
 
@@ -406,12 +434,41 @@ CREATE TABLE `trustfund` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `trustfund`
+-- Table structure for table `trustfund_plans`
 --
 
-INSERT INTO `trustfund` (`id`, `user_id`, `plan_name`, `amount`, `roi_percent`, `duration_days`, `penalty_percent`, `purpose`, `maturity_date`, `updated_at`, `roi_earned`, `payout_option`, `status`, `created_at`) VALUES
-(1, 1, 'Child Education Growth Plan', 500.00, 25.00, 1095, 1.50, NULL, '2028-11-11', NULL, 0.00, 'maturity', 'active', '2025-11-12 22:50:19');
+CREATE TABLE `trustfund_plans` (
+  `id` int NOT NULL,
+  `name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `purpose` varchar(300) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `income_source` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `min_amount` decimal(15,2) NOT NULL,
+  `max_amount` decimal(15,2) DEFAULT NULL,
+  `duration_days` int NOT NULL,
+  `roi_percent` decimal(10,2) NOT NULL,
+  `risk` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payout_option` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `summary` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `icon` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `color` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `trustfund_plans`
+--
+
+INSERT INTO `trustfund_plans` (`id`, `name`, `purpose`, `income_source`, `min_amount`, `max_amount`, `duration_days`, `roi_percent`, `risk`, `payout_option`, `summary`, `icon`, `color`, `created_at`) VALUES
+(1, 'Child Education Growth Plan', 'Build a secure education fund with guaranteed growth.', 'Education bonds, community development funds, and micro-infrastructure projects', 500.00, 50000.00, 1095, 25.00, 'Low', 'Annual or at maturity', 'A secure education-focused savings plan that grows steadily over time. Designed to protect capital while building reliable funds for tuition, fees, and academic expenses. This trust provides guaranteed growth and helps parents and guardians plan early with confidence. Ideal for preparing long-term education goals without financial stress.', 'mdi:school-outline', 'Green', '2025-11-22 14:15:26'),
+(2, 'Legacy Wealth Trust Plan', 'Generate long-term generational wealth.', 'Real estate development, healthcare partnerships, renewable energy assets, and long-term equity ventures', 500000.00, NULL, 1825, 55.00, 'Moderate', 'Annual or at maturity', 'A premium wealth preservation and growth trust designed for multigenerational impact. Built to protect and grow assets over many years, ensuring enduring financial security. Offers stable compounding returns ideal for inheritance planning. Perfect for families and estates seeking long-term financial empowerment with sustained legacy outcomes.', 'mdi:family-tree', 'Blue', '2025-11-22 14:15:26'),
+(3, 'Business Succession Trust Plan', 'Secure business growth or transition.', 'SME expansion financing, business partnership equity, and scalable enterprise loan models', 5000.00, 500000.00, 1460, 48.00, 'Moderate to High', 'Annual or at maturity', 'A strategic business-focused trust for organizations planning expansion or succession. Provides consistent returns while supporting growth, transition, or ownership transfer. Designed to secure capital while maintaining profitability. Ideal for entrepreneurs looking to protect business assets while building long-term enterprise value.', 'mdi:briefcase-outline', 'Orange', '2025-11-22 14:15:26'),
+(4, 'Medical Protection Trust Plan', 'Create a secure medical reserve with capital growth.', 'Health insurance reserve pools, medical leasing contracts, and healthcare infrastructure revenue', 300.00, 25000.00, 1095, 18.00, 'Low', 'Quarterly or at maturity', 'A specialized medical savings and protection trust that secures long-term emergency funds. Designed to grow your capital safely while ensuring healthcare preparedness. Offers accessible returns to support medical needs, emergencies, and family protection. A stable plan for anyone seeking security and wellness with financial peace of mind.', 'mdi:heart-pulse', 'Green', '2025-11-22 14:15:26'),
+(5, 'Future Builders Business Plan', 'Support startups and young entrepreneurs.', 'Startup financing, tech incubation funds, and sustainability-driven venture investments', 1000.00, 100000.00, 1460, 38.00, 'Moderate', 'Annual or at maturity', 'A forward-focused investment trust for startups, young entrepreneurs, and innovation-driven ventures. Designed to fuel ideas while generating profitable returns for supporters. Balances growth, social impact, and sustainable business funding. Ideal for investors seeking meaningful financial growth that empowers the next generation of innovators.', 'mdi:rocket-outline', 'Blue', '2025-11-22 14:15:26'),
+(6, 'Guardian Trust Income Plan', 'Steady annual income for beneficiaries.', 'Dividend portfolios, healthcare lease revenues, and infrastructure-backed income streams', 10000.00, 200000.00, 1825, 35.00, 'Low to Moderate', 'Annual income distribution', 'A dependable income trust providing guaranteed yearly payouts for beneficiaries. Protects principal while generating stable distribution to dependents, families, or long-term support needs. Ideal for individuals who want to secure financial care for others with predictable income. Built for reliability, safety, and consistent returns.', 'mdi:shield-check-outline', 'Green', '2025-11-22 14:15:26'),
+(7, 'Perpetual Legacy Trust Plan', 'Lifetime income with preserved principal.', 'Real estate income, renewable energy royalties, hospital infrastructure revenue, and high-dividend equity portfolios', 1000000.00, NULL, 9999, 11.00, 'Low', 'Annual or quarterly for life', 'An elite wealth preservation trust that guarantees lifetime income while permanently protecting principal value. Designed for estates, family offices, and institutional planning. Generates continuous payouts across generations with low-risk protection. A premium legacy solution for enduring financial continuity, security, and long-term prosperity.', 'mdi:infinity', 'Orange', '2025-11-22 14:15:26');
 
 -- --------------------------------------------------------
 
@@ -460,7 +517,7 @@ CREATE TABLE `user_impacts` (
 --
 
 INSERT INTO `user_impacts` (`id`, `user_id`, `total_contributions`, `people_helped`, `impact_score`, `communities_helped`, `packages_funded`, `updated_at`) VALUES
-(1, 1, 2250.00, 5, 0.50, 0, 3, '2025-11-22 12:07:41');
+(1, 1, 0.00, 0, 0.00, 0, 0, '2025-11-23 14:25:04');
 
 -- --------------------------------------------------------
 
@@ -489,7 +546,7 @@ CREATE TABLE `wallets` (
 --
 
 INSERT INTO `wallets` (`id`, `user_id`, `balance`, `total_deposited`, `total_withdrawn`, `total_donations`, `total_investments`, `holdlock_savings`, `total_earnings`, `pending_withdrawals`, `created_at`, `cash_mailing_address`, `wallet_deposit_address`) VALUES
-(1, 1, 9500.50, 1230.00, 0.00, 250.00, 2000.00, 0.00, 300.00, 0.00, '2025-11-08 23:15:57', NULL, 'momomomomo');
+(1, 1, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '2025-11-23 14:25:04', NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -533,6 +590,12 @@ ALTER TABLE `holdlock`
   ADD KEY `idx_hold_maturity` (`maturity_date`);
 
 --
+-- Indexes for table `holdlock_plans`
+--
+ALTER TABLE `holdlock_plans`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `infrastructure`
 --
 ALTER TABLE `infrastructure`
@@ -546,6 +609,12 @@ ALTER TABLE `infrastructure_contributions`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_infra_user` (`user_id`),
   ADD KEY `idx_infra_project` (`project_id`);
+
+--
+-- Indexes for table `infrastructure_plans`
+--
+ALTER TABLE `infrastructure_plans`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `investments`
@@ -573,6 +642,12 @@ ALTER TABLE `login_logs`
 ALTER TABLE `maintenance`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_maintenance_user` (`user_id`);
+
+--
+-- Indexes for table `maintenance_plans`
+--
+ALTER TABLE `maintenance_plans`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `password_resets`
@@ -603,6 +678,12 @@ ALTER TABLE `trustfund`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_trust_user` (`user_id`),
   ADD KEY `idx_trust_maturity` (`maturity_date`);
+
+--
+-- Indexes for table `trustfund_plans`
+--
+ALTER TABLE `trustfund_plans`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `users`
@@ -651,13 +732,19 @@ ALTER TABLE `charities`
 -- AUTO_INCREMENT for table `charity_donations`
 --
 ALTER TABLE `charity_donations`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `holdlock`
 --
 ALTER TABLE `holdlock`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `holdlock_plans`
+--
+ALTER TABLE `holdlock_plans`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `infrastructure`
@@ -672,28 +759,40 @@ ALTER TABLE `infrastructure_contributions`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `infrastructure_plans`
+--
+ALTER TABLE `infrastructure_plans`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
 -- AUTO_INCREMENT for table `investments`
 --
 ALTER TABLE `investments`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `investment_plans`
 --
 ALTER TABLE `investment_plans`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `login_logs`
 --
 ALTER TABLE `login_logs`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `maintenance`
 --
 ALTER TABLE `maintenance`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `maintenance_plans`
+--
+ALTER TABLE `maintenance_plans`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `password_resets`
@@ -705,37 +804,43 @@ ALTER TABLE `password_resets`
 -- AUTO_INCREMENT for table `settings`
 --
 ALTER TABLE `settings`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `trustfund`
 --
 ALTER TABLE `trustfund`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `trustfund_plans`
+--
+ALTER TABLE `trustfund_plans`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `user_impacts`
 --
 ALTER TABLE `user_impacts`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `wallets`
 --
 ALTER TABLE `wallets`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables

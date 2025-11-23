@@ -126,6 +126,8 @@ async function loadMaintenancePlans() {
                 <tr><td>ROI</td><td class="text-Green fw-bold">${Number(p.roi_percent)}%</td></tr>
                 <tr><td>Risk Level</td><td class="fw-bold text-${p.color}">${escapeHtml(p.risk)}</td></tr>
                 <tr><td>Payout</td><td>${escapeHtml(p.payout)}</td></tr>
+                <tr><td>Income Source</td><td>${escapeHtml(p.income_source)}</td></tr>
+
               </table>
               <p class="f12-regular text-Gray italic mt-12">${escapeHtml(p.summary)}</p>
             </div>

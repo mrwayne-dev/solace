@@ -211,6 +211,7 @@ document.addEventListener('DOMContentLoaded', function () {
               <tr><td>ROI</td><td class="text-Green fw-bold">${escapeHtml(p.roi_range)}</td></tr>
               <tr><td>Max Deposit</td><td>${p.max_amount ? '$' + Number(p.max_amount).toLocaleString() : 'Unlimited'}</td></tr>
               <tr><td>Payout</td><td>${escapeHtml(p.payout)}</td></tr>
+              <tr><td>Income Source</td><td>${escapeHtml(p.income_source)}</td></tr>
             </table>
 
             <p class="f12-regular text-Gray italic mt-12">${escapeHtml(p.summary)}</p>

@@ -89,7 +89,7 @@ if ($action === 'get_summary') {
 if ($action === 'get_plans') {
     $stmt = $pdo->query("
         SELECT 
-            id, name, purpose, min_amount, max_amount, 
+            id, name, purpose, income_source, min_amount, max_amount, 
             lock_period_text, duration_days, roi_range, 
             risk, payout, summary, icon, color
         FROM holdlock_plans
@@ -98,6 +98,7 @@ if ($action === 'get_plans') {
     $plans = $stmt->fetchAll(PDO::FETCH_ASSOC);
     respond('success', 'Plans loaded.', ['plans' => $plans]);
 }
+
 
 
 /* =====================================================

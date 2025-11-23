@@ -158,6 +158,31 @@
   </div>
 </section>
 
+<section class="section detail">
+  <div class="container detail-content">
+
+    <div class="detail-text" data-appear-left>
+      <h2 class="section-title">Smart Tools. Real Impact.</h2>
+      <p class="section-description">
+        We develop digital tools that make healthcare easier for everyone. 
+        From secure medical records to clear treatment tracking, our platform helps 
+        patients stay informed, supports doctors during care, and strengthens hospitals 
+        with systems that reduce stress and protect lives. We make healthcare simpler, 
+        safer, and more reliable for every community we serve.
+      </p>
+      <div class="detail-buttons">
+        <a href="#" class="btn btn--secondary">Explore Our Technology</a>
+      </div>
+    </div>
+
+    <div class="detail-visual" data-appear-right>
+      <img src="../../assets/images/impact.png" alt="Medical technology impact" loading="lazy">
+    </div>
+
+  </div>
+</section>
+
+
 
 <section class="platforms">
   <div class="container">
@@ -262,6 +287,63 @@
     </div>
   </div>
 </section>
+<section class="vision" id="vision">
+  <div class="container vision-content">
+    <!-- Left: Text -->
+    <div class="vision-text" data-appear-left>
+      <span class="badge badge--green">HRC</span>
+      <h2 class="section-title">We Change Lives</h2>
+      <p class="section-description">
+        At HealthRunCare, we’re not just fixing a broken healthcare system; we’re changing lives for good. By putting affordable care within reach, empowering everyday people to give and grow their money with purpose, and channeling every investment into real-world health impact, we’re proving that finance can heal, charity can multiply, and hope can be profitable.
+      </p>
+    </div>
+
+    <!-- Right: Image -->
+    <div class="vision-image" data-appear-right>
+      <img src="../../assets/images/care.jpg" alt="HealthRunCare's mission: connected, compassionate care" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<section class="vision" id="vision">
+  <div class="container vision-content">
+
+    <!-- Right: Image -->
+    <div class="vision-image" data-appear-right>
+      <img src="../../assets/images/starvation1.png" alt="HealthRunCare's mission: connected, compassionate care" loading="lazy">
+    </div>
+
+    <div class="vision-text" data-appear-left>
+      <span class="badge badge--green">HRC</span>
+      <h2 class="section-title">We End Starvation</h2>
+      <p class="section-description">
+        Starvation is a medical emergency. A hungry body cannot fight disease, recover from treatment, or sustain a healthy life. 
+        At HealthRunCare, we go beyond clinics and prescriptions by funding nutrition support, medical feeding programs, and recovery meals for vulnerable patients. 
+        When families have food security, they heal faster, live longer, and break the cycle of sickness caused by poverty.
+      </p>
+
+    </div>
+  </div>
+</section>
+
+<section class="vision" id="vision">
+  <div class="container vision-content">
+    <!-- Left: Text -->
+    <div class="vision-text" data-appear-left>
+      <span class="badge badge--green">HRC</span>
+      <h2 class="section-title">We Provide</h2>
+      <p class="section-description">
+        We provide more than medical care — we provide dignity. HRC connects communities to affordable treatment, life-saving donations, trusted health investments, and sustainable solutions that lift families out of vulnerability. 
+        By combining finance, innovation, and compassion, we make it possible for anyone to receive care, support care, and build healthier futures for those who need it most.
+      </p>
+    </div>
+
+    <!-- Right: Image -->
+    <div class="vision-image" data-appear-right>
+      <img src="../../assets/images/charity.jpg" alt="HealthRunCare's mission: connected, compassionate care" loading="lazy">
+    </div>
+  </div>
+</section>
 
 
 <section class="impact-stats">
@@ -292,6 +374,8 @@
     </div>
   </div>
 </section>
+
+
 
 
 <section class="why-hrc">
@@ -333,6 +417,9 @@
           <li>✅ <strong>Integrated Care:</strong> One platform for patients, doctors & pharmacies</li>
         </ul>
       </div>
+    </div>
+    <div class="circle-image-wrapper" data-appear>
+      <img src="../../assets/images/team.png" alt="Circle of Care illustration" loading="lazy">
     </div>
   </div>
 </section>
@@ -426,6 +513,99 @@
 
   </div>
 </section>
+
+<section class="vision">
+  <div class="container vision-content">
+
+    <div class="vision-text" data-appear-left>
+      <span class="badge badge--green">Community</span>
+      <h2 class="section-title">Healthcare for Everyone</h2>
+      <p class="section-description">
+        No one should be left behind. Our platform ensures affordable access to care,
+        community-funded health solutions, and financial opportunities that uplift
+        families and entire regions.
+      </p>
+    </div>
+
+    <div class="vision-image" data-appear-right>
+      <img src="../../assets/images/everyone.jpg" 
+           alt="Community healthcare" loading="lazy">
+    </div>
+
+  </div>
+</section>
+
+<section class="wing-container">
+  <div class="container">
+
+    <div class="wing-card" data-appear>
+
+      <div class="wing-card-image">
+        <img src="../../assets/images/hope.jpg" alt="Community health support" loading="lazy">
+      </div>
+
+      <div class="wing-card-content">
+        <h3 class="wing-card-title">Care Beyond Treatment</h3>
+        <p class="wing-card-desc">
+          Healthcare is more than medicine. It’s nutrition, education, and
+          sustained support for families who need more than prescriptions to survive.
+          We connect people to full-circle care that prevents illness before it begins.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+
+<section class="wing-container">
+  <div class="container">
+
+    <div class="wing-card" data-appear>
+
+      <div class="wing-card-content">
+        <h3 class="wing-card-title">Healthy Communities Start With Hope</h3>
+        <p class="wing-card-desc">
+          We believe that access to care should be a right, not a privilege.
+          By supporting clinics, funding emergency treatment, and
+          providing life-saving resources, we bring hope to underserved communities.
+        </p>
+      </div>
+
+      <div class="wing-card-image">
+        <img src="../../assets/images/community.jpg" alt="Healthcare support for communities" loading="lazy">
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<section class="wing-container">
+  <div class="container">
+
+    <div class="wing-card" data-appear>
+      
+      <div class="wing-card-image">
+        <img src="../../assets/images/empower.png" alt="Community healthcare support" loading="lazy">
+      </div>
+
+      <div class="wing-card-content">
+        <h3 class="wing-card-title">Empowering Communities, Changing Futures</h3>
+        <p class="wing-card-desc">
+          HRC invests in long-term community health programs—from children’s nutrition, 
+          to maternal care, to emergency medical aid. By partnering with local leaders 
+          and healthcare experts, we build healthier communities that can stand on their own, 
+          sustain their resources, and protect their future generations.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
 
 <section class="faq">
   <div class="container">

@@ -260,6 +260,10 @@ table { border-collapse: collapse; width: 100%; }
 .nav-toggle-btn.active .line-1 { transform: translateY(8px) rotate(45deg); }
 .nav-toggle-btn.active .line-2 { opacity: 0; }
 .nav-toggle-btn.active .line-3 { transform: translateY(-8px) rotate(-45deg); }
+/* Hide mobile-only nav items on desktop */
+.mobile-only {
+  display: none;
+}
 
 /* Mobile Menu */
 @media (max-width: 992px) {
