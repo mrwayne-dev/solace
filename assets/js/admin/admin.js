@@ -106,6 +106,62 @@ window.formatCurrency = function(amount) {
             });
         }
     };
+
+    // OPEN — Set Deposit Address Modal
+    $('#set-deposit-address-btn').on('click', function (e) {
+        e.preventDefault();
+        showModal('#set-deposit-address-modal');
+    });
+
+    // OPEN — Pending Withdrawals Modal
+$('a[href="/admin/withdrawals/pending"]').on('click', async function (e) {
+    e.preventDefault();
+    showModal('#pending-withdrawals-modal');
+
+    try {
+        const res = await fetchApi('/api/admin/get_pending_withdrawals.php', {}, "GET");
+
+        const listEl = $('#pending-withdrawals-list');
+        const emptyEl = $('#no-pending-withdrawals');
+
+        listEl.empty(); // Clear old rows
+
+        if (res.status === 'success' && res.data.length > 0) {
+            emptyEl.hide();
+
+            res.data.forEach(wd => {
+                listEl.append(`
+                    <tr>
+                        <td>${wd.user}</td>
+                        <td>$${Number(wd.amount).toLocaleString()}</td>
+                        <td>${wd.date}</td>
+                        <td>
+                            <button class="complete-withdrawal-btn bg-Green text-White" data-id="${wd.id}">Complete</button>
+                            <button class="cancel-withdrawal-btn bg-Accent text-Black" data-id="${wd.id}">Cancel</button>
+                        </td>
+                    </tr>
+                `);
+            });
+        } else {
+            emptyEl.show();
+        }
+
+    } catch (err) {
+        showToast("Failed to load pending withdrawals", "error");
+    }
+});
+
+// ACTION BUTTONS — Complete/Cancel Withdrawals
+$(document).on('click', '.complete-withdrawal-btn', function () {
+    const id = $(this).data('id');
+    showToast(`Withdrawal #${id} marked for completion (backend TBD)`, 'info');
+});
+
+$(document).on('click', '.cancel-withdrawal-btn', function () {
+    const id = $(this).data('id');
+    showToast(`Withdrawal #${id} marked for cancellation (backend TBD)`, 'warning');
+});
+
     
     // --- Utility Functions ---
     let adminActivityChart = null; 

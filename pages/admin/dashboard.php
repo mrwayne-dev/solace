@@ -577,6 +577,43 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                         </div>
                     </div>
 
+                    <!-- =========================================================
+                    PENDING WITHDRAWALS — MODAL
+                    ========================================================= -->
+                    <div class="modal" id="pending-withdrawals-modal">
+                        <div class="modal-overlay"></div>
+
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h2>Pending Withdrawal Requests</h2>
+                                <button class="modal-close button-close-modal">&times;</button>
+                            </div>
+
+                            <div class="modal-body">
+
+                                <table class="tab-sell-order" id="pending-withdrawals-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="f14-regular text-Gray">User</th>
+                                            <th class="f14-regular text-Gray">Amount</th>
+                                            <th class="f14-regular text-Gray">Date</th>
+                                            <th class="f14-regular text-Gray">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pending-withdrawals-list">
+                                        <!-- Loaded via JS -->
+                                    </tbody>
+                                </table>
+
+                                <div id="no-pending-withdrawals" class="text-center text-Gray mt-20" style="display:none;">
+                                    No pending withdrawal requests.
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
 
 
                 </div>
