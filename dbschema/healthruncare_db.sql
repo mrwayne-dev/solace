@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 23, 2025 at 03:33 PM
+-- Generation Time: Nov 24, 2025 at 07:01 AM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.26
 
@@ -29,13 +29,13 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `admins` (
   `id` int NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `full_name` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `role` enum('super_admin','manager','support') COLLATE utf8mb4_unicode_ci DEFAULT 'manager',
-  `status` enum('active','disabled') COLLATE utf8mb4_unicode_ci DEFAULT 'active',
-  `profile_picture` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '/assets/images/avatar/admin_default.png',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `full_name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `role` enum('super_admin','manager','support') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'manager',
+  `status` enum('active','disabled') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'active',
+  `profile_picture` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '/assets/images/avatar/admin_default.png',
   `last_login` datetime DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -45,7 +45,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `name`, `full_name`, `email`, `password`, `role`, `status`, `profile_picture`, `last_login`, `created_at`) VALUES
-(1, 'mr wayne', 'mr wayne', 'aleruchi0987@gmail.com', '$2y$10$tssRL/rKOgDPKtFCs5w6MetlAM3fF2FBTMO0S4mkRD6iwjdkZHLKC', 'manager', 'active', '/assets/images/avatar/admin_default.png', '2025-11-23 00:25:05', '2025-11-12 15:22:41');
+(1, 'mr wayne', 'mr wayne', 'aleruchi0987@gmail.com', '$2y$10$tssRL/rKOgDPKtFCs5w6MetlAM3fF2FBTMO0S4mkRD6iwjdkZHLKC', 'manager', 'active', '/assets/images/avatar/admin_default.png', '2025-11-24 07:16:30', '2025-11-12 15:22:41');
 
 -- --------------------------------------------------------
 
@@ -56,7 +56,7 @@ INSERT INTO `admins` (`id`, `name`, `full_name`, `email`, `password`, `role`, `s
 CREATE TABLE `bank_details` (
   `id` int NOT NULL,
   `user_id` int NOT NULL,
-  `method` enum('local_bank','wallet_address') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `method` enum('local_bank','wallet_address') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `details` json NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -69,13 +69,13 @@ CREATE TABLE `bank_details` (
 
 CREATE TABLE `charities` (
   `id` int NOT NULL,
-  `name` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `organization` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '/assets/images/charity/placeholder.jpg',
+  `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `organization` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '/assets/images/charity/placeholder.jpg',
   `goal_amount` decimal(12,2) DEFAULT '0.00',
   `raised_amount` decimal(12,2) DEFAULT '0.00',
-  `status` enum('active','inactive') COLLATE utf8mb4_unicode_ci DEFAULT 'active',
+  `status` enum('active','inactive') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'active',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -102,7 +102,7 @@ CREATE TABLE `charity_donations` (
   `user_id` int NOT NULL,
   `charity_id` int NOT NULL,
   `amount` decimal(12,2) NOT NULL,
-  `reference` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `reference` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -115,16 +115,16 @@ CREATE TABLE `charity_donations` (
 CREATE TABLE `holdlock` (
   `id` int NOT NULL,
   `user_id` int NOT NULL,
-  `plan_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `plan_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `amount` decimal(12,2) NOT NULL,
   `roi_percent` decimal(5,2) DEFAULT '0.00',
   `duration_days` int NOT NULL,
   `penalty_percent` decimal(5,2) DEFAULT '1.50',
-  `status` enum('locked','unlock_pending','matured','unlocked_early','completed') COLLATE utf8mb4_unicode_ci DEFAULT 'locked',
+  `status` enum('locked','unlock_pending','matured','unlocked_early','completed') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'locked',
   `maturity_date` date DEFAULT NULL,
   `roi_earned` decimal(12,2) DEFAULT '0.00',
   `penalty_applied` decimal(12,2) DEFAULT '0.00',
-  `payout_option` enum('maturity','early') COLLATE utf8mb4_unicode_ci DEFAULT 'maturity',
+  `payout_option` enum('maturity','early') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'maturity',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -137,18 +137,18 @@ CREATE TABLE `holdlock` (
 
 CREATE TABLE `holdlock_plans` (
   `id` int NOT NULL,
-  `name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `purpose` text COLLATE utf8mb4_unicode_ci,
+  `name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `purpose` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `min_amount` decimal(15,2) NOT NULL,
   `max_amount` decimal(15,2) DEFAULT NULL,
-  `lock_period_text` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `lock_period_text` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `duration_days` int DEFAULT NULL,
-  `roi_range` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `risk` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payout` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `summary` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `icon` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `color` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `roi_range` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `risk` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payout` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `summary` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `color` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -171,11 +171,11 @@ INSERT INTO `holdlock_plans` (`id`, `name`, `purpose`, `min_amount`, `max_amount
 
 CREATE TABLE `infrastructure` (
   `id` int NOT NULL,
-  `name` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `goal_amount` decimal(12,2) DEFAULT '0.00',
   `raised_amount` decimal(12,2) DEFAULT '0.00',
   `roi_percent` decimal(5,2) DEFAULT '10.00',
-  `status` enum('open','funded','complete') COLLATE utf8mb4_unicode_ci DEFAULT 'open',
+  `status` enum('open','funded','complete') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'open',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -192,7 +192,7 @@ CREATE TABLE `infrastructure_contributions` (
   `project_id` int DEFAULT NULL,
   `amount` decimal(12,2) NOT NULL,
   `roi_earned` decimal(12,2) DEFAULT '0.00',
-  `status` enum('active','matured','unlocked') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'active',
+  `status` enum('active','matured','unlocked') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'active',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -205,17 +205,17 @@ CREATE TABLE `infrastructure_contributions` (
 
 CREATE TABLE `infrastructure_plans` (
   `id` int NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `purpose` text COLLATE utf8mb4_unicode_ci,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `purpose` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `min_amount` decimal(12,2) NOT NULL DEFAULT '0.00',
   `duration_days` int NOT NULL DEFAULT '0',
   `roi_percent` decimal(5,2) NOT NULL DEFAULT '0.00',
-  `payout_option` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `risk_level` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `summary` text COLLATE utf8mb4_unicode_ci,
-  `color` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT 'Green',
-  `repayment_mode` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `icon` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `payout_option` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `risk_level` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `summary` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `color` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'Green',
+  `repayment_mode` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `icon` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -241,11 +241,11 @@ INSERT INTO `infrastructure_plans` (`id`, `name`, `purpose`, `min_amount`, `dura
 CREATE TABLE `investments` (
   `id` int NOT NULL,
   `user_id` int NOT NULL,
-  `plan_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `plan_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `amount` decimal(12,2) NOT NULL,
   `roi_percent` decimal(5,2) DEFAULT '15.00',
   `duration_days` int DEFAULT '30',
-  `status` enum('active','completed') COLLATE utf8mb4_unicode_ci DEFAULT 'active',
+  `status` enum('active','completed') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'active',
   `maturity_date` date DEFAULT NULL,
   `roi_earned` decimal(12,2) DEFAULT '0.00',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
@@ -259,21 +259,21 @@ CREATE TABLE `investments` (
 
 CREATE TABLE `investment_plans` (
   `id` int NOT NULL,
-  `title` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `roi_percent` decimal(5,2) NOT NULL,
   `duration_days` int NOT NULL,
-  `payout_option` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payout_option` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `min_amount` decimal(15,2) NOT NULL,
   `max_amount` decimal(15,2) NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `details` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `risk` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` enum('active','hidden') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'active',
-  `income` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `summary` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `icon` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `color` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `details` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `risk` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` enum('active','hidden') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'active',
+  `income` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `summary` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `color` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -298,21 +298,13 @@ INSERT INTO `investment_plans` (`id`, `title`, `roi_percent`, `duration_days`, `
 
 CREATE TABLE `login_logs` (
   `id` int NOT NULL,
-  `user_type` enum('user','admin') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_type` enum('user','admin') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_id` int NOT NULL,
-  `ip` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `browser` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `location` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ip` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `browser` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `location` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `login_logs`
---
-
-INSERT INTO `login_logs` (`id`, `user_type`, `user_id`, `ip`, `browser`, `location`, `created_at`) VALUES
-(1, 'admin', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-23 00:25:10'),
-(2, 'user', 1, '127.0.0.1', 'Firefox 145.0 on Windows', 'Localhost / Internal Network', '2025-11-23 15:25:02');
 
 -- --------------------------------------------------------
 
@@ -324,11 +316,11 @@ CREATE TABLE `maintenance` (
   `id` int NOT NULL,
   `plan_id` int DEFAULT NULL,
   `user_id` int NOT NULL,
-  `plan_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `plan_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `amount` decimal(12,2) NOT NULL,
   `roi_earned` decimal(12,2) DEFAULT '0.00',
-  `frequency` enum('monthly','once') COLLATE utf8mb4_unicode_ci DEFAULT 'monthly',
-  `status` enum('active','matured','unlocked','expired') COLLATE utf8mb4_unicode_ci DEFAULT 'active',
+  `frequency` enum('monthly','once') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'monthly',
+  `status` enum('active','matured','unlocked','expired') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'active',
   `next_payment_date` date DEFAULT NULL,
   `maturity_date` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -343,16 +335,16 @@ CREATE TABLE `maintenance` (
 
 CREATE TABLE `maintenance_plans` (
   `id` int NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `purpose` text COLLATE utf8mb4_unicode_ci,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `purpose` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `min_amount` decimal(15,2) NOT NULL,
   `max_amount` decimal(15,2) DEFAULT NULL,
   `duration_days` int DEFAULT NULL,
   `roi_percent` decimal(5,2) NOT NULL,
-  `risk` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `payout` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `summary` text COLLATE utf8mb4_unicode_ci,
-  `color` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `risk` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `payout` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `summary` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `color` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -376,7 +368,7 @@ INSERT INTO `maintenance_plans` (`id`, `name`, `purpose`, `min_amount`, `max_amo
 CREATE TABLE `password_resets` (
   `id` int NOT NULL,
   `user_id` int NOT NULL,
-  `otp` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `otp` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `expires_at` datetime NOT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -389,8 +381,8 @@ CREATE TABLE `password_resets` (
 
 CREATE TABLE `settings` (
   `id` int NOT NULL,
-  `cash_mailing_address` text COLLATE utf8mb4_unicode_ci,
-  `wallet_deposit_address` text COLLATE utf8mb4_unicode_ci
+  `cash_mailing_address` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `wallet_deposit_address` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -402,12 +394,12 @@ CREATE TABLE `settings` (
 CREATE TABLE `transactions` (
   `id` int NOT NULL,
   `user_id` int NOT NULL,
-  `type` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `method` enum('secure_exchange','cash_mailing','wire_transfer','local_bank','wallet_address','wallet','system') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `details` json DEFAULT NULL,
   `amount` decimal(12,2) NOT NULL,
-  `reference` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` enum('pending','completed','failed') COLLATE utf8mb4_unicode_ci DEFAULT 'completed',
+  `reference` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` enum('pending','completed','failed') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'completed',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -420,17 +412,17 @@ CREATE TABLE `transactions` (
 CREATE TABLE `trustfund` (
   `id` int NOT NULL,
   `user_id` int NOT NULL,
-  `plan_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `plan_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `amount` decimal(12,2) NOT NULL,
   `roi_percent` decimal(5,2) DEFAULT '0.00',
   `duration_days` int DEFAULT '0',
   `penalty_percent` decimal(5,2) DEFAULT '1.50',
-  `purpose` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `purpose` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `maturity_date` date DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `roi_earned` decimal(12,2) DEFAULT '0.00',
-  `payout_option` enum('annual','maturity') COLLATE utf8mb4_unicode_ci DEFAULT 'maturity',
-  `status` enum('active','matured','unlock_pending','unlocked_early','completed') COLLATE utf8mb4_unicode_ci DEFAULT 'active',
+  `payout_option` enum('annual','maturity') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'maturity',
+  `status` enum('active','matured','unlock_pending','unlocked_early','completed') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'active',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -442,18 +434,18 @@ CREATE TABLE `trustfund` (
 
 CREATE TABLE `trustfund_plans` (
   `id` int NOT NULL,
-  `name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `purpose` varchar(300) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `income_source` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `purpose` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `income_source` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `min_amount` decimal(15,2) NOT NULL,
   `max_amount` decimal(15,2) DEFAULT NULL,
   `duration_days` int NOT NULL,
   `roi_percent` decimal(10,2) NOT NULL,
-  `risk` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payout_option` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `summary` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `icon` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `color` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `risk` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payout_option` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `summary` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `icon` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `color` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -478,13 +470,13 @@ INSERT INTO `trustfund_plans` (`id`, `name`, `purpose`, `income_source`, `min_am
 
 CREATE TABLE `users` (
   `id` int NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `full_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `role` enum('user','admin') COLLATE utf8mb4_unicode_ci DEFAULT 'user',
-  `status` enum('active','disabled') COLLATE utf8mb4_unicode_ci DEFAULT 'active',
-  `profile_picture` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '/assets/images/avatar/default.png',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `full_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `role` enum('user','admin') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'user',
+  `status` enum('active','disabled') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'active',
+  `profile_picture` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '/assets/images/avatar/default.png',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -517,7 +509,7 @@ CREATE TABLE `user_impacts` (
 --
 
 INSERT INTO `user_impacts` (`id`, `user_id`, `total_contributions`, `people_helped`, `impact_score`, `communities_helped`, `packages_funded`, `updated_at`) VALUES
-(1, 1, 0.00, 0, 0.00, 0, 0, '2025-11-23 14:25:04');
+(1, 1, 0.00, 0, 0.00, 0, 0, '2025-11-24 07:01:19');
 
 -- --------------------------------------------------------
 
@@ -537,8 +529,8 @@ CREATE TABLE `wallets` (
   `total_earnings` decimal(12,2) DEFAULT '0.00',
   `pending_withdrawals` decimal(12,2) DEFAULT '0.00',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `cash_mailing_address` text COLLATE utf8mb4_unicode_ci,
-  `wallet_deposit_address` text COLLATE utf8mb4_unicode_ci
+  `cash_mailing_address` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `wallet_deposit_address` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -546,7 +538,7 @@ CREATE TABLE `wallets` (
 --
 
 INSERT INTO `wallets` (`id`, `user_id`, `balance`, `total_deposited`, `total_withdrawn`, `total_donations`, `total_investments`, `holdlock_savings`, `total_earnings`, `pending_withdrawals`, `created_at`, `cash_mailing_address`, `wallet_deposit_address`) VALUES
-(1, 1, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '2025-11-23 14:25:04', NULL, NULL);
+(1, 1, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '2025-11-24 07:01:19', NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -780,7 +772,7 @@ ALTER TABLE `investment_plans`
 -- AUTO_INCREMENT for table `login_logs`
 --
 ALTER TABLE `login_logs`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `maintenance`
