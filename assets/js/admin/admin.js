@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * HealthRunCare Admin.js (Consolidated and Updated for Email Action)
+ * HealthRunCare Admin.js (Consolidated and Updated for Deposit Actions)
  * Purpose: Provides Admin Dashboard data loading, UI binding, and quick action logic.
  * ============================================================
  */
@@ -119,6 +119,7 @@ $('a[href="/admin/withdrawals/pending"]').on('click', async function (e) {
     showModal('#pending-withdrawals-modal');
 
     try {
+        // Ensure the correct endpoint is used here
         const res = await fetchApi('/api/admin/get_pending_withdrawals.php', {}, "GET");
 
         const listEl = $('#pending-withdrawals-list');
@@ -151,7 +152,7 @@ $('a[href="/admin/withdrawals/pending"]').on('click', async function (e) {
     }
 });
 
-// ACTION BUTTONS — Complete/Cancel Withdrawals
+// ACTION BUTTONS — Complete/Cancel Withdrawals (Placeholders - assuming backend is TBD)
 $(document).on('click', '.complete-withdrawal-btn', function () {
     const id = $(this).data('id');
     showToast(`Withdrawal #${id} marked for completion (backend TBD)`, 'info');
@@ -226,9 +227,9 @@ $(document).on('click', '.cancel-withdrawal-btn', function () {
             modal.removeClass('is-open');
             // Reset form for good UX
             if (selector === '#email-modal') {
-                 $('#email-form')[0]?.reset();
-                 $('#email-user-id-group').hide();
-                 $('#email-user-id').prop('required', false);
+                $('#email-form')[0]?.reset();
+                $('#email-user-id-group').hide();
+                $('#email-user-id').prop('required', false);
             }
         }, 300);
         $('body').css('overflow', 'auto');
@@ -438,6 +439,45 @@ $(document).on('click', '.cancel-withdrawal-btn', function () {
         });
     }
 
+
+    /**
+     * Sends the complete/cancel action for a deposit to the backend.
+     * @param {number} id - The transaction ID.
+     * @param {string} action - 'complete' or 'cancel'.
+     * @param {string} [reason=''] - Reason for cancellation.
+     */
+    async function processDepositAction(id, action, reason = '') {
+        showToast(`${action.charAt(0).toUpperCase() + action.slice(1)}ing transaction #${id}...`, 'info', 6000);
+        
+        try {
+            // Using the new endpoint
+            const res = await fetchApi('/api/admin/process_deposit.php', {
+                id: id,
+                action: action,
+                reason: reason
+            }, 'POST');
+            
+            if (res.status === 'success') {
+                showToast(res.message, 'success');
+                // Remove the row from the table to reflect the change immediately
+                $(`#deposit-row-${id}`).remove(); 
+                // Refresh main dashboard stats (to update pending counts)
+                loadAdminDashboardData();
+                // Check if table is now empty and show "no pending" message
+                if($('#pending-deposits-list').children().length === 0) {
+                    $('#no-pending-deposits').show();
+                }
+            } else {
+                showToast(res.message || `Failed to ${action} deposit.`, 'error');
+            }
+
+        } catch (err) {
+            console.error('Deposit action error:', err);
+            showToast('A network error occurred or the server failed to respond.', 'error');
+        }
+    }
+
+
     // --- Initialization ---
     $(function () {
         // Core UI Bindings 
@@ -452,18 +492,13 @@ $(document).on('click', '.cancel-withdrawal-btn', function () {
         bindEmailForm();
 
 
-        // Open Pending Deposits Modal
-        $('a[href="/admin/transactions/pending"]').on('click', function (e) {
-            e.preventDefault();
-            showModal('#pending-deposits-modal');
-        });
-
         // WHEN MODAL OPENS — Load Pending Deposit Requests
         $('a[href="/admin/transactions/pending"]').on('click', async function (e) {
             e.preventDefault();
             showModal('#pending-deposits-modal');
 
             try {
+                // Fetch the deposits from the updated endpoint
                 const res = await fetchApi('/api/admin/get_pending_deposits.php', {}, "GET");
 
                 const listEl = $('#pending-deposits-list');
@@ -476,13 +511,15 @@ $(document).on('click', '.cancel-withdrawal-btn', function () {
 
                     res.data.forEach(dep => {
                         listEl.append(`
-                            <tr>
+                            <tr id="deposit-row-${dep.id}">
                                 <td>${dep.user}</td>
-                                <td>$${Number(dep.amount).toLocaleString()}</td>
+                                <td>$${formatCurrency(dep.amount)}</td>
                                 <td>${dep.date}</td>
                                 <td>
-                                    <button class="complete-deposit-btn bg-Green text-White" data-id="${dep.id}">Complete</button>
-                                    <button class="cancel-deposit-btn bg-Accent text-Black" data-id="${dep.id}">Cancel</button>
+                                    <button class="complete-deposit-btn tf-button bg-Green text-White" 
+                                        data-id="${dep.id}" data-amount="${dep.amount}">Complete</button>
+                                    <button class="cancel-deposit-btn tf-button bg-Accent text-Black" 
+                                        data-id="${dep.id}">Cancel</button>
                                 </td>
                             </tr>
                         `);
@@ -496,14 +533,33 @@ $(document).on('click', '.cancel-withdrawal-btn', function () {
                 showToast("Failed to load pending deposits", "error");
             }
         });
+
+        // ACTION HANDLER: Complete Deposit
         $(document).on('click', '.complete-deposit-btn', function () {
             const id = $(this).data('id');
-            showToast(`Deposit #${id} marked for completion (backend TBD)`, 'info');
+            const amount = $(this).data('amount');
+            
+            if (!confirm(`Are you sure you want to COMPLETE Deposit #${id} for $${formatCurrency(amount)}? This will credit the user's wallet.`)) {
+                return;
+            }
+
+            // Call the shared function
+            processDepositAction(id, 'complete');
         });
 
+        // ACTION HANDLER: Cancel Deposit (prompts for reason)
         $(document).on('click', '.cancel-deposit-btn', function () {
             const id = $(this).data('id');
-            showToast(`Deposit #${id} marked for cancellation (backend TBD)`, 'warning');
+            const amount = $(this).data('amount');
+            
+            const reason = prompt(`Enter a brief reason for cancelling Deposit #${id} for $${formatCurrency(amount)}:`);
+            
+            if (reason === null) { // User clicked cancel on the prompt
+                return;
+            }
+            
+            // Call the shared function
+            processDepositAction(id, 'cancel', reason.trim());
         });
 
 
@@ -569,6 +625,7 @@ $(document).on('click', '.cancel-withdrawal-btn', function () {
         // ------- Expose Global Modal Functions -------
         window.showModal = showModal;
         window.closeModal = closeModal;
+        window.formatCurrency = formatCurrency; // Ensure it's globally available if needed
 
     });
 

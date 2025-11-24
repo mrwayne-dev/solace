@@ -309,3 +309,37 @@
 [2025-11-23 17:02:21] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
 [2025-11-23 17:23:03] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
 [2025-11-23 17:23:07] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-23 19:47:05] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
+[2025-11-23 19:50:19] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
+[2025-11-23 20:28:53] SENT → aleruchi0987@gmail.com | Template: deposit_completed | Subject: HealthRunCare Notification
+[2025-11-23 20:39:44] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-23 20:39:49] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-23 20:40:18] SENT → aleruchi0987@gmail.com | Template: deposit_initiated | Subject: Deposit Request Received!
+[2025-11-23 20:40:22] SENT → support@healthruncare.com | Template: admin_deposit_notification | Subject: New Deposit Request!
+[2025-11-23 20:40:34] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
+[2025-11-23 20:40:52] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-23 20:40:57] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-23 20:41:12] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
+[2025-11-23 20:41:21] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
+[2025-11-23 20:41:41] SENT → aleruchi0987@gmail.com | Template: deposit_confirmed | Subject: Success! Your Deposit Has Been Approved and Credited!
+[2025-11-23 20:48:59] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-23 20:49:04] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-23 20:49:40] SENT → aleruchi0987@gmail.com | Template: deposit_initiated | Subject: Deposit Request Received!
+[2025-11-23 20:49:45] SENT → support@healthruncare.com | Template: admin_deposit_notification | Subject: New Deposit Request!
+[2025-11-23 20:49:58] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
+[2025-11-23 20:50:17] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
+[2025-11-23 20:50:38] SENT → aleruchi0987@gmail.com | Template: deposit_confirmed | Subject: Success! Your Deposit Has Been Approved and Credited!
+[2025-11-23 20:54:02] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-23 20:54:07] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-23 20:55:14] SENT → aleruchi0987@gmail.com | Template: deposit_initiated | Subject: Deposit Request Received!
+[2025-11-23 20:55:18] SENT → support@healthruncare.com | Template: admin_deposit_notification | Subject: New Deposit Request!
+[2025-11-23 20:55:30] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
+[2025-11-23 20:55:48] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
+[2025-11-23 20:56:27] SENT → aleruchi0987@gmail.com | Template: deposit_confirmed | Subject: Success! Your Deposit Has Been Approved and Credited!
+[2025-11-23 20:58:55] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-23 20:59:00] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-23 20:59:21] SENT → aleruchi0987@gmail.com | Template: deposit_initiated | Subject: Deposit Request Received!
+[2025-11-23 20:59:26] SENT → support@healthruncare.com | Template: admin_deposit_notification | Subject: New Deposit Request!
+[2025-11-23 20:59:39] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
+[2025-11-23 20:59:54] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
+[2025-11-23 21:00:19] SENT → aleruchi0987@gmail.com | Template: deposit_confirmed | Subject: Success! Your Deposit Has Been Approved and Credited!

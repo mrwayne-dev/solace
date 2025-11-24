@@ -88,7 +88,7 @@ function sendEmail($params)
         // Message
         $mail->Subject = $subject;
         $mail->Body    = $bodyHtml;
-        $mail->AltBody = strip_tags($bodyHtml);
+        $mail->AltBody = html_entity_decode(strip_tags($bodyHtml), ENT_QUOTES, 'UTF-8');
 
         // Send
         $mail->send();

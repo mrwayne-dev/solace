@@ -291,18 +291,43 @@ function getEmailTemplates() {
             "),
         ],
         'deposit_confirmed' => [
-            'subject' => 'Success! Your Deposit Has Been Confirmed!',
+            'subject' => 'Success! Your Deposit Has Been Approved and Credited!',
             'html' => $wrap("
-                <h2 style='color: {$colors['success']}; margin-top: 0; font-size: 24px;'>Deposit Confirmed Successfully! 🎉</h2>
+                <h2 style='color: {$colors['success']}; margin-top: 0; font-size: 24px;'>Deposit Approved & Credited</h2>
                 <p>Hi {{user_name}},</p>
-                <p>Excellent news! We have successfully verified the payment for your deposit request (Reference: {{reference}}).</p>
-                <div style='background-color: {$colors['success']}; color: white; padding: 16px; margin: 15px 0; border-radius: 4px; text-align: center;'>
-                    <p style='margin: 0; font-size: 18px;'><strong>Amount Credited:</strong> \${{amount}}</p>
+                <p>Great news! Your deposit request with the reference <strong>{{reference}}</strong> has been <strong>approved</strong> and the funds have now been safely added to your {$appName} wallet.</p>
+
+                <div style='background-color: {$colors['accent']}; padding: 16px; margin: 18px 0; border-radius: 6px; border: 1px solid {$colors['border']}; text-align: left;'>
+                    <p style='margin: 0; font-size: 16px; color: {$colors['text']};'>
+                        <strong>Amount Credited:</strong> \${{amount}}
+                    </p>
                 </div>
-                <p>The full amount of \${{amount}} has been securely added to your {$appName} wallet balance. You can now use these funds for donations, investments, or other activities within the platform.</p>
-                <p>We appreciate your trust in {$appName} and thank you for contributing to our mission.</p>
-                <p>Keep up the great work!</p>
-                <p>Best regards,<br>The {$appName} Team</p>
+
+                <p>You can now use your wallet balance to make donations, explore investment plans, or participate in other rewarding programs within {$appName}.</p>
+                <p>Thank you for your patience and for choosing to grow with us.</p>
+
+                <p style='margin-top: 24px;'>Best regards,<br><strong>The {$appName} Team</strong></p>
+            "),
+        ],
+
+        'deposit_cancelled' => [
+            'subject' => 'Your Deposit Request Has Been Cancelled',
+            'html' => $wrap("
+                <h2 style='color: {$colors['danger']}; margin-top: 0; font-size: 24px;'>Deposit Request Cancelled</h2>
+                <p>Hi {{user_name}},</p>
+                <p>We regret to inform you that your pending deposit request (Reference: <strong>{{reference}}</strong>) for <strong>\${{amount}}</strong> has been <strong>cancelled</strong> by our team.</p>
+
+                <div style='background-color: {$colors['highlight']}; padding: 16px; margin: 18px 0; border-radius: 6px; border-left: 4px solid {$colors['danger']};'>
+                    <p style='margin: 0; color: {$colors['highlight_text']};'><strong>Reason:</strong> {{reason}}</p>
+                </div>
+
+                <p>This may occur when payment cannot be verified, when the deposit method used is invalid, or when requested details are incomplete.</p>
+                <p>If you believe this decision was made in error or need clarification, please contact our support team at 
+                    <a href='mailto:{$supportEmail}' style='color:{$colors['primary']}; text-decoration: none;'>{$supportEmail}</a>.
+                </p>
+
+                <p>We appreciate your understanding and hope to assist you further.</p>
+                <p style='margin-top: 24px;'>Best regards,<br><strong>The {$appName} Team</strong></p>
             "),
         ],
         'admin_payment_confirmed' => [
