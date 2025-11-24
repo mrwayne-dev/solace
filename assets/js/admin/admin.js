@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * HealthRunCare Admin.js (Consolidated and Updated for Deposit Actions)
+ * HealthRunCare Admin.js (Consolidated and Updated for Deposit and Withdrawal Actions)
  * Purpose: Provides Admin Dashboard data loading, UI binding, and quick action logic.
  * ============================================================
  */
@@ -132,8 +132,7 @@ $('a[href="/admin/withdrawals/pending"]').on('click', async function (e) {
 
             res.data.forEach(wd => {
                 listEl.append(`
-                    <tr>
-                        <td>${wd.user}</td>
+                    <tr id="withdrawal-row-${wd.id}"> <td>${wd.user}</td>
                         <td>$${Number(wd.amount).toLocaleString()}</td>
                         <td>${wd.date}</td>
                         <td>
@@ -152,25 +151,34 @@ $('a[href="/admin/withdrawals/pending"]').on('click', async function (e) {
     }
 });
 
-// ACTION BUTTONS — Complete/Cancel Withdrawals (Placeholders - assuming backend is TBD)
+// ACTION BUTTONS — Complete/Cancel Withdrawals
 $(document).on('click', '.complete-withdrawal-btn', function () {
     const id = $(this).data('id');
-    showToast(`Withdrawal #${id} marked for completion (backend TBD)`, 'info');
+
+    if (!confirm(`Complete Withdrawal #${id}? This releases user funds.`)) return;
+
+    processWithdrawalAction(id, 'complete');
 });
 
 $(document).on('click', '.cancel-withdrawal-btn', function () {
     const id = $(this).data('id');
-    showToast(`Withdrawal #${id} marked for cancellation (backend TBD)`, 'warning');
+    const reason = prompt(`Enter reason for cancelling Withdrawal #${id}:`);
+
+    if (reason === null) return; // cancelled input
+    if (reason.trim() === '') {
+        showToast("Cancellation reason is required.", "warning");
+        return;
+    }
+
+    processWithdrawalAction(id, 'cancel', reason.trim());
 });
 
     
     // --- Utility Functions ---
     let adminActivityChart = null; 
     
-    function formatCurrency(amount) {
-        if (amount == null || isNaN(Number(amount))) return '0.00';
-        return Number(amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
+    // This is defined globally at the top, kept here for reference if needed
+    // function formatCurrency(amount) { /* ... */ }
     
     function showToast(message, type = 'info', timeout = 4000) {
         const container = $('#toast-container');
@@ -476,7 +484,38 @@ $(document).on('click', '.cancel-withdrawal-btn', function () {
             showToast('A network error occurred or the server failed to respond.', 'error');
         }
     }
+    
+    // ===============================================
+    // NEW: PROCESS WITHDRAWAL (Reusable like deposit version)
+    // ===============================================
+    async function processWithdrawalAction(id, action, reason = '') {
+        showToast(`${action.charAt(0).toUpperCase() + action.slice(1)}ing withdrawal #${id}...`, 'info');
 
+        try {
+            const res = await fetchApi('/api/admin/process_withdrawal.php', {
+                id: id,
+                action: action,
+                reason: reason
+            }, 'POST');
+
+            if (res.status === 'success') {
+                showToast(res.message, 'success');
+                // Remove the row from the table
+                $(`#withdrawal-row-${id}`).remove();
+                // Refresh dashboard stats
+                loadAdminDashboardData();
+                // Check if table is now empty
+                if ($('#pending-withdrawals-list').children().length === 0) {
+                    $('#no-pending-withdrawals').show();
+                }
+            } else {
+                showToast(res.message || 'Failed to process withdrawal.', 'error');
+            }
+
+        } catch (err) {
+            showToast('Server error occurred.', 'error');
+        }
+    }
 
     // --- Initialization ---
     $(function () {
@@ -491,6 +530,9 @@ $(document).on('click', '.cancel-withdrawal-btn', function () {
         bindQuickActions(); 
         bindEmailForm();
 
+        // ------------------------------------------------
+        // DEPOSIT ACTIONS (Existing Handlers)
+        // ------------------------------------------------
 
         // WHEN MODAL OPENS — Load Pending Deposit Requests
         $('a[href="/admin/transactions/pending"]').on('click', async function (e) {

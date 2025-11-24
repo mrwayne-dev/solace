@@ -36,17 +36,16 @@ if ($user_email) {
     // Include the email sending function
     require_once __DIR__ . '/../../api/backend/email.php';
 
+// Prepare email data using the 'logout_notification' template
+$emailData = [
+    'to' => $user_email,
+    'template' => 'logout_notification',
+    'variables' => [
+        'user_name'   => $user_name,
+        'logout_time' => date('Y-m-d H:i:s')
+    ]
+];
 
-    // Prepare email data using the 'logout_notification' template
-    $emailData = [
-        'to' => $user_email,
-        'template' => 'logout_notification', // Use the specific template
-        'variables' => [
-            'user_name' => $user_name,
-            // No specific variable for logout time in the template, but you could add it if desired
-            // 'logout_time' => date('Y-m-d H:i:s T'), // Example variable
-        ]
-    ];
 
     // Attempt to send the email
     try {

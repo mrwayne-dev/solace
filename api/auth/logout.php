@@ -48,9 +48,11 @@ try {
         sendEmail([
             'to' => $email,
             'template' => 'logout_notification',
-            'variables' => [
-                'user_name' => $full_name,
-            ],
+           'variables' => [
+            'user_name'   => $full_name,
+            'logout_time' => date('d M Y, h:i:s A T')
+        ],
+
         ]);
         error_log("Logout email sent successfully to $email");
     } catch (Throwable $e) {

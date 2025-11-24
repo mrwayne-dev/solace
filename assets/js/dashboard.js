@@ -580,8 +580,10 @@ const item = $(`
   }
 }
 
-  // Open specific pending deposit in the modal FORM
-function openPendingDepositDetails(reference, deposits) {
+
+
+
+async function openPendingDepositDetails(reference, deposits) {
   const deposit = (deposits || []).find(d => d.reference === reference);
   if (!deposit) {
     showToast('Deposit not found. Please refresh and try again.', 'error');
@@ -594,6 +596,27 @@ function openPendingDepositDetails(reference, deposits) {
   const addressInput = $('#pending-deposit-address');
   const instruction = $('#pending-deposit-instruction');
 
+  // Helper function to safely parse and extract address
+  const getAddressFromDetails = (d) => {
+    let details = {};
+    try {
+      details = JSON.parse(d.details || '{}');
+    } catch (e) {
+      details = {};
+    }
+    // Check all possible address keys (common variations)
+    return {
+      address: details.deposit_address ||
+        details.address ||
+        details.wallet_address ||
+        details.payment_address ||
+        details.created_invoice_url ||
+        (details.data && (details.data.address || details.data.deposit_address)) ||
+        '',
+      instruction: details.instruction || details.note || details.message || ''
+    };
+  };
+
   // Reset fields before filling
   addressInput.val('');
   addressGroup.addClass('hidden');
@@ -602,38 +625,58 @@ function openPendingDepositDetails(reference, deposits) {
   methodInput.prop('disabled', true).val(deposit.method || '');
   amountInput.prop('disabled', true).val(formatCurrency(deposit.amount || 0));
 
-  // Parse admin-provided details
-  let details = {};
-  try {
-    details = JSON.parse(deposit.details || '{}');
-  } catch (e) {
-    details = {};
+  let { address: addressVal, instruction: note } = getAddressFromDetails(deposit);
+
+  // 🚨 START NEW LOGIC: Check if address is missing and fetch from global settings
+  if (!addressVal && (deposit.method === 'cash_mailing' || deposit.method === 'wallet_address')) {
+    showToast('Attempting to retrieve payment details...', 'info', 1000);
+    try {
+      const settingsRes = await fetchApi('/api/backend/wallet.php', {
+        action: 'get_deposit_details',
+        method: deposit.method
+      });
+
+      if (settingsRes.status === 'success' && settingsRes.data?.details) {
+        addressVal = settingsRes.data.details.trim();
+        // Override instruction with a generic message if one wasn't in the transaction already
+        if (!note) {
+          note = 'The deposit details below have been provided by Administration. Please complete payment promptly.';
+        }
+      } else {
+        // Global settings are empty or API returned error
+        addressVal = '';
+        showToast(
+          'Support details not yet configured. Support will provide details shortly.',
+          'warning'
+        );
+      }
+    } catch (e) {
+      console.error('Error fetching settings details:', e);
+      showToast('Failed to retrieve payment details.', 'error');
+      addressVal = '';
+    }
   }
+  // 🚨 END NEW LOGIC
 
-  // Check all possible address keys (common variations)
-  const addressVal =
-    details.deposit_address ||
-    details.address ||
-    details.wallet_address ||
-    details.payment_address ||
-    details.created_invoice_url ||
-    (details.data && (details.data.address || details.data.deposit_address)) ||
-    '';
-
+  // Final check and display logic
   if (addressVal && typeof addressVal === 'string' && addressVal.trim() !== '') {
-    // ✅ Address provided by admin → show field
+    // ✅ Address provided (either from txn details or settings) → show field
     addressInput.val(addressVal.trim());
     addressGroup.removeClass('hidden');
   } else {
-    // ❌ No address provided → show toast
-    showToast(
-      'Deposit address or payment details are not yet available. Please check back shortly.',
-      'warning'
-    );
+    // ❌ No address provided (and toast was already shown by new logic if applicable)
+    addressGroup.addClass('hidden');
+    // If it was a 'secure_exchange' (handled by NOWPayments), we need a warning here.
+    if (deposit.method === 'secure_exchange') {
+      showToast(
+        'Payment provider details (Secure Exchange) are not yet available. Please try again from the main deposit form.',
+        'warning'
+      );
+    }
   }
 
-  // Optional instruction/note from admin
-  const note = details.instruction || details.note || details.message || '';
+  // Optional instruction/note from admin/defaulted
+  // Ensure we only display a note if the address is available OR if a fallback note was provided
   if (note) {
     instruction.removeClass('hidden').text(note);
   }

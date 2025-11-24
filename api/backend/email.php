@@ -17,14 +17,14 @@ use PHPMailer\PHPMailer\Exception;
  * Sends an HTML email using PHPMailer and a chosen template.
  *
  * @param array $params [
- *   'to' => recipient email,
- *   'template' => key from getEmailTemplates(),
- *   'variables' => array('placeholder' => 'value'),
- *   'subject' => optional override,
- *   'body' => optional raw HTML override,
- *   'debug' => optional true to preview in browser,
- *   'cc_admin' => optional true to auto-send to admin,
- *   'admin_template' => optional template key for admin notification
+ * 'to' => recipient email,
+ * 'template' => key from getEmailTemplates(),
+ * 'variables' => array('placeholder' => 'value'),
+ * 'subject' => optional override,
+ * 'body' => optional raw HTML override,
+ * 'debug' => optional true to preview in browser,
+ * 'cc_admin' => optional true to auto-send to admin,
+ * 'admin_template' => optional template key for admin notification
  * ]
  * @return bool|array
  */
@@ -46,7 +46,13 @@ function sendEmail($params)
 
     // Replace template variables safely
     foreach ($variables as $key => $value) {
-        $safeValue = htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+        // 🚨 CRITICAL FIX: Do not escape pre-formatted HTML variables.
+        if ($key === 'details_html' || $key === 'message_body') {
+            $safeValue = (string)$value;
+        } else {
+            // Escape all other dynamic variables
+            $safeValue = htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+        }
         $bodyHtml = str_replace('{{' . $key . '}}', $safeValue, $bodyHtml);
         $subject = str_replace('{{' . $key . '}}', $safeValue, $subject);
     }
@@ -70,12 +76,12 @@ function sendEmail($params)
 
     try {
         $mail->isSMTP();
-        $mail->Host       = SMTP_HOST;
-        $mail->SMTPAuth   = true;
-        $mail->Username   = SMTP_USER;
-        $mail->Password   = SMTP_PASS;
+        $mail->Host      = SMTP_HOST;
+        $mail->SMTPAuth  = true;
+        $mail->Username  = SMTP_USER;
+        $mail->Password  = SMTP_PASS;
         $mail->SMTPSecure = SMTP_SECURE;
-        $mail->Port       = SMTP_PORT;
+        $mail->Port      = SMTP_PORT;
         $mail->CharSet    = 'UTF-8';
         $mail->Encoding   = 'base64';
         $mail->isHTML(true);

@@ -343,3 +343,39 @@
 [2025-11-23 20:59:39] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
 [2025-11-23 20:59:54] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
 [2025-11-23 21:00:19] SENT → aleruchi0987@gmail.com | Template: deposit_confirmed | Subject: Success! Your Deposit Has Been Approved and Credited!
+[2025-11-24 03:57:00] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-24 03:57:04] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-24 03:58:08] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-24 03:58:12] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-24 03:58:24] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-24 03:58:28] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-24 04:00:29] SENT → aleruchi0987@gmail.com | Template: withdrawal_initiated | Subject: Withdrawal Request Submitted!
+[2025-11-24 04:00:33] SENT → support@healthruncare.com | Template: admin_withdrawal_notification | Subject: New Withdrawal Request!
+[2025-11-24 04:01:45] SENT → aleruchi0987@gmail.com | Template: withdrawal_initiated | Subject: Withdrawal Request Submitted!
+[2025-11-24 04:01:49] SENT → support@healthruncare.com | Template: admin_withdrawal_notification | Subject: New Withdrawal Request!
+[2025-11-24 04:02:06] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
+[2025-11-24 04:02:24] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
+[2025-11-24 04:02:39] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
+[2025-11-24 04:47:55] SENT → aleruchi0987@gmail.com | Template: withdrawal_approved | Subject: Great News! Your Withdrawal Has Been Approved!
+[2025-11-24 05:27:24] SENT → aleruchi0987@gmail.com | Template: withdrawal_declined | Subject: Withdrawal Request Declined
+[2025-11-24 05:38:53] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-24 05:38:58] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-24 05:40:38] SENT → aleruchi0987@gmail.com | Template: withdrawal_initiated | Subject: Withdrawal Request Submitted!
+[2025-11-24 05:40:43] SENT → support@healthruncare.com | Template: admin_withdrawal_notification | Subject: New Withdrawal Request!
+[2025-11-24 05:48:58] SENT → aleruchi0987@gmail.com | Template: withdrawal_initiated | Subject: Withdrawal Request Submitted!
+[2025-11-24 05:49:03] SENT → support@healthruncare.com | Template: admin_withdrawal_notification | Subject: New Withdrawal Request!
+[2025-11-24 05:55:09] SENT → aleruchi0987@gmail.com | Template: withdrawal_initiated | Subject: Withdrawal Request Submitted!
+[2025-11-24 05:55:14] SENT → support@healthruncare.com | Template: admin_withdrawal_notification | Subject: New Withdrawal Request!
+[2025-11-24 06:02:32] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
+[2025-11-24 06:12:16] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-24 06:12:21] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-24 06:16:17] SENT → aleruchi0987@gmail.com | Template: logout_notification | Subject: You Have Successfully Logged Out of Your HealthRunCare Account
+[2025-11-24 06:16:35] SENT → aleruchi0987@gmail.com | Template: admin_login_alert | Subject: [Admin Security Alert] New Login to Your HealthRunCare Admin Account
+[2025-11-24 06:16:51] SENT → aleruchi0987@gmail.com | Template: withdrawal_declined | Subject: Withdrawal Request Declined
+[2025-11-24 06:17:11] SENT → aleruchi0987@gmail.com | Template: withdrawal_declined | Subject: Withdrawal Request Declined
+[2025-11-24 06:17:20] SENT → aleruchi0987@gmail.com | Template: withdrawal_declined | Subject: Withdrawal Request Declined
+[2025-11-24 06:17:45] SENT → aleruchi0987@gmail.com | Template: login_alert | Subject: [Security Alert] New Login Detected on Your HealthRunCare Account
+[2025-11-24 06:17:50] SENT → support@healthruncare.com | Template: admin_user_login_notification | Subject: [User Login Alert] A User Has Just Logged In
+[2025-11-24 06:43:59] SENT → aleruchi0987@gmail.com | Template: deposit_initiated | Subject: Deposit Request Received!
+[2025-11-24 06:44:04] SENT → support@healthruncare.com | Template: admin_deposit_notification | Subject: New Deposit Request!
+[2025-11-24 06:51:54] SENT → support@healthruncare.com | Template: admin_payment_confirmed | Subject: User Confirmed Payment for Deposit!
