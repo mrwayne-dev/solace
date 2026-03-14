@@ -12,9 +12,9 @@ define('APP_ENV', (ENV === 'dev' ? 'local' : 'production'));
 
 // Database Credentials
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'healthruncare_db');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_NAME', 'uvammbciwx_healthruncare');
+define('DB_USER', 'uvammbciwx_michael');
+define('DB_PASS', 'Michael@01');
 
 // Email / SMTP Settings
 define('SMTP_HOST', 'mail.spacemail.com');
