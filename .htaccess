@@ -12,25 +12,25 @@ RewriteBase /
 # -------------------------------
 # Localhost (Laragon or XAMPP)
 RewriteCond %{HTTP_HOST} ^localhost [NC]
-SetEnv HRC_ENV dev
+SetEnv TXH_ENV dev
 
 # Production
 RewriteCond %{HTTP_HOST} !^localhost [NC]
-SetEnv HRC_ENV prod
+SetEnv TXH_ENV prod
 
 # -------------------------------
 # REDIRECT RULES (env-aware)
 # -------------------------------
 
 # Force HTTPS + non-www on production
-RewriteCond %{ENV:HRC_ENV} =prod
+RewriteCond %{ENV:TXH_ENV} =prod
 RewriteCond %{HTTPS} !=on [OR]
 RewriteCond %{HTTP_HOST} ^www\. [NC]
 RewriteCond %{HTTP_HOST} ^(?:www\.)?(.*)$ [NC]
 RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
 
 # Skip HTTPS redirect in dev
-RewriteCond %{ENV:HRC_ENV} =dev
+RewriteCond %{ENV:TXH_ENV} =dev
 RewriteRule ^ - [L]
 
 # -------------------------------

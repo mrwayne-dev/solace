@@ -1,32 +1,18 @@
 <?php
 // ========================================
-// GLOBAL CONSTANTS — HealthRunCare Platform
+// GLOBAL CONSTANTS — TitanXHoldings Platform
 // ========================================
 
-// App Information
-define('APP_NAME', 'HealthRunCare');
-define('APP_URL', 'https://healthruncare.com');
-define('APP_EMAIL', 'support@healthruncare.com');
-define('CURRENCY', 'USD');
-define('TIMEZONE', 'Europe/London'); 
-
-// Paths
-define('UPLOAD_PATH', __DIR__ . '/../assets/uploads/');
-define('TEMP_PATH', UPLOAD_PATH . 'temp/');
-define('USER_UPLOADS_PATH', UPLOAD_PATH . 'user_uploads/');
-
-// User Roles
-define('ROLE_USER', 'user');
-define('ROLE_SUPPORT_ADMIN', 'support_admin');
-define('ROLE_SUPER_ADMIN', 'super_admin');
-
-// Feature Controls
-define('OTP_EXPIRY_MINUTES', 10); 
-define('SIMULATION_MODE', true);  
+define('APP_NAME',     'TitanXHoldings');
+define('APP_SHORT',    'TXH');
+define('APP_URL',      'https://titanxholdings.com');
+define('APP_TAGLINE',  'Own More. Hold Stronger. Grow Faster.');
+define('APP_AFFILIATE','Tesla');
+define('CURRENCY',     'USD');
+define('TIMEZONE',     'America/New_York');
+define('OTP_EXPIRY_MINUTES', 10);
 define('MAX_WITHDRAWAL_ATTEMPTS', 3);
 
 // Business Timings / System
 date_default_timezone_set(TIMEZONE);
-
-
 ?>

@@ -1,4 +1,0 @@
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'gokavlrwts_healthruncare');  // ✅ full DB name (with prefix)
-define('DB_USER', 'gokavlrwts_michael');        // ✅ your cPanel DB user
-define('DB_PASS', 'Michael@01');     

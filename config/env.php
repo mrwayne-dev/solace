@@ -4,15 +4,15 @@
 // ========================================
 
 // Auto-detect environment (from .htaccess)
-$env = $_SERVER['HRC_ENV'] ?? 'dev';
+$env = $_SERVER['TXH_ENV'] ?? 'dev';
 define('ENV', $env);
 define('APP_ENV', (ENV === 'dev' ? 'local' : 'production'));
 
 
-
+ 
 // Database Credentials
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'uvammbciwx_healthruncare');
+define('DB_NAME', 'titanx_db');
 define('DB_USER', 'uvammbciwx_michael');
 define('DB_PASS', 'Michael@01');
 
