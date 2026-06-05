@@ -20,44 +20,12 @@ $user_email = $_SESSION['email'] ?? null;
 $user_role = $_SESSION['role'] ?? 'user';
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- Meta -->
-    <meta charset="UTF-8">
-    <meta name="description" content="HealthRunCare HoldLock - Secure your capital with guaranteed trust-based growth plans.">
-    <meta name="author" content="HealthRunCare">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://healthruncare.com/holdlock">
-    <title>HealthRunCare HoldLock</title>
+<?php
+  $page_title = "X-Lock | TitanXHoldings";
+  include __DIR__ . "/_partials/head.php";
+?>
 
-    <!-- Preload + Apply (critical CSS) -->
-    <link rel="preload" href="../../assets/css/bootstrap.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="../../assets/css/dashboard.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="../../assets/icon/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-
-    <link rel="stylesheet" href="../../assets/css/animation.min.css">
-    <link rel="stylesheet" href="../../assets/css/animation.css">
-    <link rel="stylesheet" href="../../assets/css/bootstrap-select.min.css">
-    <link rel="stylesheet" href="../../assets/fonts/font.css">
-    <link rel="stylesheet" href="../../assets/icon/style.css">
-
-    <!-- Fallback for browsers without preload support -->
-    <noscript>
-    <link rel="stylesheet" href="../../assets/css/bootstrap.css">
-    <link rel="stylesheet" href="../../assets/css/dashboard.css">
-    </noscript>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="../../assets/favicon/favicon-32x32.png" sizes="32x32">
-    <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
-    <meta name="apple-mobile-web-app-title" content="HRC">
-    <link rel="manifest" href="../../assets/favicon/site.webmanifest">
-</head>
-
-<body class="counter-scroll">
+<body class="counter-scroll txh-dash">
     <!-- #wrapper -->
     <div id="wrapper">
         <!-- #page -->
@@ -72,146 +40,11 @@ $user_role = $_SESSION['role'] ?? 'user';
                 </div>
                 <!-- /preload -->
                                 <!-- section-menu-left -->
-                <div class="section-menu-left">
-                    <div class="box-logo">
-                        <a href="/dashboard" id="site-logo-inner">
-                            <img class="" id="logo_header" alt="HRC" src="/assets/images/healthruncarelogo.png" width="150px">
-                        </a>
-                        <div class="button-show-hide">
-                            <span class="iconify" data-icon="mdi:chevron-left"></span>
-                        </div>
-                    </div>
-                    <div class="section-menu-left-wrap">
-                        <div class="center">
-                            <div class="center-item">
-                                <div class="center-heading f14-regular text-Gray menu-heading mb-12">Navigation</div>
-                            </div>
-                            <div class="center-item">
-                                <ul class="">
-                                    <li class="menu-item has-children">
-                                        <a href="javascript:void(0);" class="menu-item-button">
-                                            <div class="icon">
-                                                <span class="iconify" data-icon="mdi:view-dashboard-outline"></span>
-                                            </div>
-                                            <div class="text">Dashboard</div>
-                                        </a>
-                                        <ul class="sub-menu">
-                                            <li class="sub-menu-item">
-                                                <a href="/dashboard" class="">
-                                                    <div class="text">Overview</div>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="menu-item has-children">
-                                        <a href="javascript:void(0);" class="menu-item-button">
-                                            <div class="icon">
-                                                <span class="iconify" data-icon="mdi:wallet-outline"></span>
-                                            </div>
-                                            <div class="text">My Wallet</div>
-                                        </a>
-                                        <ul class="sub-menu">
-                                            <li class="sub-menu-item active">
-                                                <a href="/dashboard.wallet" class="">
-                                                    <div class="text">Wallet</div>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/dashboard.transactions" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:receipt-text-outline"></span></div>
-                                            <div class="text">Transaction</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/dashboard.charity" class="menu-item-button">
-                                            <div class="icon">
-                                                <span class="iconify" data-icon="mdi:heart-outline"></span>
-                                            </div>
-                                            <div class="text">Charity</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/dashboard.investment" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:chart-timeline-variant"></span></div>
-                                            <div class="text">Investments</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item active">
-                                        <a href="/dashboard.holdlock" class="menu-item-button active">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:lock-outline"></span></div>
-                                            <div class="text">Holdlock</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/dashboard.trustfund" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:account-cash-outline"></span></div>
-                                            <div class="text">Trustfund</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/dashboard.infrastructure" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:office-building-outline"></span></div>
-                                            <div class="text">Infrastructure</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/dashboard.development" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:tools"></span></div>
-                                            <div class="text">Maintenance Dev</div>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /section-menu-left -->
+                <?php $active = "xlock"; include __DIR__ . "/_partials/sidebar.php"; ?>
                 <!-- section-content-right -->
                 <div class="section-content-right">
                     <!-- header-dashboard -->
-                    <div class="header-dashboard">
-                        <div class="wrap">
-                            <div class="header-left">
-                                <div class="button-show-hide">
-                                    <i class="icon-menu"></i>
-                                </div>
-                                <h6>HoldLock</h6>
-                            </div>
-                            <div class="header-grid">
-                                <div class="line1"></div>
-                                <div class="popup-wrap user type-header">
-                                    <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <span class="header-user wg-user">
-                                                <span class="image">
-                                                    <img src="/assets/images/avatar/default.png" alt="">
-                                                </span>
-                                                <span class="content flex flex-column">
-                                                    <span class="label-02 text-Black name"><?= $user_name ?></span>
-                                                    <span class="f14-regular text-Gray">User</span>
-                                                </span>
-                                            </span>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end has-content" aria-labelledby="dropdownMenuButton3" >
-                                            <li>
-                                                <a href="/dashboard.transactions" class="user-item">
-                                                    <div class="body-title-2">Transactions</div>
-                                                </a>
-                                            </li>
-                                            <li>
-                                            <a href="#" id="logout-btn" class="user-item">
-                                                <div class="body-title-2">Log out</div>
-                                            </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /header-dashboard -->
+                    <?php $page_heading = "X-Lock"; include __DIR__ . "/_partials/topbar.php"; ?>
                     <!-- main-content -->
                     <div class="main-content">
                         <!-- main-content-wrap -->
@@ -219,101 +52,54 @@ $user_role = $_SESSION['role'] ?? 'user';
                             <!-- main-content-wrap -->
                             <div class="main-content-wrap">
                                 <div class="tf-container">
+                                    <!-- ============================================================
+                                         PORTFOLIO HERO (relocated summary metrics)
+                                         ============================================================ -->
                                     <div class="row mb-32">
-                                        <div class="col-12">
-                                            <div class="wg-box impact-overview">
-                                            <div class="title mb-16 flex justify-between items-center">
-                                                <div class="label-01 text-Primary">HoldLock Summary</div>
-                                                <span class="f12-regular text-Gray">Your locked savings performance</span>
+                                      <div class="col-12 mb-24">
+                                        <div class="wallet-card wallet-main wallet-hero">
+                                          <div class="wallet-hero-top">
+                                            <div class="title-box flex items-center gap-2">
+                                              <span class="iconify" data-icon="mdi:lock-outline"></span>
+                                              <span class="f12-medium text-White">Total Locked (USD)</span>
                                             </div>
-
-                                            <div class="content">
-                                                <div class="row g-3">
-
-                                                <!-- Active Locks -->
-                                                <div class="col-md-3 col-6">
-                                                    <div class="impact-card">
-                                                    <div class="icon bg-PrimaryLight">
-                                                        <span class="iconify" data-icon="mdi:lock-outline" style="color: var(--color-primary);"></span>
-                                                    </div>
-                                                    <div class="text">
-                                                        <h6 class="text-Primary" id="card-active-locks">0</h6>
-                                                        <p class="f12-regular text-Gray">Active Locks</p>
-                                                    </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Total Locked Amount -->
-                                                <div class="col-md-3 col-6">
-                                                    <div class="impact-card">
-                                                    <div class="icon bg-GreenLight">
-                                                        <span class="iconify" data-icon="mdi:cash-lock" style="color: var(--Green);"></span>
-                                                    </div>
-                                                    <div class="text">
-                                                        <h6 class="text-Green" id="card-total-locked">$0.00</h6>
-                                                        <p class="f12-regular text-Gray">Total Locked</p>
-                                                    </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- ROI -->
-                                                <div class="col-md-3 col-6">
-                                                    <div class="impact-card">
-                                                    <div class="icon bg-AccentLight">
-                                                        <span class="iconify" data-icon="mdi:chart-areaspline" style="color: var(--color-accent);"></span>
-                                                    </div>
-                                                    <div class="text">
-                                                        <h6 class="text-Black" id="card-roi-earned">$0.00</h6>
-                                                        <p class="f12-regular text-Gray">ROI Earned</p>
-                                                    </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Next Unlock Date -->
-                                                <div class="col-md-3 col-6">
-                                                    <div class="impact-card">
-                                                    <div class="icon bg-YellowLight">
-                                                        <span class="iconify" data-icon="mdi:calendar-lock" style="color: #d4a017;"></span>
-                                                    </div>
-                                                    <div class="text">
-                                                        <h6 class="text-Black" id="card-next-unlock">—</h6>
-                                                        <p class="f12-regular text-Gray">Next Unlock Date</p>
-                                                    </div>
-                                                    </div>
-                                                </div>
-
-                                                </div>
+                                            <span class="box-status bg-Green f12-medium flex items-center gap-2">
+                                              <span class="iconify" data-icon="mdi:shield-check"></span> Active
+                                            </span>
+                                          </div>
+                                          <div class="wallet-hero-balance">
+                                            <h2 class="counter text-White" id="card-total-locked">$0.00</h2>
+                                            <div class="wallet-hero-change f14-regular">
+                                              <span class="iconify" data-icon="mdi:trending-up"></span>
+                                              <span id="card-roi-earned">$0.00</span>&nbsp;ROI earned to date
                                             </div>
+                                          </div>
+                                          <div class="wallet-hero-substats">
+                                            <div class="wallet-substat">
+                                              <div class="f12-regular">Active locks</div>
+                                              <div class="f14-bold text-White" id="card-active-locks">0</div>
                                             </div>
+                                            <div class="wallet-substat">
+                                              <div class="f12-regular">Next unlock</div>
+                                              <div class="f14-bold text-White" id="card-next-unlock">&mdash;</div>
+                                            </div>
+                                          </div>
+                                          <div class="wallet-hero-actions">
+                                            <a href="/dashboard.transactions" class="tf-button bg-Accent f14-bold">
+                                              <span class="iconify" data-icon="mdi:history"></span> Transactions
+                                            </a>
+                                          </div>
                                         </div>
-                                        </div>
+                                      </div>
+                                    </div>
 
-                                    <!-- HoldLock Plans Grid (Uniform Investment Format) -->
-                                        <div class="row mb-32">
-                                        <div class="col-12">
-                                            <div class="wg-box holdlock-plans">
-                                            <div class="title mb-16 flex justify-between items-center">
-                                                <div class="label-01 text-Primary">Available HoldLock Plans</div>
-                                            </div>
-
-                                            <div class="content">
-                                                <div class="row g-4" id="holdlock-plans-grid">
-                                                <!-- Plans dynamically injected by holdlock.js -->
-                                            </div>
-                                            </div>
-                                        </div>
-                                        </div>
-
-
-
-
-                                                        <!-- Start HoldLock Plan Section -->
+                                                        <!-- Start X-Lock Plan Section -->
                                                             <div class="row mb-32">
                                                             <!-- Left: Start Form -->
-                                                            <div class="col-lg-8 col-md-12">
+                                                            <div class="col-lg-7 col-md-12">
                                                                 <div class="wg-box holdlock-form">
                                                                 <div class="title mb-16">
-                                                                    <div class="label-01 text-Primary">Start Your HoldLock Plan</div>
+                                                                    <div class="label-01 text-Primary">Start Your X-Lock Plan</div>
                                                                 </div>
 
                                                                 <div class="content">
@@ -373,32 +159,24 @@ $user_role = $_SESSION['role'] ?? 'user';
                                                                 </div>
                                                             </div>
 
-                                                            <!-- Right: Benefits -->
-                                                            <div class="col-lg-4 col-md-12">
-                                                                <div class="wg-box holdlock-benefits">
-                                                                <div class="title mb-16">
-                                                                    <div class="label-01 text-Primary">HoldLock Benefits</div>
-                                                                </div>
-
-                                                                <div class="content">
-                                                                    <ul class="f12-regular text-Gray">
-                                                                    <li class="mb-8 flex items-center">
-                                                                        100% Capital Protection
-                                                                    </li>
-                                                                    <li class="mb-8 flex items-center">
-                                                                        Guaranteed Fixed Returns
-                                                                    </li>
-                                                                    <li class="mb-8 flex items-center">
-                                                                        Transparent Trust Management
-                                                                    </li>
-                                                                    <li class="mb-8 flex items-center">
-                                                                        Flexible Lock Periods
-                                                                    </li>
-                                                                    <li class="mb-8 flex items-center">
-                                                                        Lifetime Options Available
-                                                                    </li>
-                                                                    </ul>
-                                                                </div>
+                                                            <!-- Right: Plan details -->
+                                                            <div class="col-lg-5 col-md-12">
+                                                                <div class="wg-box plan-detail-panel">
+                                                                    <div class="pdp-empty" id="pdp-empty">
+                                                                        <span class="iconify" data-icon="mdi:gesture-tap-button" data-width="32" data-height="32"></span>
+                                                                        <div class="f14-bold text-Primary">Select a plan</div>
+                                                                        <div class="f12-regular text-Gray">Choose a plan from the dropdown to see its full details.</div>
+                                                                    </div>
+                                                                    <div id="pdp-content" class="hidden">
+                                                                        <div class="pdp-head">
+                                                                            <div class="pdp-name" id="pdp-name">—</div>
+                                                                            <span class="pdp-badge" id="pdp-risk" style="display:none;"></span>
+                                                                        </div>
+                                                                        <div class="pdp-roi" id="pdp-roi">—</div>
+                                                                        <div class="pdp-roi-label" id="pdp-roi-label">Expected ROI</div>
+                                                                        <ul class="pdp-meta" id="pdp-meta"></ul>
+                                                                        <p class="pdp-summary" id="pdp-summary"></p>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                             </div>
@@ -413,26 +191,21 @@ $user_role = $_SESSION['role'] ?? 'user';
                                         </div>
 
                                     <div class="content">
-                                        <div class="table-responsive table-list-transaction">
-                                            <!-- Table Header -->
-                                            <div class="list-transaction-head title-sort bg-Primary text-White">
-                                            <div class="btn-key-sort"><div class="f12-bold">Plan Name</div></div>
-                                            <div class="btn-key-sort"><div class="f12-bold">Amount Locked</div></div>
-                                            <div class="btn-key-sort"><div class="f12-bold">ROI (%)</div></div>
-                                            <div class="btn-key-sort"><div class="f12-bold">Lock Period</div></div>
-                                            <div class="btn-key-sort"><div class="f12-bold">Payout Option</div></div>
-                                            <div class="btn-key-sort"><div class="f12-bold">Status</div></div>
-                                            <div class="btn-key-sort"><div class="f12-bold">Start Date</div></div>
-                                            </div>
-
-                                            <!-- Dynamic Table -->
-                                            <table id="active-holdlocks-table" class="list-transaction-content content-sort w-100">
+                                        <div class="txh-scroll-table mt-3">
+                                            <table id="active-holdlocks-table" class="txh-table">
+                                            <thead><tr>
+                                                <th>Plan Name</th>
+                                                <th>Amount Locked</th>
+                                                <th>ROI (%)</th>
+                                                <th>Lock Period</th>
+                                                <th>Payout Option</th>
+                                                <th>Status</th>
+                                                <th>Start Date</th>
+                                            </tr></thead>
                                             <tbody id="active-holdlocks-table-body">
                                                 <!-- Populated dynamically by holdlock.js -->
                                             </tbody>
                                             </table>
-
-                                            
                                         </div>
                                         </div>
                                         </div>
@@ -448,21 +221,20 @@ $user_role = $_SESSION['role'] ?? 'user';
                                 </div>
                                 <div class="content">
                                 
-                                <div id="matured-holdlocks-table-wrapper" class="table-responsive table-list-transaction">
-                                    <div class="list-transaction-head title-sort bg-Green text-White">
-                                    <div class="btn-key-sort"><div class="f12-bold">Plan Name</div></div>
-                                    <div class="btn-key-sort"><div class="f12-bold">Original Amount</div></div>
-                                    <div class="btn-key-sort"><div class="f12-bold">ROI Earned</div></div>
-                                    <div class="btn-key-sort"><div class="f12-bold">Maturity Date</div></div>
-                                    <div class="btn-key-sort"><div class="f12-bold">Total Payout</div></div>  
-                                    <div class="btn-key-sort"><div class="f12-bold">Actions</div></div>
-                                    </div>
-                                    <table id="matured-holdlocks-table" class="list-transaction-content content-sort w-100">
+                                <div class="txh-scroll-table mt-3">
+                                    <table id="matured-holdlocks-table" class="txh-table">
+                                    <thead><tr>
+                                    <th>Plan Name</th>
+                                    <th>Original Amount</th>
+                                    <th>ROI Earned</th>
+                                    <th>Maturity Date</th>
+                                    <th>Total Payout</th>
+                                    <th>Actions</th>
+                                    </tr></thead>
                                     <tbody id="matured-holdlocks-table-body">
                                         <!-- Dynamically loaded via JS -->
                                     </tbody>
                                     </table>
-                                    
                                 </div>
                                 </div>
                                 </div>
@@ -492,13 +264,13 @@ $user_role = $_SESSION['role'] ?? 'user';
     <!-- Toast Container -->
     <div id="toast-container"></div>
 
-<script src="../../assets/js/jquery.min.js"></script>
-<script src="../../assets/js/bootstrap.min.js"></script>
-<script src="../../assets/js/api.js"></script>
-<script src="../../assets/js/holdlock.js"></script>
-<script src="../../assets/js/countto.js" defer></script>
-<script src="../../assets/js/bootstrap-select.min.js" defer></script>
-<script src="../../assets/js/dashboard.js" defer></script>
+<script src="<?= txh_asset('../../assets/js/jquery.min.js') ?>"></script>
+<script src="<?= txh_asset('../../assets/js/bootstrap.min.js') ?>"></script>
+<script src="<?= txh_asset('../../assets/js/api.js') ?>"></script>
+<script src="<?= txh_asset('../../assets/js/xlock.js') ?>"></script>
+<script src="<?= txh_asset('../../assets/js/countto.js') ?>" defer></script>
+<script src="<?= txh_asset('../../assets/js/bootstrap-select.min.js') ?>" defer></script>
+<script src="<?= txh_asset('../../assets/js/dashboard.js') ?>" defer></script>
 
     <!-- Iconify CDN -->
     <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>

@@ -1,0 +1,53 @@
+name: Security
+
+# Regression prevention for the categories most likely to silently return:
+#  - A03 Supply chain  -> composer audit (dependency CVEs)
+#  - A02 Secrets        -> gitleaks (no credentials committed)
+#  - basic correctness  -> php -l lint of all PHP files
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-audit:
+    name: Composer audit (A03)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+      - name: Audit dependencies for known CVEs
+        run: composer audit --no-interaction --format=plain
+
+  secret-scan:
+    name: Secret scan (A02)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history so newly-pushed commits are scanned
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  php-lint:
+    name: PHP syntax lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - name: Lint all PHP files
+        run: |
+          set -e
+          find . -path ./vendor -prune -o -name '*.php' -print0 \
+            | xargs -0 -n1 -P4 php -l > /dev/null
+          echo "All PHP files passed php -l"

@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// DATABASE CONNECTION HANDLER — HealthRunCare
+// DATABASE CONNECTION HANDLER — TitanXHoldings
 // ========================================
 
 function getPDO() {

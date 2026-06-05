@@ -1,331 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <!-- Meta -->
-  <meta charset="UTF-8">
-  <meta name="description" content="Donate securely and transparently with HealthRunCare Charity. Track your impact in real-time and support verified health causes globally.">
-  <meta name="author" content="HealthRunCare">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://healthruncare.com/charity">
+<?php
+$page_title = 'X-Grid | Institutional infrastructure co-investments | TitanXHoldings';
+$page_description = 'TitanXHoldings X-Grid — fractional positions in UK infrastructure deals normally reserved for institutions. Clear minimums, projected returns, quarterly reports.';
+$page_path = '/xgrid';
+include __DIR__ . '/_partials/head.php';
+?>
+<body class="txh-redesign">
 
-  <!-- Title -->
-  <title>Donate with Trust & Transparency | HealthRunCare Charity</title>
+<?php include __DIR__ . '/_partials/navbar.php'; ?>
 
-  <!-- Preload CSS -->
-  <link rel="preload" href="../../assets/css/main.css" as="style">
-
-  <!-- Preload Fonts -->
-  <link rel="preload" href="../fonts/HostGrotesk-Regular.woff2" as="font" type="font/woff2" crossorigin>
-
-  <!-- Unicons CDN -->
-  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
-
-  <!-- Stylesheets -->
-  <link rel="stylesheet" href="../../assets/css/main.css">
-  <link rel="stylesheet" href="../../assets/css/responsive.css">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="../../assets/favicon/favicon-32x32.png" sizes="32x32">
-  <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
-  <meta name="apple-mobile-web-app-title" content="HealthRunCare">
-  <link rel="manifest" href="../../assets/favicon/site.webmanifest">
-      <!-- Smartsupp Live Chat script -->
-  <script type="text/javascript">
-  var _smartsupp = _smartsupp || {};
-  _smartsupp.key = '74f4168b124ca112a5c2ecfde6804a6e6e6306e6';
-  window.smartsupp||(function(d) {
-    var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
-    s=d.getElementsByTagName('script')[0];c=d.createElement('script');
-    c.type='text/javascript';c.charset='utf-8';c.async=true;
-    c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
-  })(document);
-  </script>
-  <noscript> Powered by <a href=“https://www.smartsupp.com” target=“_blank”>Smartsupp</a></noscript>
-</head>
-<body>
-
-<!-- Header -->
-<header class="header" data-header>
-  <div class="container">
-    <div class="header-left">
-      <a href="/" class="logo">
-        <img src="../../assets/images/logo2.png" alt="HealthRunCare logo" loading="lazy">
-        <span class="logo-text">HealthRunCare</span>
-      </a>
-    </div>
-
-    <!-- Center: Navigation -->
-    <nav class="navbar" id="navbar" data-navbar>
-      <ul class="navbar-list">
-        <li class="navbar-item"><a href="/whyhrc" class="navbar-link">Why HRC</a></li>
-        <li class="navbar-item"><a href="/platform" class="navbar-link">Platform</a></li>
-        <li class="navbar-item"><a href="/solutions" class="navbar-link">Solutions</a></li>
-        <li class="navbar-item"><a href="/about" class="navbar-link">About</a></li>
-
-        <li class="navbar-item mobile-only"><a href="/login" class="navbar-link">Login</a></li>
-        <li class="navbar-item mobile-only"><a href="/contact" class="navbar-link">Contact</a></li>
-      </ul>
-    </nav>
-
-    <!-- Right: Actions (Login, Sign Up, etc.) -->
-    <div class="header-right">
-      <a href="/login" class="btn btn--glass">Login</a>
-      <a href="/contact" class="btn btn--glass">Contact</a>
-    </div>
-
-    <!-- Mobile toggle -->
-    <button class="nav-toggle-btn" aria-label="Toggle menu" data-nav-toggler>
-      <span class="line line-1"></span>
-      <span class="line line-2"></span>
-      <span class="line line-3"></span>
-    </button>
+<section class="hero">
+  <div class="hero__bg" aria-hidden="true">
+    <picture>
+      <source type="image/avif" srcset="/assets/images/xgrid-bg.avif">
+      <source type="image/webp" srcset="/assets/images/xgrid-bg.webp">
+      <img src="/assets/images/xgrid-bg.webp" alt="" width="1920" height="1080" loading="eager" fetchpriority="high">
+    </picture>
   </div>
-</header>
-
-<!-- 1️⃣ Hero Section -->
-<section class="hero infrastructure-hero" id="hero">
-  <div class="hero-content container" data-appear>
-    <div class="hero-main">
-      <h1 class="hero-title" id="hero-title">Building the Future of Care</h1>
-      <p class="hero-subtitle" id="hero-subtitle">
-        HealthRunCare’s Mount Infrastructure program empowers individuals and organizations 
-        to fund and co-own critical healthcare facilities, equipment, and technologies.  
-        Every contribution helps build the foundation for accessible, modern healthcare — brick by brick.
-      </p>
-      <a href="/login" class="btn btn--glass">Start Funding</a>
-    </div>
-  </div>
-  <div class="hero-dots" id="hero-dots"></div>
-</section>
-
-<!-- 2️⃣ Mission Section -->
-<section class="founders-mission" id="founders-mission">
-  <div class="container">
-    <!-- Left Column: The Challenge -->
-    <div class="founders-column">
-      <div class="founders-header">
-        <span class="founders-label">THE CHALLENGE</span>
-        <h2 class="founders-title">Healthcare Access Begins with Infrastructure</h2>
-      </div>
-      <div class="founders-content">
-        <p>
-          In many communities, quality healthcare isn’t lacking doctors — it’s lacking infrastructure.  
-          From diagnostic labs and telehealth centers to essential equipment, the gap is visible and growing.  
-          HealthRunCare’s Mount Infrastructure initiative bridges this divide by allowing donors, investors, and partners 
-          to directly fund the physical backbone of care — securely, transparently, and with measurable impact.
-        </p>
-      </div>
-    </div>
-
-    <!-- Right Column: The Solution -->
-    <div class="mission-column">
-      <div class="mission-card">
-        <span class="mission-label">THE HRC SOLUTION</span>
-        <h2 class="mission-title">Co-Fund, Track, and Own the Future of Healthcare.</h2>
-        <div class="mission-icon"></div>
+  <div class="container hero__inner">
+    <div class="hero__content">
+      <p class="eyebrow"><span class="eyebrow__icon"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg></span>X-Grid</p>
+      <h1 class="hero__title">Institutional infrastructure, retail-friendly minimums.</h1>
+      <p class="hero__subtitle">Fractional positions in operational UK infrastructure — solar, logistics, data centres, fibre — alongside the institutional LPs that normally dominate the cap table.</p>
+      <div class="hero__cta-row">
+        <a href="/register" class="btn btn--primary">Co-invest</a>
+        <a href="/login" class="btn btn--ghost">Sign in</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 3️⃣ Process Section -->
-<section class="impact-journey" id="impact-journey">
+<section class="section section--white" id="how">
   <div class="container">
-    <div class="impact-header" data-appear>
-      <h2 class="section-title">How Mount Infrastructure Works</h2>
-      <p class="section-description">
-        From identifying projects to seeing your funded equipment in use — 
-        our transparent process ensures your contribution builds real healthcare access where it’s needed most.
-      </p>
+    <div class="section-header" style="margin-bottom: var(--space-10);">
+      <p class="eyebrow"><span class="eyebrow__icon"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg></span>How it works</p>
+      <h2 class="section-header__title">Real assets. Contracted revenue. Quarterly distributions.</h2>
+      <p class="section-header__body">Each X-Grid deal is a real UK infrastructure asset with documented counterparty contracts. We slice it into co-investment positions, you collect a share of the contracted revenue.</p>
     </div>
-
-    <div class="impact-flow">
-      <!-- Step 1 -->
-      <div class="impact-step" data-appear-stagger>
-        <div class="impact-icon"><span class="uil uil-map-marker-question"></span></div>
-        <div class="impact-content">
-          <h3 class="impact-title">1. Select a Project</h3>
-          <p class="impact-desc">
-            Browse a curated list of infrastructure campaigns — clinics, laboratories, and diagnostic equipment 
-            verified by HRC’s compliance and audit team.
-          </p>
-        </div>
-      </div>
-
-      <!-- Step 2 -->
-      <div class="impact-step" data-appear-stagger>
-        <div class="impact-icon"><span class="uil uil-building"></span></div>
-        <div class="impact-content">
-          <h3 class="impact-title">2. Fund or Co-Fund</h3>
-          <p class="impact-desc">
-            Choose to sponsor an entire project or contribute partially. 
-            Every fund is traceable and visible on the HRC dashboard with transparent milestones.
-          </p>
-        </div>
-      </div>
-
-      <!-- Step 3 -->
-      <div class="impact-step" data-appear-stagger>
-        <div class="impact-icon"><span class="uil uil-chart-line"></span></div>
-        <div class="impact-content">
-          <h3 class="impact-title">3. Track Progress & ROI</h3>
-          <p class="impact-desc">
-            Monitor construction or equipment delivery in real-time.  
-            Once operational, contributors receive annual ROI or usage impact reports depending on project type.
-          </p>
-        </div>
-      </div>
-
-      <!-- Step 4 -->
-      <div class="impact-step" data-appear-stagger>
-        <div class="impact-icon"><span class="uil uil-users-alt"></span></div>
-        <div class="impact-content">
-          <h3 class="impact-title">4. Empower Communities</h3>
-          <p class="impact-desc">
-            See your funded clinic, equipment, or system in action.  
-            Every project improves access, creates jobs, and builds local medical resilience — with full transparency.
-          </p>
-        </div>
-      </div>
+    <div class="grid-2">
+      <article class="card-feature">
+        <span class="card-feature__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V9l7-5 7 5v12"/></svg></span>
+        <h3 class="card-feature__title">Operational UK assets</h3>
+        <p class="card-feature__desc">Solar portfolios, last-mile logistics, Tier-III data centres, FTTP roll-outs. Income-producing from day one.</p>
+      </article>
+      <article class="card-feature">
+        <span class="card-feature__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg></span>
+        <h3 class="card-feature__title">Quarterly distributions</h3>
+        <p class="card-feature__desc">Contracted revenue → quarterly payouts to your wallet. Income tracks operational performance, with downside protected by minimum take-or-pay clauses where applicable.</p>
+      </article>
+      <article class="card-feature">
+        <span class="card-feature__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg></span>
+        <h3 class="card-feature__title">Quarterly performance report</h3>
+        <p class="card-feature__desc">Per-deal report covering utilisation, revenue, distributions, and any material counterparty changes. Read it in five minutes, file it for the year-end.</p>
+      </article>
+      <article class="card-feature">
+        <span class="card-feature__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></span>
+        <h3 class="card-feature__title">From £500, scale to institutional</h3>
+        <p class="card-feature__desc">Most deals start at £500–£2,500. The "Institutional Slot" opens an allocation normally reserved for £25,000+ LPs.</p>
+      </article>
     </div>
   </div>
 </section>
 
-<!-- 4️⃣ Impact / Numbers -->
-<section class="impact-stats">
-  <div class="container">
-    <div class="impact-stats-header" data-appear>
-      <h2 class="section-title">Building Impact by the Numbers</h2>
-      <p class="section-description">
-        Mount Infrastructure turns collective funding into tangible healthcare capacity — 
-        clinics built, equipment installed, and communities served.
-      </p>
-    </div>
+<?php $plan_product = 'xgrid'; include __DIR__ . '/_partials/plans-section.php'; ?>
 
-    <div class="stats-grid">
-      <div class="stat-item">
-        <div class="stat-number" data-count="180">0</div>
-        <div class="stat-label">Healthcare Facilities Funded</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number" data-count="5200">0</div>
-        <div class="stat-label">Equipment Units Installed</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number" data-count="35">0</div>
-        <div class="stat-label">Communities Reached</div>
-      </div>
-    </div>
-  </div>
-</section>
+<?php include __DIR__ . '/_partials/footer.php'; ?>
 
-<!-- 5️⃣ Call to Action -->
-<section class="cta-visual cta-visual--infrastructure">
-  <div class="container">
-    <div class="cta-content" data-appear>
-      <h2 class="cta-title">Help Build the Next Generation of Healthcare Infrastructure</h2>
-      <p class="cta-subtitle">
-        Every contribution — big or small — brings us closer to sustainable, equitable healthcare access.  
-        Join the movement and co-create the foundation for better health systems.
-      </p>
-      <a href="/login" class="btn btn--glass">Fund a Project</a>
-    </div>
-  </div>
-</section>
-
-
-<!-- ==============================
-     Footer Stamp / Wordmark
-     ============================== -->
-<div class="footer-stamp" aria-hidden="true">
-  <span>HealthRunCare Ltd</span>
-</div>
-<!-- ==============================
-     Static Footer
-     ============================== -->
-<footer class="static-footer">
-  <div class="container">
-    <!-- Grid Layout -->
-    <div class="footer-grid">
-
-      <!-- Column 1: Solutions -->
-      <div class="footer-column">
-        <h4>Solutions</h4>
-        <ul>
-          <li><a href="/solutions">Charity & Donations</a></li>
-          <li><a href="/solutions">Mount Infrastructure</a></li>
-        </ul>
-      </div>
-
-      <!-- Column 2: Using HRC -->
-      <div class="footer-column">
-        <h4>Using HealthRunCare</h4>
-        <ul>
-          <li><a href="/login">Pricing</a></li>
-          <li><a href="/login">Integrations</a></li>
-        </ul>
-      </div>
-
-      <!-- Column 3: Resources -->
-      <div class="footer-column">
-        <h4>Contact</h4>
-        <ul>
-          <li><a href="mailto:hello@healthruncare.com">hello@healthruncare.com</a></li>
-          <li><a href="mailto:sales@healthruncare.com">support@healthruncare.com</a></li>
-        </ul>
-      </div>
-
-      <!-- Column 4: About -->
-      <div class="footer-column">
-        <h4>About HealthRunCare</h4>
-        <ul>
-          <li><a href="/about">Who We Are</a></li>
-          <li><a href="/about">Our History</a></li>
-        </ul>
-      </div>
-
-      <!-- Column 5: Legal + Contact -->
-      <div class="footer-column">
-        <h4>Legal</h4>
-        <ul>
-          <li><a href="/about">Privacy Policy</a></li>
-          <li><a href="/about">Terms of Use</a></li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Bottom Row -->
-    <div class="footer-bottom-row">
-      <div class="footer-logo">
-        <img src="../../assets/images/logo2.png" alt="HealthRunCare logo" loading="lazy">
-        <span class="logo-text">HealthRunCare</span>
-      </div>
-
-      <div class="footer-copyright">
-        <p>© 2025 HealthRunCare Inc. All rights reserved.</p>
-      </div>
-    </div>
-  </div>
-</footer>
-
-<!-- Scripts -->
-<script src="../../assets/js/main.js" defer></script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "HealthRunCare",
-  "url": "https://healthruncare.com",
-  "logo": "https://healthruncare.com/assets/images/logo.png",
-  "sameAs": [
-    "https://www.linkedin.com/company/healthruncare",
-    "https://twitter.com/healthruncare",
-    "https://instagram.com/healthruncare"
-  ]
-}
-</script>
-
+<script src="<?= txh_asset('/assets/js/main.js') ?>" defer></script>
 </body>
 </html>

@@ -1,0 +1,1338 @@
+/* =================================================================
+ * TitanXHoldings Design System
+ * Adapted from crestmark-design-spec.md (2026-05-31)
+ *
+ * Activation: add class="txh-redesign" to <body> on any page that
+ * should pick up this design system. Pages without the class stay
+ * on the legacy main.css styles.
+ * ================================================================= */
+
+/* --- Font ----------------------------------------------------------- */
+@import url('https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* =================================================================
+ * DESIGN TOKENS — scoped to .txh-redesign so legacy pages untouched
+ * ================================================================= */
+.txh-redesign {
+  /* --- Colour: surfaces ----------------------------------------- */
+  --color-bg-page:          #FFFFFF;
+  --color-bg-dark:          #0D0D0D;
+  --color-bg-dark-40:       rgba(13, 13, 13, 0.40);
+  --color-surface-warm:     #F8F7F5;
+  --color-surface-warm-alt: #FAF9F5;
+  --color-surface-card:     #FFFFFF;
+
+  /* --- Colour: ink ---------------------------------------------- */
+  --color-ink-primary:      #1A1A1A;
+  --color-ink-body:         #0D0D0D;
+  --color-ink-muted:        #636363;
+  --color-ink-white:        #FFFFFF;
+
+  /* --- Colour: accents (per spec — dark CTA primary, red sparing) */
+  --color-accent-dark:      #1A1A1A;   /* CTA pill primary */
+  --color-accent-red:       #CC0000;   /* Brand mark + alerts only */
+
+  /* --- Status semantics (TXH-specific, not in Crestmark) -------- */
+  --status-success:         #386641;
+  --status-warning:         #F59E0B;
+  --status-danger:          #CC0000;
+
+  /* --- Typography ---------------------------------------------- */
+  --font-display: 'General Sans', 'Host Grotesk', system-ui, -apple-system, sans-serif;
+  --font-body:    'General Sans', 'Host Grotesk', system-ui, -apple-system, sans-serif;
+  --font-mono:    'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Type scale (px values from spec, kept literal) */
+  --text-h1:      58px;
+  --text-h2:      32px;
+  --text-h3:      28px;
+  --text-stat:    56px;
+  --text-body-lg: 20px;
+  --text-body:    16px;
+  --text-sm:      14px;
+
+  /* Line-heights computed per spec */
+  --lh-h1:        68px;
+  --lh-h2:        40px;
+  --lh-h3:        32px;
+  --lh-stat:      61.6px;
+  --lh-body-lg:   24px;
+  --lh-body:      22.4px;
+  --lh-sm:        16.8px;
+
+  /* Tracking */
+  --tracking-h1:       -1.1px;
+  --tracking-h2:       -1px;
+  --tracking-eyebrow:  0.5px;
+
+  /* Weights — Crestmark uses 400 / 500 / 600 only */
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-semibold: 600;
+
+  /* --- Spacing (4px base unit) -------------------------------- */
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-8:   32px;
+  --space-10:  40px;
+  --space-15:  60px;
+  --space-20:  80px;
+  --space-30:  120px;
+
+  /* Section + container */
+  --section-py:        60px;
+  --section-py-hero:   120px;
+  --container-max:     1200px;
+  --container-px:      40px;
+  --container-px-sm:   16px;
+
+  /* --- Radii ---------------------------------------------------- */
+  --radius-card:   8px;
+  --radius-input:  4px;
+  --radius-pill:   30px;
+  --radius-circle: 50%;
+
+  /* --- Motion --------------------------------------------------- */
+  --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast:   180ms;
+  --dur-base:   240ms;
+  --dur-slow:   400ms;
+
+  /* No shadows in spec — depth via contrast only. */
+  --shadow-none: none;
+}
+
+
+/* =================================================================
+ * GLOBAL BASE — body, headings, links
+ * ================================================================= */
+.txh-redesign {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-body);
+  color: var(--color-ink-body);
+  background: var(--color-bg-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  margin: 0;
+}
+
+.txh-redesign *,
+.txh-redesign *::before,
+.txh-redesign *::after {
+  box-sizing: border-box;
+}
+
+.txh-redesign h1,
+.txh-redesign h2,
+.txh-redesign h3,
+.txh-redesign h4,
+.txh-redesign h5,
+.txh-redesign h6 {
+  font-family: var(--font-display);
+  color: var(--color-ink-primary);
+  margin: 0;
+  font-weight: var(--fw-medium);
+}
+
+.txh-redesign h1 {
+  font-size: var(--text-h1);
+  line-height: var(--lh-h1);
+  letter-spacing: var(--tracking-h1);
+  font-weight: var(--fw-regular);
+}
+
+.txh-redesign h2 {
+  font-size: var(--text-h2);
+  line-height: var(--lh-h2);
+  letter-spacing: var(--tracking-h2);
+}
+
+.txh-redesign h3 {
+  font-size: var(--text-h3);
+  line-height: var(--lh-h3);
+  font-weight: var(--fw-semibold);
+}
+
+.txh-redesign p {
+  margin: 0;
+  color: var(--color-ink-body);
+}
+
+.txh-redesign a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.txh-redesign img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.txh-redesign ul,
+.txh-redesign ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.txh-redesign button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+
+/* =================================================================
+ * LAYOUT PRIMITIVES — container + section
+ * ================================================================= */
+.txh-redesign .container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding-left: var(--container-px);
+  padding-right: var(--container-px);
+  width: 100%;
+}
+
+.txh-redesign .section {
+  padding-top: var(--section-py);
+  padding-bottom: var(--section-py);
+}
+
+.txh-redesign .section--warm {
+  background: var(--color-surface-warm);
+}
+
+.txh-redesign .section--white {
+  background: var(--color-bg-page);
+}
+
+.txh-redesign .section--dark {
+  background: var(--color-bg-dark);
+  color: var(--color-ink-white);
+}
+
+.txh-redesign .section--dark h1,
+.txh-redesign .section--dark h2,
+.txh-redesign .section--dark h3,
+.txh-redesign .section--dark p {
+  color: var(--color-ink-white);
+}
+
+
+/* =================================================================
+ * RESPONSIVE
+ * Crestmark spec uses a fixed-width transform:scale() — we use real
+ * breakpoints per the spec's rebuild guidance (Section H).
+ * ================================================================= */
+@media (max-width: 768px) {
+  .txh-redesign {
+    --text-h1:    40px;
+    --text-h2:    26px;
+    --text-stat:  44px;
+    --lh-h1:      48px;
+    --lh-h2:      32px;
+    --lh-stat:    48px;
+    --section-py: 48px;
+    --section-py-hero: 80px;
+  }
+
+  .txh-redesign .container {
+    padding-left: var(--container-px-sm);
+    padding-right: var(--container-px-sm);
+  }
+}
+
+
+/* =================================================================
+ * COMPONENTS
+ * ================================================================= */
+
+
+/* --- Button (D.3 / D.4) ------------------------------------------- */
+.txh-redesign .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: 1;
+  font-weight: var(--fw-regular);
+  padding: 10px 16px;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out);
+  min-height: 42px;
+}
+
+.txh-redesign .btn:focus-visible {
+  outline: 2px solid var(--color-accent-red);
+  outline-offset: 2px;
+}
+
+/* Primary CTA — dark pill (used everywhere except nav) */
+.txh-redesign .btn--primary {
+  background: var(--color-accent-dark);
+  color: var(--color-ink-white);
+}
+.txh-redesign .btn--primary:hover {
+  background: #2A2A2A;
+}
+
+/* Nav CTA — white pill */
+.txh-redesign .btn--nav {
+  background: var(--color-ink-white);
+  color: var(--color-ink-body);
+}
+.txh-redesign .btn--nav:hover {
+  background: #F1F1F1;
+}
+
+/* Ghost — for dark-bg secondary actions (404, hero secondary) */
+.txh-redesign .btn--ghost {
+  background: transparent;
+  color: var(--color-ink-white);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+.txh-redesign .btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Form-style submit (D.14) — rectangular, muted */
+.txh-redesign .btn--submit {
+  background: var(--color-ink-muted);
+  color: var(--color-ink-white);
+  padding: 12px 28px;
+  border-radius: var(--radius-input);
+  min-height: 46px;
+  width: 100%;
+}
+.txh-redesign .btn--submit:hover {
+  background: var(--color-ink-primary);
+}
+
+
+/* --- Eyebrow Label (D.1, with TXH mono divergence) ---------------- */
+.txh-redesign .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-sm);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.txh-redesign .eyebrow__icon {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent-red);
+}
+
+.txh-redesign .eyebrow__icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+
+/* --- Section Header Block (D.2) ----------------------------------- */
+.txh-redesign .section-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  max-width: 760px;
+}
+
+.txh-redesign .section-header--center {
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.txh-redesign .section-header__title {
+  /* inherits h2 styles */
+}
+
+.txh-redesign .section-header__body {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--color-ink-muted);
+}
+
+.txh-redesign .section-header__cta {
+  margin-top: var(--space-2);
+}
+
+/* When the header sits in a 2-col layout with grid on the right,
+   stretch helper drops the max-width cap. */
+.txh-redesign .section-header--wide {
+  max-width: none;
+}
+
+
+/* --- Card: Icon-Top Feature (D.5) --------------------------------- */
+.txh-redesign .card-feature {
+  background: var(--color-surface-warm);
+  border-radius: var(--radius-card);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  overflow: clip;
+}
+
+.txh-redesign .card-feature__icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-ink-primary);
+}
+
+.txh-redesign .card-feature__icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.txh-redesign .card-feature__title {
+  font-family: var(--font-display);
+  font-size: var(--text-body-lg);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-body-lg);
+  color: var(--color-ink-primary);
+}
+
+.txh-redesign .card-feature__desc {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--color-ink-muted);
+}
+
+
+/* --- Card: Image-Top Feature (D.6) -------------------------------- */
+.txh-redesign .card-image {
+  display: flex;
+  flex-direction: column;
+  overflow: clip;
+  border-radius: var(--radius-card);
+}
+
+.txh-redesign .card-image__media {
+  width: 100%;
+  aspect-ratio: 470 / 250;
+  overflow: clip;
+  background: var(--color-surface-warm);
+}
+
+.txh-redesign .card-image__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.txh-redesign .card-image__body {
+  background: var(--color-surface-warm);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  flex: 1;
+}
+
+.txh-redesign .card-image__icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-ink-primary);
+}
+
+.txh-redesign .card-image__title {
+  font-family: var(--font-display);
+  font-size: var(--text-body-lg);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-body-lg);
+  color: var(--color-ink-primary);
+}
+
+.txh-redesign .card-image__desc {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--color-ink-muted);
+}
+
+
+/* --- Card: Stat Counter (D.7) ------------------------------------- */
+.txh-redesign .card-stat {
+  background: var(--color-surface-card);
+  border-radius: var(--radius-card);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 234px;
+  position: relative;
+  overflow: clip;
+}
+
+.txh-redesign .card-stat__icon {
+  position: absolute;
+  top: var(--space-6);
+  right: var(--space-6);
+  width: 24px;
+  height: 35px;
+  color: var(--color-ink-body);
+}
+
+.txh-redesign .card-stat__icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.txh-redesign .card-stat__desc {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--color-ink-muted);
+  max-width: calc(100% - 40px);  /* avoid clashing with the absolute icon */
+}
+
+.txh-redesign .card-stat__value {
+  font-family: var(--font-display);
+  font-size: var(--text-stat);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-stat);
+  color: var(--color-ink-primary);
+  letter-spacing: -0.5px;
+}
+
+
+/* --- Grid utilities ----------------------------------------------- */
+.txh-redesign .grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+}
+
+.txh-redesign .grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+}
+
+@media (max-width: 768px) {
+  .txh-redesign .grid-2,
+  .txh-redesign .grid-3 {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+}
+
+
+/* --- Testimonial Block (D.13) ------------------------------------- */
+.txh-redesign .testimonial {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: var(--space-10);
+  align-items: flex-start;
+}
+
+.txh-redesign .testimonial__quote {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-h2);
+  letter-spacing: var(--tracking-h2);
+  color: var(--color-ink-primary);
+}
+
+.txh-redesign .testimonial__attribution {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.txh-redesign .testimonial__portrait {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-input);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.txh-redesign .testimonial__name {
+  font-size: var(--text-sm);
+  line-height: var(--lh-sm);
+  font-weight: var(--fw-regular);
+  color: var(--color-ink-primary);
+}
+
+.txh-redesign .testimonial__role {
+  font-size: var(--text-sm);
+  line-height: var(--lh-sm);
+  color: var(--color-ink-muted);
+}
+
+@media (max-width: 768px) {
+  .txh-redesign .testimonial {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+  .txh-redesign .testimonial__quote {
+    font-size: 24px;
+    line-height: 30px;
+  }
+}
+
+
+/* --- FAQ Accordion (D.10) ----------------------------------------- */
+.txh-redesign .accordion {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.txh-redesign .accordion__item {
+  background: var(--color-surface-card);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.txh-redesign .accordion__trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 60px;
+  padding: var(--space-5);
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  font-weight: var(--fw-regular);
+  color: var(--color-ink-primary);
+  background: var(--color-surface-card);
+  border: none;
+  cursor: pointer;
+}
+
+.txh-redesign .accordion__icon {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-circle);
+  background: var(--color-ink-primary);
+  color: var(--color-ink-white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.txh-redesign .accordion__icon::before,
+.txh-redesign .accordion__icon::after {
+  content: '';
+  position: absolute;
+  background: var(--color-ink-white);
+  border-radius: 1px;
+}
+.txh-redesign .accordion__icon::before { width: 10px; height: 2px; }
+.txh-redesign .accordion__icon::after  { width: 2px;  height: 10px;
+  transition: transform var(--dur-base) var(--ease-out); }
+
+.txh-redesign .accordion__item[open] .accordion__icon::after,
+.txh-redesign .accordion__trigger[aria-expanded="true"] .accordion__icon::after {
+  transform: rotate(90deg);  /* + becomes × visually (— + crossed bar) */
+}
+
+.txh-redesign .accordion__body {
+  padding: 0 var(--space-5) var(--space-5);
+  color: var(--color-ink-muted);
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+}
+
+
+/* --- Navbar (D.12) ------------------------------------------------ */
+.txh-redesign .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  background: var(--color-bg-dark-40);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background-color var(--dur-base) var(--ease-out),
+              backdrop-filter var(--dur-base) var(--ease-out);
+}
+
+/* When scrolled past hero — toggled by JS adding .is-scrolled */
+.txh-redesign .navbar.is-scrolled {
+  background: var(--color-bg-page);
+  backdrop-filter: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* When page has no hero behind (about, contact, etc.), solid from start */
+.txh-redesign .navbar--solid {
+  background: var(--color-bg-page);
+  backdrop-filter: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.txh-redesign .navbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  min-height: 66px;
+  padding: var(--space-3) 0;
+}
+
+.txh-redesign .navbar__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-ink-white);
+}
+
+.txh-redesign .navbar.is-scrolled .navbar__brand,
+.txh-redesign .navbar--solid .navbar__brand {
+  color: var(--color-ink-primary);
+}
+
+.txh-redesign .navbar__brand img {
+  height: 26px;
+  width: auto;
+}
+
+/* Wordmark swaps with the nav background: white over the hero,
+   dark once scrolled or on solid (white) pages. */
+.txh-redesign .navbar__logo { display: block; }
+.txh-redesign .navbar__logo--dark { display: none; }
+.txh-redesign .navbar.is-scrolled .navbar__logo--light,
+.txh-redesign .navbar--solid .navbar__logo--light { display: none; }
+.txh-redesign .navbar.is-scrolled .navbar__logo--dark,
+.txh-redesign .navbar--solid .navbar__logo--dark { display: block; }
+
+.txh-redesign .navbar__links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  margin: 0;
+  padding: 0;
+}
+
+.txh-redesign .navbar__link {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--color-ink-white);
+  transition: color var(--dur-base) var(--ease-out),
+              opacity var(--dur-base) var(--ease-out);
+}
+
+.txh-redesign .navbar.is-scrolled .navbar__link,
+.txh-redesign .navbar--solid .navbar__link {
+  color: var(--color-ink-body);
+}
+
+.txh-redesign .navbar__link:hover {
+  opacity: 0.7;
+}
+
+.txh-redesign .navbar__cta {
+  /* dark pill on dark nav doesn't pop; nav uses white pill (D.4) */
+}
+
+.txh-redesign .navbar__toggle {
+  display: none;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+}
+
+.txh-redesign .navbar__toggle svg {
+  width: 24px;
+  height: 24px;
+}
+
+@media (max-width: 768px) {
+  .txh-redesign .navbar__links,
+  .txh-redesign .navbar__cta {
+    display: none;
+  }
+  .txh-redesign .navbar__toggle {
+    display: inline-flex;
+  }
+}
+
+
+/* --- Forms (D.14 adapted) ----------------------------------------- */
+.txh-redesign .form-card {
+  background: var(--color-surface-card);
+  border-radius: var(--radius-card);
+  padding: var(--space-8);
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.txh-redesign .form-card--wide {
+  max-width: 760px;
+}
+
+.txh-redesign .form-card__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-8);
+}
+
+.txh-redesign .form-card__header h1 {
+  font-size: 28px;
+  line-height: 32px;
+  letter-spacing: -0.4px;
+  font-weight: var(--fw-medium);
+}
+
+.txh-redesign .form-card__header p {
+  color: var(--color-ink-muted);
+}
+
+.txh-redesign .form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.txh-redesign .form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.txh-redesign .form-field__label {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-ink-body);
+}
+
+.txh-redesign .form-field__input {
+  background: var(--color-surface-warm);
+  border: 1px solid transparent;
+  border-radius: var(--radius-input);
+  padding: 12px 16px;
+  height: 48px;
+  font-family: inherit;
+  font-size: var(--text-body);
+  color: var(--color-ink-body);
+  width: 100%;
+  transition: border-color var(--dur-base) var(--ease-out),
+              background-color var(--dur-base) var(--ease-out);
+}
+
+.txh-redesign .form-field__input:focus {
+  outline: none;
+  border-color: var(--color-ink-primary);
+  background: var(--color-bg-page);
+}
+
+.txh-redesign .form-field__input::placeholder {
+  color: var(--color-ink-muted);
+}
+
+.txh-redesign textarea.form-field__input {
+  min-height: 120px;
+  resize: vertical;
+  padding: 12px 16px;
+  height: auto;
+  line-height: 1.5;
+}
+
+.txh-redesign .form-field__hint {
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+}
+
+.txh-redesign .form-field--with-action {
+  position: relative;
+}
+
+.txh-redesign .form-field__action {
+  position: absolute;
+  right: 12px;
+  top: 38px;
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.txh-redesign .form-link {
+  font-size: var(--text-sm);
+  color: var(--color-ink-primary);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color var(--dur-base) var(--ease-out);
+}
+.txh-redesign .form-link:hover {
+  text-decoration-color: var(--color-ink-primary);
+}
+
+.txh-redesign .form-footer {
+  text-align: center;
+  margin-top: var(--space-6);
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+}
+
+.txh-redesign .form-footer a {
+  color: var(--color-ink-primary);
+  font-weight: var(--fw-medium);
+}
+
+
+/* --- Auth Page Shell ---------------------------------------------- */
+.txh-redesign .auth-page {
+  min-height: calc(100vh - 66px);
+  background: var(--color-surface-warm);
+  display: flex;
+  align-items: center;
+  padding: var(--space-10) 0;
+}
+
+
+/* --- Hero (C.2) --------------------------------------------------- */
+.txh-redesign .hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-dark);
+  color: var(--color-ink-white);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Kill the legacy main.css `.hero::after` overlay that paints over the
+   hero text/buttons and blocks clicks. The redesign uses .hero__bg::after. */
+.txh-redesign .hero::after {
+  content: none;
+}
+
+.txh-redesign .hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.txh-redesign .hero__bg img,
+.txh-redesign .hero__bg video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.txh-redesign .hero__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg,
+      rgba(13, 13, 13, 0.55) 0%,
+      rgba(13, 13, 13, 0.35) 35%,
+      rgba(13, 13, 13, 0.85) 100%);
+}
+
+.txh-redesign .hero__inner {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: var(--section-py-hero);
+  padding-bottom: var(--space-15);
+}
+
+.txh-redesign .hero__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 760px;
+}
+
+.txh-redesign .hero .eyebrow {
+  color: var(--color-ink-white);
+}
+
+.txh-redesign .hero .eyebrow__icon {
+  color: var(--color-ink-white);
+}
+
+.txh-redesign .hero__title {
+  color: var(--color-ink-white);
+}
+
+.txh-redesign .hero__subtitle {
+  font-size: var(--text-body-lg);
+  line-height: var(--lh-body-lg);
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 640px;
+}
+
+.txh-redesign .hero__cta-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.txh-redesign .hero__divider {
+  position: relative;
+  z-index: 1;
+  background: var(--color-bg-page);
+  min-height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.txh-redesign .hero__arrow {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-circle);
+  background: var(--color-ink-primary);
+  color: var(--color-ink-white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
+}
+
+@media (max-width: 768px) {
+  .txh-redesign .hero { min-height: 88vh; }
+  .txh-redesign .hero__subtitle { font-size: 16px; line-height: 22px; }
+}
+
+
+/* --- Footer ------------------------------------------------------- */
+.txh-redesign .footer {
+  background: var(--color-bg-page);
+  padding-top: var(--space-10);
+}
+
+.txh-redesign .footer__top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-4);
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.txh-redesign .footer__nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  padding-top: var(--space-10);
+  padding-bottom: var(--space-5);
+  font-size: var(--text-body);
+  color: var(--color-ink-body);
+}
+
+.txh-redesign .footer__nav a {
+  color: var(--color-ink-body);
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.txh-redesign .footer__nav a:hover { opacity: 0.6; }
+
+.txh-redesign .footer__sep {
+  color: var(--color-ink-body);
+  opacity: 0.5;
+}
+
+.txh-redesign .footer__credits {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-5) 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+}
+
+.txh-redesign .footer__socials {
+  display: inline-flex;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.txh-redesign .footer__socials a {
+  color: var(--color-ink-primary);
+  display: inline-flex;
+}
+
+@media (max-width: 768px) {
+  .txh-redesign .footer__credits {
+    flex-direction: column;
+    gap: var(--space-3);
+    text-align: center;
+  }
+}
+
+
+/* --- Utility: hidden ---------------------------------------------- */
+.txh-redesign .hidden { display: none !important; }
+
+
+/* --- Loader (auth pages) ------------------------------------------ */
+.txh-redesign #loader {
+  position: fixed;
+  inset: 0;
+  z-index: 13000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(13, 13, 13, 0.55);
+  opacity: 1;
+  transition: opacity 0.3s var(--ease-out);
+}
+.txh-redesign #loader.hidden { display: none !important; }
+.txh-redesign #loader.fade-out { opacity: 0; pointer-events: none; }
+
+.txh-redesign .line-loader {
+  display: flex;
+  gap: 4px;
+  height: 40px;
+  align-items: flex-end;
+}
+.txh-redesign .line-loader div {
+  width: 6px;
+  height: 10px;
+  background: #FFFFFF;
+  border-radius: 4px;
+  animation: txhWave 1s ease-in-out infinite;
+}
+.txh-redesign .line-loader div:nth-child(2) { animation-delay: 0.1s; }
+.txh-redesign .line-loader div:nth-child(3) { animation-delay: 0.2s; }
+.txh-redesign .line-loader div:nth-child(4) { animation-delay: 0.3s; }
+.txh-redesign .line-loader div:nth-child(5) { animation-delay: 0.4s; }
+
+@keyframes txhWave {
+  0%, 100% { height: 10px; opacity: 0.6; }
+  50% { height: 30px; opacity: 1; }
+}
+
+
+/* --- Toast (auth pages) — on-brand dark card + accent bar --------- */
+.txh-redesign #toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 13001;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.txh-redesign .toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 280px;
+  max-width: 360px;
+  padding: 14px 18px 14px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  background: #1A1A1A;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+  pointer-events: auto;
+  animation: txhToastIn 0.4s ease forwards, txhToastOut 0.4s ease 3.6s forwards;
+}
+.txh-redesign .toast::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+}
+.txh-redesign .toast.success::before { background: #386641; }
+.txh-redesign .toast.success .iconify { color: #6FBF73; }
+.txh-redesign .toast.error::before { background: #CC0000; }
+.txh-redesign .toast.error .iconify { color: #F26464; }
+.txh-redesign .toast.info::before { background: #FFFFFF; }
+.txh-redesign .toast.info .iconify { color: #FFFFFF; }
+.txh-redesign .toast.warning::before { background: #E8A33D; }
+.txh-redesign .toast.warning .iconify { color: #E8A33D; }
+.txh-redesign .toast .iconify { font-size: 22px; flex-shrink: 0; }
+.txh-redesign .toast-message { flex: 1; line-height: 1.4; }
+
+@keyframes txhToastIn {
+  from { opacity: 0; transform: translateY(-15px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes txhToastOut {
+  to { opacity: 0; transform: translateY(-15px); }
+}
+
+
+/* =================================================================
+ * Plan cards (public catalog) — defined plan/pricing cards
+ * Tokens only; sits on .section--warm / --white.
+ * ================================================================= */
+.txh-redesign .plan-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background: var(--color-surface-card);
+  border: 1px solid rgba(26, 26, 26, 0.10);
+  border-radius: var(--radius-card);
+  height: 100%;
+}
+.txh-redesign .plan-card__tier {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+.txh-redesign .plan-card__roi {
+  font-family: var(--font-display);
+  font-size: var(--text-stat);
+  line-height: 1;
+  font-weight: var(--fw-regular);
+  color: var(--color-ink-primary);
+  overflow-wrap: anywhere;
+}
+.txh-redesign .plan-card__roi small {
+  font-size: var(--text-h3);
+  color: var(--color-ink-muted);
+}
+.txh-redesign .plan-card__name {
+  font-size: var(--text-body-lg);
+  font-weight: var(--fw-medium);
+  color: var(--color-ink-primary);
+}
+.txh-redesign .plan-card__meta {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-3) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border-top: 1px solid rgba(26, 26, 26, 0.08);
+}
+.txh-redesign .plan-card__meta li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+}
+.txh-redesign .plan-card__meta li strong {
+  color: var(--color-ink-primary);
+  font-weight: var(--fw-medium);
+  text-align: right;
+}
+.txh-redesign .plan-card__summary {
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--color-ink-muted);
+  margin-top: auto;
+}
+
+/* Product variant (X-Rewards) */
+.txh-redesign .plan-card--product {
+  padding: 0;
+  overflow: hidden;
+}
+.txh-redesign .plan-card--product .plan-card__media {
+  aspect-ratio: 470 / 300;
+  background: var(--color-surface-warm);
+}
+.txh-redesign .plan-card--product .plan-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.txh-redesign .plan-card--product .plan-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5);
+}
+.txh-redesign .plan-card__badge {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  color: var(--color-accent-red);
+  border: 1px solid var(--color-accent-red);
+  border-radius: var(--radius-pill);
+  padding: 2px 10px;
+}
+.txh-redesign .plan-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-top: auto;
+}
+.txh-redesign .plan-card__price-member {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  color: var(--color-ink-primary);
+}
+.txh-redesign .plan-card__price-retail {
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+  text-decoration: line-through;
+}

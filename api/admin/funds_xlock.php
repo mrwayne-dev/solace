@@ -1,5 +1,5 @@
 <?php
-// FILE: /api/admin/funds_holdlock.php
+// FILE: /api/admin/funds_xlock.php
 // ============================================================
 // PURPOSE: Manage HoldLock Savings Plans and Active Entries (Admin View)
 // Handles: Metrics, Plan CRUD, Active HoldLock List (Paginated), Manual Payout
@@ -35,7 +35,7 @@ function executeQuery($pdo, $sql, $params = []) {
         return $stmt;
     } catch (PDOException $e) {
         // Log the actual error for debugging
-        error_log("Database Error in admin/funds_holdlock.php: " . $e->getMessage() . " | SQL: " . $sql);
+        error_log("Database Error in admin/funds_xlock.php: " . $e->getMessage() . " | SQL: " . $sql);
         return false;
     }
 }

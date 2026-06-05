@@ -214,7 +214,8 @@ try {
     }
 
 } catch (Exception $e) {
+    error_log('admin/email.php: ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()]);
+    echo json_encode(['status' => 'error', 'message' => 'Server error while sending email.']);
 }
 ?>

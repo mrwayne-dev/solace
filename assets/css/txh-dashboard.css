@@ -1,0 +1,959 @@
+/* =================================================================
+ * TitanXHoldings Dashboard Re-skin (token bridge)
+ * Adapts the Crestmark design system onto the existing dashboard
+ * component framework WITHOUT changing any DOM the JS depends on.
+ *
+ * Activation: add `txh-dash` to the dashboard <body> class, e.g.
+ *   <body class="counter-scroll txh-dash">
+ *
+ * Strategy:
+ *   1. Override dashboard.css :root variables (re-skins ~65% that
+ *      reads from var()).
+ *   2. Explicit overrides for hardcoded components (wallet variants,
+ *      buttons, sidebar, cards, tables).
+ *   3. General Sans font + no-shadow + 8px radii per spec.
+ * ================================================================= */
+
+@import url('https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+
+/* =================================================================
+ * 1. VARIABLE OVERRIDES — re-skins everything driven by var()
+ * ================================================================= */
+body.txh-dash {
+  --White:        #ffffff;
+  --Primary:      #1A1A1A;   /* brand ink — buttons, sidebar active, text-Primary */
+  --Primary-Hover:#2A2A2A;
+  --Accent:       #F8F7F5;   /* warm cream (was blue-grey) */
+  --Bg:           #F8F7F5;   /* warm cream (was beige) */
+  --Surface:      #ffffff;
+  --Surface-Alt:  #F8F7F5;
+  --Black:        #1A1A1A;
+  --GrayDark:     #636363;   /* muted text */
+  --Gray:         #8a8a8a;
+  --Gainsboro:    #F8F7F5;
+  --LightGray:    rgba(26, 26, 26, 0.08);
+  --Green:        #386641;   /* KEEP — status-success only (active badges) */
+
+  /* Design-system aliases so dashboard markup can opt into them */
+  --txh-accent-red: #CC0000;
+  --txh-radius-card: 8px;
+  --txh-radius-pill: 30px;
+
+  /* Font */
+  font-family: 'General Sans', 'Host Grotesk', system-ui, -apple-system, sans-serif;
+  background: #F8F7F5;
+}
+
+body.txh-dash h1,
+body.txh-dash h2,
+body.txh-dash h3,
+body.txh-dash h4,
+body.txh-dash h5,
+body.txh-dash h6 {
+  font-family: 'General Sans', 'Host Grotesk', system-ui, sans-serif;
+  letter-spacing: -0.3px;
+}
+
+
+/* =================================================================
+ * 2. KILL SHADOWS — depth via contrast (spec A.4)
+ * ================================================================= */
+body.txh-dash .wg-box,
+body.txh-dash .wallet-card,
+body.txh-dash .impact-card,
+body.txh-dash .plan-card,
+body.txh-dash .card-details,
+body.txh-dash .tf-button,
+body.txh-dash .box-icon,
+body.txh-dash .modal-content,
+body.txh-dash .dropdown-menu {
+  box-shadow: none !important;
+}
+
+body.txh-dash .wallet-card:hover {
+  transform: none;
+  box-shadow: none !important;
+}
+
+
+/* =================================================================
+ * 3. CARDS — 8px radius, contrast-based depth
+ * ================================================================= */
+body.txh-dash .wg-box {
+  border-radius: var(--txh-radius-card);
+  border: 1px solid var(--LightGray);
+  background: var(--Surface);
+}
+
+body.txh-dash .wallet-card {
+  border-radius: var(--txh-radius-card);
+  /* !important defeats the legacy short-stat-card rules in dashboard.css
+     (.wallet-card { height:140px!important } + a 130px!important mobile clamp)
+     which otherwise crush the hero on mobile and push its metrics outside. */
+  height: auto !important;
+  min-height: 170px;
+}
+
+/* Main wallet card stays dark/ink (Crestmark's single dark surface) */
+body.txh-dash .wallet-main {
+  background: var(--Primary) !important;
+  color: var(--White);
+}
+
+/* Secondary wallet cards → white with warm border + ink text */
+body.txh-dash .wallet-donations,
+body.txh-dash .wallet-investments,
+body.txh-dash .wallet-holdlock,
+body.txh-dash .wallet-aum,
+body.txh-dash .wallet-xlock,
+body.txh-dash .wallet-green,
+body.txh-dash .wallet-accent,
+body.txh-dash .wallet-purple {
+  background: var(--Surface) !important;
+  color: var(--Black) !important;
+  border: 1px solid var(--LightGray);
+}
+
+/* Card icons: muted on light cards, white on the dark main card */
+body.txh-dash .wallet-donations .iconify,
+body.txh-dash .wallet-investments .iconify,
+body.txh-dash .wallet-holdlock .iconify,
+body.txh-dash .wallet-aum .iconify,
+body.txh-dash .wallet-xlock .iconify,
+body.txh-dash .wallet-green .iconify,
+body.txh-dash .wallet-accent .iconify,
+body.txh-dash .wallet-purple .iconify {
+  color: var(--txh-accent-red);
+}
+body.txh-dash .wallet-main .iconify {
+  color: var(--White);
+}
+
+body.txh-dash .impact-card,
+body.txh-dash .plan-card {
+  border-radius: var(--txh-radius-card);
+  border: 1px solid var(--LightGray);
+  background: var(--Surface);
+}
+
+
+/* =================================================================
+ * 4. BUTTONS — dark pill primary, clean secondary
+ * ================================================================= */
+body.txh-dash .tf-button {
+  border-radius: var(--txh-radius-pill);
+  font-weight: 500;
+  letter-spacing: 0;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+body.txh-dash .tf-button.bg-Primary,
+body.txh-dash .tf-button.bg-Green {
+  background: var(--Primary) !important;
+  color: var(--White) !important;
+}
+body.txh-dash .tf-button.bg-Primary:hover,
+body.txh-dash .tf-button.bg-Green:hover {
+  background: var(--Primary-Hover) !important;
+}
+
+/* Destructive keeps red */
+body.txh-dash .tf-button.bg-Red {
+  background: var(--txh-accent-red) !important;
+  color: var(--White) !important;
+}
+
+/* Subtle / accent action buttons → light pill */
+body.txh-dash .tf-button.bg-Accent,
+body.txh-dash .tf-button.bg-GrayLight {
+  background: var(--Surface-Alt) !important;
+  color: var(--Black) !important;
+}
+
+/* Quick-action buttons on the dashboard overview */
+body.txh-dash .quick-action-btn.bg-Primary {
+  background: var(--Primary) !important;
+  color: var(--White) !important;
+  border-radius: var(--txh-radius-card);
+}
+
+
+/* =================================================================
+ * 5. STATUS BADGES — success stays green, others mapped
+ * ================================================================= */
+body.txh-dash .box-status {
+  border-radius: 999px;
+  font-weight: 500;
+}
+body.txh-dash .box-status.bg-Green  { background-color: var(--Green) !important; }
+body.txh-dash .box-status.bg-Yellow { background-color: #F59E0B !important; }
+body.txh-dash .box-status.bg-Red    { background-color: var(--txh-accent-red) !important; }
+body.txh-dash .box-status.bg-Primary{ background-color: var(--Primary) !important; }
+body.txh-dash .box-status.bg-Gray   { background-color: var(--Gray) !important; }
+
+
+/* =================================================================
+ * 6. SIDEBAR — white surface, ink active state, red accent
+ * ================================================================= */
+body.txh-dash .section-menu-left {
+  background: var(--White);
+  border-right: 1px solid var(--LightGray);
+}
+
+body.txh-dash .section-menu-left .box-logo {
+  border-bottom: 1px solid var(--LightGray);
+}
+
+/* Active top-level item — ink text + red accent bar */
+body.txh-dash .section-menu-left .menu-item.active > a .text,
+body.txh-dash .section-menu-left .menu-item.active .menu-item-button .text,
+body.txh-dash .section-menu-left .menu-item .menu-item-button.active .text {
+  color: var(--Primary);
+  font-weight: 600;
+}
+
+body.txh-dash .section-menu-left .menu-item.active > a .iconify,
+body.txh-dash .section-menu-left .menu-item .menu-item-button.active .iconify {
+  color: var(--txh-accent-red);
+}
+
+body.txh-dash .section-menu-left .sub-menu-item.active a .text {
+  color: var(--Primary);
+  font-weight: 600;
+}
+
+/* Active accent bar (::before / ::after vary by build — paint red) */
+body.txh-dash .section-menu-left .menu-item .menu-item-button.active::before,
+body.txh-dash .section-menu-left .menu-item.has-children.active::after {
+  background: var(--txh-accent-red) !important;
+}
+
+
+/* =================================================================
+ * 7. HEADER / TOPBAR
+ * ================================================================= */
+body.txh-dash .header-dashboard {
+  background: var(--White);
+  border-bottom: 1px solid var(--LightGray);
+}
+
+body.txh-dash .header-dashboard h6 {
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+/* Topbar account chip — truncate long usernames instead of overflowing.
+   Width shrinks to fit short names, caps on long ones (and narrow screens). */
+body.txh-dash .header-dashboard .wg-user {
+  width: auto;
+  max-width: min(200px, 42vw);
+}
+body.txh-dash .header-dashboard .wg-user .content {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+body.txh-dash .header-dashboard .wg-user .content > span {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* =================================================================
+ * 8. TABLES — clean rows, ink headers
+ * ================================================================= */
+body.txh-dash .list-transaction-head.bg-Primary {
+  background: var(--Primary) !important;
+  border-radius: var(--txh-radius-card) var(--txh-radius-card) 0 0;
+}
+
+body.txh-dash .tf-table-item {
+  border-bottom: 1px solid var(--LightGray);
+}
+
+body.txh-dash .table-list-transaction {
+  border-radius: var(--txh-radius-card);
+}
+
+
+/* =================================================================
+ * 9. FORM CONTROLS — warm-cream inputs
+ * ================================================================= */
+body.txh-dash .form-control,
+body.txh-dash .form-select,
+body.txh-dash .custom-select,
+body.txh-dash .wallet-input {
+  border-radius: var(--txh-radius-card);
+  border: 1px solid var(--LightGray);
+  background: var(--Surface-Alt);
+}
+
+body.txh-dash .form-control:focus,
+body.txh-dash .form-select:focus,
+body.txh-dash .wallet-input:focus {
+  border-color: var(--Primary);
+  background: var(--White);
+  box-shadow: none;
+}
+
+body.txh-dash .readonly-input {
+  background: var(--Surface-Alt);
+}
+
+
+/* =================================================================
+ * 10. MODALS — 8px radius, clean header
+ * ================================================================= */
+/* Overlay — deeper dim + blur for a focused, premium modal */
+body.txh-dash .modal-overlay {
+  background: rgba(13, 13, 13, 0.55);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+/* Card — clean, rounded, softly elevated (re-adds the shadow killed in §2) */
+body.txh-dash .modal-content {
+  border-radius: 14px;
+  border: 1px solid var(--LightGray);
+  box-shadow: 0 24px 60px -20px rgba(26, 26, 26, 0.35) !important;
+  padding: 24px 26px;
+}
+
+/* Header — title + divider + ghost close button */
+body.txh-dash .modal-header {
+  align-items: flex-start;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--LightGray);
+}
+body.txh-dash .modal-header h2 {
+  font-family: 'General Sans', 'Host Grotesk', system-ui, sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: var(--Primary);
+}
+
+/* The × close icon in the header — circular ghost, ink hover (not HRC green).
+   Scoped to the header so footer "Cancel" buttons (.button-close-modal.tf-button)
+   keep their own styling. */
+body.txh-dash .modal-header .modal-close,
+body.txh-dash .modal-header .button-close-modal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--Gray);
+  background: transparent;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+body.txh-dash .modal-header .modal-close:hover,
+body.txh-dash .modal-header .button-close-modal:hover {
+  background: var(--LightGray);
+  color: var(--Primary);
+}
+body.txh-dash .modal-header .modal-close:focus {
+  outline: 2px solid rgba(204, 0, 0, 0.35);
+}
+
+/* Inputs — warm-cream field + red focus ring (matches the dashboard form skin) */
+body.txh-dash .modal-body label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--Primary);
+}
+body.txh-dash .modal-body input,
+body.txh-dash .modal-body select,
+body.txh-dash .modal-body textarea {
+  border-radius: 10px;
+  background: var(--Surface-Alt);
+  border: 1px solid var(--LightGray);
+  color: var(--Primary);
+  font-family: inherit;
+  font-size: 14px;
+}
+body.txh-dash .modal-body input:focus,
+body.txh-dash .modal-body select:focus,
+body.txh-dash .modal-body textarea:focus {
+  border-color: var(--txh-accent-red);
+  box-shadow: 0 0 0 3px rgba(204, 0, 0, 0.12);
+}
+
+/* Primary action — pill, ink → red on hover (site CTA pattern) */
+body.txh-dash .modal-confirm-btn {
+  border-radius: var(--txh-radius-pill);
+  background: var(--Primary);
+  color: var(--White);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 16px;
+  transition: background 0.2s ease;
+}
+body.txh-dash .modal-confirm-btn:hover {
+  background: var(--txh-accent-red);
+}
+
+
+/* =================================================================
+ * 11. TEXT UTILITY REMAPS
+ * ================================================================= */
+body.txh-dash .text-Primary { color: var(--Primary) !important; }
+body.txh-dash .text-Green   { color: var(--Green) !important; }
+body.txh-dash .text-Gray    { color: var(--GrayDark) !important; }
+
+
+/* =================================================================
+ * 12. WALLET PAGE — portfolio hero, allocations, activity
+ *     (reuses wallet-card/wg-box/tf-button; tokens only)
+ * ================================================================= */
+
+/* --- Portfolio hero (dark wallet-main) --- */
+body.txh-dash .wallet-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 28px;
+  min-height: 240px;
+}
+body.txh-dash .wallet-hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+body.txh-dash .wallet-hero-top .box-status {
+  border-radius: var(--txh-radius-pill);
+  padding: 4px 12px;
+  color: var(--White);
+  flex-shrink: 0;
+}
+body.txh-dash .wallet-hero-balance { min-width: 0; max-width: 100%; }
+body.txh-dash .wallet-hero-balance h2 {
+  font-size: clamp(26px, 7vw, 44px);
+  line-height: 1.05;
+  margin: 0;
+  color: var(--White);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  max-width: 100%;
+}
+body.txh-dash .wallet-hero-change {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+  color: #9FD3A6;            /* light green reads on dark ink */
+}
+body.txh-dash .wallet-hero-substats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 40px;
+  padding-top: 18px;
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+body.txh-dash .wallet-substat { min-width: 0; }
+body.txh-dash .wallet-substat .f12-regular { color: rgba(255, 255, 255, 0.6); }
+body.txh-dash .wallet-substat .f14-bold { margin-top: 4px; font-size: 18px; }
+body.txh-dash .wallet-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+body.txh-dash .wallet-hero-actions .tf-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+}
+/* Ghost pills on the dark card */
+body.txh-dash .wallet-hero-actions .tf-button.bg-Accent {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: var(--White) !important;
+}
+body.txh-dash .wallet-hero-actions .tf-button.bg-Accent:hover {
+  background: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* --- Lifetime activity stat list --- */
+body.txh-dash .wallet-lifetime { padding: 24px; }
+body.txh-dash .h-full { height: 100%; }
+body.txh-dash .wallet-stat-list { list-style: none; margin: 0; padding: 0; }
+body.txh-dash .wallet-stat-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--LightGray);
+}
+body.txh-dash .wallet-stat-list li:last-child { border-bottom: 0; }
+body.txh-dash .wallet-stat-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+body.txh-dash .wallet-stat-label .iconify { color: var(--Gray); }
+
+/* --- Portfolio allocation list --- */
+body.txh-dash .wallet-alloc-list { list-style: none; margin: 0; padding: 0; }
+body.txh-dash .wallet-alloc-item + .wallet-alloc-item { border-top: 1px solid var(--LightGray); }
+body.txh-dash .wallet-alloc-item > a {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 8px;
+  border-radius: var(--txh-radius-card);
+  transition: background-color 0.2s ease;
+}
+body.txh-dash .wallet-alloc-item > a:hover { background: var(--Surface-Alt); }
+body.txh-dash .wallet-alloc-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: var(--txh-radius-card);
+  background: var(--Surface-Alt);
+  color: var(--Primary);
+  font-size: 22px;
+}
+body.txh-dash .wallet-alloc-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+body.txh-dash .wallet-alloc-value { white-space: nowrap; }
+body.txh-dash .wallet-alloc-arrow { color: var(--Gray); flex-shrink: 0; }
+
+/* --- Activity empty state --- */
+body.txh-dash .wallet-activity-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 40px 20px;
+  color: var(--Gray);
+}
+body.txh-dash .wallet-activity-empty .iconify { color: var(--Gray); margin-bottom: 4px; }
+
+/* --- Responsive --- */
+@media (max-width: 1200px) {
+  body.txh-dash .wallet-hero-balance h2 { font-size: 38px; }
+}
+@media (max-width: 768px) {
+  body.txh-dash .wallet-hero { padding: 22px; min-height: 0; }
+  body.txh-dash .wallet-hero-balance h2 { font-size: 32px; }
+  body.txh-dash .wallet-hero-substats { gap: 24px; flex-wrap: wrap; }
+  body.txh-dash .wallet-hero-actions .tf-button { flex: 1 1 auto; justify-content: center; }
+  body.txh-dash .wallet-alloc-item > a { gap: 12px; padding: 14px 4px; }
+  body.txh-dash .wallet-alloc-icon { width: 38px; height: 38px; font-size: 19px; }
+}
+@media (max-width: 480px) {
+  body.txh-dash .wallet-hero-substats > .wallet-substat { flex: 1 1 100%; }
+}
+
+
+/* =================================================================
+ * 13. PLAN DETAIL PANEL — dashboard product pages (dropdown UX)
+ * ================================================================= */
+body.txh-dash .plan-detail-panel { padding: 24px; height: 100%; }
+body.txh-dash .plan-detail-panel .pdp-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+body.txh-dash .plan-detail-panel .pdp-name { font-size: 18px; font-weight: 600; color: var(--Primary); }
+body.txh-dash .plan-detail-panel .pdp-roi {
+  font-family: 'General Sans', sans-serif;
+  font-size: 40px;
+  line-height: 1;
+  color: var(--Primary);
+  margin-bottom: 4px;
+}
+body.txh-dash .plan-detail-panel .pdp-roi small { font-size: 16px; color: var(--Gray); }
+body.txh-dash .plan-detail-panel .pdp-roi-label { font-size: 12px; color: var(--Gray); margin-bottom: 18px; }
+body.txh-dash .plan-detail-panel .pdp-meta { list-style: none; margin: 0 0 16px; padding: 0; }
+body.txh-dash .plan-detail-panel .pdp-meta li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--LightGray);
+  font-size: 14px;
+}
+body.txh-dash .plan-detail-panel .pdp-meta li:last-child { border-bottom: 0; }
+body.txh-dash .plan-detail-panel .pdp-meta .k { color: var(--Gray); }
+body.txh-dash .plan-detail-panel .pdp-meta .v { color: var(--Primary); font-weight: 600; text-align: right; }
+body.txh-dash .plan-detail-panel .pdp-summary { font-size: 13px; line-height: 1.55; color: var(--GrayDark); }
+body.txh-dash .plan-detail-panel .pdp-badge {
+  display: inline-block;
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: var(--txh-radius-pill);
+  background: var(--Surface-Alt);
+  color: var(--Primary);
+  white-space: nowrap;
+}
+/* Empty / placeholder state */
+body.txh-dash .plan-detail-panel .pdp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+  min-height: 220px;
+  color: var(--Gray);
+}
+body.txh-dash .plan-detail-panel .pdp-empty .iconify { color: var(--Gray); }
+
+
+/* =================================================================
+ * 14. PROFILE PAGE — avatar card
+ * ================================================================= */
+body.txh-dash .profile-avatar-card { padding: 24px; text-align: center; }
+body.txh-dash .profile-avatar-wrap {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 20px;
+  border-radius: var(--txh-radius-circle, 50%);
+  overflow: hidden;
+  background: var(--Surface-Alt);
+  border: 1px solid var(--LightGray);
+}
+body.txh-dash .profile-avatar-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+body.txh-dash .profile-avatar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+body.txh-dash .profile-avatar-actions .tf-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+body.txh-dash .profile-avatar-actions .tf-button[disabled] { opacity: 0.5; cursor: not-allowed; }
+body.txh-dash .profile-avatar-hint { margin-top: 12px; }
+
+
+/* =================================================================
+ * 15. SCROLLABLE TABLE — real <table>, horizontal scroll on mobile
+ *     (used by the transactions page; JS appends <tr><td> rows)
+ * ================================================================= */
+/* Containment: the dashboard content chain uses flex (and the layout-wrap clips
+   overflow), so flex items default to min-width:auto and let a wide table push
+   the column past the viewport — clipping the right-hand columns. Forcing
+   min-width:0 / max-width:100% lets the scroll container below actually scroll. */
+body.txh-dash .section-content-right,
+body.txh-dash .main-content,
+body.txh-dash .main-content-inner,
+body.txh-dash .main-content-wrap,
+body.txh-dash .tf-container {
+  min-width: 0;
+  max-width: 100%;
+}
+
+body.txh-dash .txh-scroll-table {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--LightGray);
+  border-radius: var(--txh-radius-card);
+}
+body.txh-dash .txh-table {
+  /* size to content (no column compression → no nowrap overlap on mobile),
+     but never narrower than the scroll wrapper. The wrapper's overflow-x:auto
+     then provides horizontal scroll when content is wider than the screen.
+     !important defeats bootstrap's .w-100{width:100%!important}. */
+  width: max-content !important;
+  min-width: 100%;
+  border-collapse: collapse;
+}
+body.txh-dash .txh-table thead th {
+  text-align: left;
+  background: var(--Primary);
+  color: var(--White);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 12px 16px;
+  white-space: nowrap;
+}
+/* Centered empty/placeholder rows span the full table cleanly */
+body.txh-dash .txh-table td.txh-empty { text-align: center; color: var(--Gray); padding: 28px 16px; }
+body.txh-dash .txh-table tbody tr { background: transparent; }
+body.txh-dash .txh-table tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--LightGray);
+  font-size: 13px;
+  color: var(--Primary);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+body.txh-dash .txh-table tbody tr:last-child td { border-bottom: 0; }
+body.txh-dash .txh-table .box-status { display: inline-block; }
+/* Safety net: neutralise the template div-grid row styling (.tf-table-item) if it
+   ever lands on a real <table> row — its position:relative/::before bar shifts the
+   whole row one column to the right in a real table. */
+body.txh-dash .txh-table tbody tr.tf-table-item {
+  position: static;
+  background: transparent;
+  border-radius: 0;
+}
+body.txh-dash .txh-table tbody tr.tf-table-item::before { content: none; display: none; }
+
+
+/* =================================================================
+ * 16. X-REWARDS — member promo banner + modern product catalogue
+ * ================================================================= */
+
+/* --- Promo banner (replaces the old inline Tesla strip) --- */
+body.txh-dash .reward-promo {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 26px 30px;
+  border-radius: var(--txh-radius-card);
+  background: var(--Primary);          /* ink base */
+  color: #fff;
+}
+body.txh-dash .reward-promo::before {   /* soft red brand glow */
+  content: "";
+  position: absolute;
+  right: -90px;
+  top: -110px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(204,0,0,0.55) 0%, rgba(204,0,0,0) 70%);
+  pointer-events: none;
+}
+body.txh-dash .reward-promo__main {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+}
+body.txh-dash .reward-promo__icon {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.10);
+  font-size: 30px;
+  color: #fff;
+}
+body.txh-dash .reward-promo__eyebrow {
+  margin: 0 0 5px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+}
+body.txh-dash .reward-promo__title {
+  margin: 0 0 4px;
+  color: #fff;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+body.txh-dash .reward-promo__body {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(255,255,255,0.78);
+  max-width: 540px;
+}
+body.txh-dash .reward-promo__badge {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--txh-accent-red);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: var(--txh-radius-pill);
+}
+
+/* --- Section header --- */
+body.txh-dash .reward-section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+body.txh-dash .reward-eyebrow {
+  margin: 0 0 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--txh-accent-red);
+}
+body.txh-dash .reward-section-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--Primary);
+}
+body.txh-dash .reward-section-note {
+  font-size: 13px;
+  color: var(--GrayDark);
+}
+
+/* --- Product grid + cards --- */
+body.txh-dash .reward-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+body.txh-dash .reward-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--Surface);
+  border: 1px solid var(--LightGray);
+  border-radius: var(--txh-radius-card);
+  overflow: hidden;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+body.txh-dash .reward-card:hover {
+  border-color: rgba(26,26,26,0.20);
+  transform: translateY(-2px);
+}
+body.txh-dash .reward-card__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: var(--Surface-Alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+body.txh-dash .reward-card__media img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+body.txh-dash .reward-card__badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--txh-accent-red);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  padding: 4px 10px;
+  border-radius: var(--txh-radius-pill);
+}
+body.txh-dash .reward-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  padding: 16px;
+}
+body.txh-dash .reward-card__name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--Primary);
+}
+body.txh-dash .reward-card__desc {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--GrayDark);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+body.txh-dash .reward-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: auto;
+}
+body.txh-dash .reward-card__price-now {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--txh-accent-red);
+}
+body.txh-dash .reward-card__price-was {
+  font-size: 13px;
+  color: var(--Gray);
+  text-decoration: line-through;
+}
+body.txh-dash .reward-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--Gray);
+}
+body.txh-dash .reward-card__stock-low { color: var(--txh-accent-red); font-weight: 600; }
+body.txh-dash .reward-card__btn {
+  width: 100%;
+  border: 0;
+  cursor: pointer;
+  background: var(--Primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 11px;
+  border-radius: var(--txh-radius-pill);
+  transition: background 0.2s ease;
+}
+body.txh-dash .reward-card__btn:hover { background: var(--txh-accent-red); }
+body.txh-dash .reward-card__btn:disabled {
+  background: var(--LightGray);
+  color: var(--Gray);
+  cursor: not-allowed;
+}
+body.txh-dash .reward-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--Gray);
+  font-size: 14px;
+}

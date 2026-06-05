@@ -1,111 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-        <!-- Meta -->
-    <meta charset="UTF-8">
-    <meta name="description" content="HealthRunCare Charity - Support health initiatives through donations and community contributions.">
-    <meta name="author" content="HealthRunCare">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://healthruncare.com/login">
-    <title>HealthRunCare – Login</title>
+<?php
+$page_title = 'Reset your password | TitanXHoldings';
+$page_description = 'Reset your TitanXHoldings account password securely. Enter your email to receive a one-time reset code.';
+$page_path = '/forgotpassword';
+$nav_variant = 'solid';
+include __DIR__ . '/_partials/head.php';
+?>
+<body class="txh-redesign">
 
-    <!-- Preload + Apply (critical CSS) -->
-    <link rel="preload" href="../../assets/css/bootstrap.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="../../assets/css/dashboard.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="../../assets/css/main.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="../../assets/icon/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<?php include __DIR__ . '/_partials/navbar.php'; ?>
 
-    <!-- Load Non-critical CSS Normally -->
-    <link rel="stylesheet" href="../../assets/css/animation.min.css">
-    <link rel="stylesheet" href="../../assets/css/animation.css">
-    <link rel="stylesheet" href="../../assets/css/bootstrap-select.min.css">
-    <link rel="stylesheet" href="../../assets/fonts/font.css">
-    <link rel="stylesheet" href="../../assets/icon/style.css">
+<main class="auth-page">
+  <div class="container">
+    <div class="form-card">
+      <div class="form-card__header">
+        <p class="eyebrow">
+          <span class="eyebrow__icon"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg></span>
+          Recovery
+        </p>
+        <h1>Reset your password</h1>
+        <p>Enter your registered email and we'll send a one-time code.</p>
+      </div>
 
-    <!-- Fallback for browsers without preload support -->
-    <noscript>
-        <link rel="stylesheet" href="../../assets/css/bootstrap.css">
-        <link rel="stylesheet" href="../../assets/css/dashboard.css">
-        <link rel="stylesheet" href="../../assets/css/main.css">
-    </noscript>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="../../assets/favicon/favicon-32x32.png" sizes="32x32">
-    <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
-    <meta name="apple-mobile-web-app-title" content="HRC">
-    <link rel="manifest" href="../../assets/favicon/site.webmanifest">
-
-</head>
-
-<body>
-<div id="wrapper">
-    <div id="page">
-        <div class="sign-in-wrap">
-            <div class="sign-in-box">
-                <!-- LEFT SIDE -->
-                <div class="left">
-                    <div class="content">
-                        <h3 class="heading text-Primary mb-8 text-center">Forgot Password?</h3>
-                        <div class="sub f14-regular text-GrayDark mb-24 text-center">
-                            Enter your registered email and we’ll send an OTP to reset your password.
-                        </div>
-
-                        <div class="sign-in-inner">
-                            <!-- STEP 1: Enter Email -->
-                            <form id="forgot-step1" class="auth-form flex flex-column gap24" autocomplete="off">
-                                <fieldset>
-                                    <div class="f14-regular mb-6">Email Address</div>
-                                    <input id="forgot-email" class="form-control" type="email" placeholder="you@example.com" required>
-                                </fieldset>
-                                <button type="submit" class="tf-button style-1 w-100 bg-Primary text-White">Send OTP</button>
-                            </form>
-
-                            <!-- STEP 2: Enter OTP -->
-                            <form id="forgot-step2" class="auth-form hidden flex flex-column gap24" autocomplete="off">
-                                <fieldset>
-                                    <div class="f14-regular mb-6">Enter OTP</div>
-                                    <input id="otp" class="form-control" type="text" placeholder="Enter 6-digit code" maxlength="6" required>
-                                </fieldset>
-                                <button type="submit" class="tf-button style-1 w-100 bg-Primary text-White">Verify OTP</button>
-                            </form>
-
-                            <!-- STEP 3: Reset Password -->
-                            <form id="forgot-step3" class="auth-form hidden flex flex-column gap24" autocomplete="off">
-                                <fieldset>
-                                    <div class="f14-regular mb-6">New Password</div>
-                                    <input id="new_password" class="form-control" type="password" placeholder="Enter new password" required>
-                                </fieldset>
-                                <button type="submit" class="tf-button style-1 w-100 bg-Primary text-White">Reset Password</button>
-                            </form>
-
-                            <div class="f14-regular text-center mt-4">
-                                Remember your password? 
-                                <a href="/login" class="f14-bold text-Primary">Sign In</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- RIGHT SIDE -->
-                <div class="right">
-                    <img src="../../assets/images/forgotpasssword.png" alt="AI Health Illustration">
-                </div>
-            </div>
+      <!-- Step 1 — request OTP -->
+      <form id="forgot-step1" class="form-stack" autocomplete="off">
+        <div class="form-field">
+          <label class="form-field__label" for="forgot-email">Email address</label>
+          <input id="forgot-email" type="email" class="form-field__input" placeholder="you@example.com" required>
         </div>
+        <button type="submit" class="btn btn--primary" style="width: 100%;">Send code</button>
+      </form>
+
+      <!-- Step 2 — verify OTP -->
+      <form id="forgot-step2" class="form-stack hidden" autocomplete="off" style="margin-top: var(--space-5);">
+        <div class="form-field">
+          <label class="form-field__label" for="otp">Enter the 6-digit code</label>
+          <input id="otp" type="text" class="form-field__input" placeholder="••••••" maxlength="6" required>
+          <p class="form-field__hint">Check your inbox (and spam folder).</p>
+        </div>
+        <button type="submit" class="btn btn--primary" style="width: 100%;">Verify code</button>
+      </form>
+
+      <!-- Step 3 — set new password -->
+      <form id="forgot-step3" class="form-stack hidden" autocomplete="off" style="margin-top: var(--space-5);">
+        <div class="form-field">
+          <label class="form-field__label" for="new_password">New password</label>
+          <input id="new_password" type="password" class="form-field__input" placeholder="••••••••" required>
+          <p class="form-field__hint">Minimum 8 characters. Include a number or symbol.</p>
+        </div>
+        <button type="submit" class="btn btn--primary" style="width: 100%;">Reset password</button>
+      </form>
+
+      <div class="form-footer">
+        Remembered it? <a href="/login">Sign in</a>
+      </div>
     </div>
-</div>
+  </div>
+</main>
 
-<!-- Loader -->
-<div id="loader" class="hidden">
-    <div class="line-loader"><div></div><div></div><div></div><div></div><div></div></div>
-</div>
-
-<!-- Toast Notifications -->
 <div id="toast-container"></div>
+<div id="loader" class="hidden"><div class="line-loader"><div></div><div></div><div></div><div></div><div></div></div></div>
 
-<!-- Scripts -->
-<script src="../../assets/js/api.js" defer></script>
+<?php include __DIR__ . '/_partials/footer.php'; ?>
+
+<script src="<?= txh_asset('/assets/js/api.js') ?>" defer></script>
 </body>
 </html>

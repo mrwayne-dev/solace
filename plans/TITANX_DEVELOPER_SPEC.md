@@ -73,7 +73,8 @@ Update `config/env.php` to read `$_SERVER['TXH_ENV']`.
 
 ```sql
 CREATE DATABASE titanx_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
--- Import from updated schema file: dbschema/titanx_db.sql
+-- Import from the single creation script: dbschema/titanx_create.sql
+-- (it also CREATEs the database itself, so importing alone is enough)
 ```
 
 ### 2.2 Tables to drop (removed products)

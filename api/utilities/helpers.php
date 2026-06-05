@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// HELPER FUNCTIONS — HealthRunCare
+// HELPER FUNCTIONS — TitanXHoldings
 // ========================================
 
 /**
@@ -119,5 +119,63 @@ function getUserBrowser($userAgent) {
     }
 
     return trim("{$browser} {$version} on {$platform}");
+}
+
+// ============================================================
+// Brute-force mitigation: lightweight per-IP login throttle.
+// Records only FAILED attempts; throttles by IP (NOT by account)
+// so an attacker can't lock a victim out by spamming their email.
+// Fails OPEN on infra error — a rate-limiter must never self-DoS.
+// ============================================================
+function ensureLoginAttemptsTable($pdo) {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS login_attempts (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        ip VARCHAR(45) NOT NULL,
+        email VARCHAR(255) DEFAULT NULL,
+        attempted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        KEY idx_ip_time (ip, attempted_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+}
+
+function loginThrottleExceeded($pdo, $ip, $maxPerIp = 10, $windowMinutes = 15) {
+    try {
+        ensureLoginAttemptsTable($pdo);
+        $since = date('Y-m-d H:i:s', time() - ($windowMinutes * 60));
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM login_attempts WHERE ip = ? AND attempted_at > ?");
+        $stmt->execute([$ip, $since]);
+        return (int) $stmt->fetchColumn() >= $maxPerIp;
+    } catch (Throwable $e) {
+        error_log('loginThrottleExceeded error: ' . $e->getMessage());
+        return false; // fail open
+    }
+}
+
+function recordLoginFailure($pdo, $ip, $email = null) {
+    try {
+        ensureLoginAttemptsTable($pdo);
+        $stmt = $pdo->prepare("INSERT INTO login_attempts (ip, email, attempted_at) VALUES (?, ?, NOW())");
+        $stmt->execute([$ip, ($email !== '' ? $email : null)]);
+    } catch (Throwable $e) {
+        error_log('recordLoginFailure error: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Append a structured security event to logs/security.log (A09).
+ * Values are newline-stripped to prevent log forgery/injection (audit 11.3).
+ */
+function logSecurityEvent($event, array $context = []) {
+    try {
+        $logPath = __DIR__ . '/../../logs/security.log';
+        if (!is_dir(dirname($logPath))) @mkdir(dirname($logPath), 0775, true);
+        $clean = [];
+        foreach ($context as $k => $v) {
+            $clean[$k] = is_scalar($v) ? str_replace(["\r", "\n"], ' ', (string) $v) : json_encode($v);
+        }
+        $line = json_encode(['ts' => date('c'), 'event' => $event] + $clean, JSON_UNESCAPED_SLASHES);
+        @file_put_contents($logPath, $line . PHP_EOL, FILE_APPEND | LOCK_EX);
+    } catch (Throwable $e) {
+        error_log('logSecurityEvent error: ' . $e->getMessage());
+    }
 }
 ?>

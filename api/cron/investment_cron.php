@@ -1,10 +1,17 @@
 <?php
-file_put_contents(__DIR__ . '/investment_cron.log', "[" . date('Y-m-d H:i:s') . "] Cron started\n", FILE_APPEND);
+// Restrict execution to CLI or localhost — prevents unauthenticated web triggering
+// of financial batch processing (payouts/debits). Mirrors xgrid_cron.php.
+if (php_sapi_name() !== 'cli' && !in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1'], true)) {
+    http_response_code(403);
+    exit("Access Denied\n");
+}
+
+file_put_contents(__DIR__ . '/../../logs/investment_cron.log', "[" . date('Y-m-d H:i:s') . "] Cron started\n", FILE_APPEND);
 // ============================================================
 // FILE: /api/cron/investment_cron.php
 // PURPOSE: Weekly automated investment ROI updater & maturities handler
 // SCHEDULE: Run weekly (or daily) via CRON
-// AUTHOR: HealthRunCare Core
+// AUTHOR: TitanXHoldings Core
 // ============================================================
 
 // ------------------------------------------------------------
@@ -82,7 +89,7 @@ foreach ($investments as $inv) {
                 ->execute([$total_payout, $final_roi, $user_id]);
 
             // Insert payout transaction
-            $ref = 'HRC-MATURE-' . strtoupper(uniqid());
+            $ref = 'TXH-MATURE-' . strtoupper(uniqid());
             $details = json_encode(['investment_id' => $investment_id, 'payout' => $total_payout]);
             $pdo->prepare("INSERT INTO transactions (user_id, type, amount, reference, status, details, created_at) 
                 VALUES (?, 'investment', ?, ?, 'completed', ?, ?)")
@@ -133,7 +140,7 @@ foreach ($investments as $inv) {
             ->execute([$weekly_roi, $weekly_roi, $user_id]);
 
         // Insert transaction record
-        $ref = 'HRC-ROI-' . strtoupper(uniqid());
+        $ref = 'TXH-ROI-' . strtoupper(uniqid());
         $details = json_encode(['investment_id' => $investment_id, 'weekly_roi' => $weekly_roi]);
         $pdo->prepare("INSERT INTO transactions (user_id, type, amount, reference, status, details, created_at)
             VALUES (?, 'investment', ?, ?, 'completed', ?, ?)")
@@ -174,6 +181,6 @@ $summary = sprintf(
     $processedCount,
     $maturedCount
 );
-file_put_contents(__DIR__ . '/investment_cron.log', $summary . implode("\n", $log) . "\n\n", FILE_APPEND);
+file_put_contents(__DIR__ . '/../../logs/investment_cron.log', $summary . implode("\n", $log) . "\n\n", FILE_APPEND);
 
 echo $summary;

@@ -1,7 +1,7 @@
 <?php
 /**
  * ==========================================================
- * HealthRunCare — HoldLock Backend API (DYNAMIC VERSION)
+ * TitanXHoldings — HoldLock Backend API (DYNAMIC VERSION)
  * ==========================================================
  * Handles:
  *  - get_summary

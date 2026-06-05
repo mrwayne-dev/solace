@@ -1,7 +1,14 @@
 <?php
+// Restrict execution to CLI or localhost — prevents unauthenticated web triggering
+// of financial batch processing (payouts/debits). Mirrors xgrid_cron.php.
+if (php_sapi_name() !== 'cli' && !in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1'], true)) {
+    http_response_code(403);
+    exit("Access Denied\n");
+}
+
 /**
  * ======================================================
- * HealthRunCare — HoldLock CRON Handler (Final)
+ * TitanXHoldings — HoldLock CRON Handler (Final)
  * Purpose: Auto-matures locked funds, applies ROI, handles early unlock penalties,
  *          credits user wallets, and logs transactions.
  * ======================================================

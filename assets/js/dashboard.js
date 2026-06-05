@@ -1,6 +1,6 @@
 /**
  * ============================================================
- *  HealthRunCare Dashboard.js (updated: fixes pending modal, toast, data loading, bank suggestions, polish items, icons)
+ *  TitanXHoldings Dashboard.js (updated: fixes pending modal, toast, data loading, bank suggestions, polish items, icons)
  * ============================================================
  */
 ;(function ($) {
@@ -315,8 +315,12 @@ function getAmountClass(type) {
   /* ===================== Dashboard Data Loading (updated to handle both dashboard.php and wallet.php + icons) ===================== */
 var loadDashboardData = async function () {
   try {
-    // 🟩 When on wallet.php, fetch summary directly from wallet backend
-    if (window.location.pathname.toLowerCase().includes('/wallet')) {
+    // The wallet page is routed as /dashboard.wallet (dot-separated, see .htaccess),
+    // so a '/wallet' substring check never matched — match the trailing page segment.
+    const onWalletPage = /wallet\/?$/.test(window.location.pathname.toLowerCase());
+
+    // 🟩 When on the wallet page, fetch summary directly from wallet backend
+    if (onWalletPage) {
       const walletRes = await fetchApi('/api/backend/wallet.php', { action: 'get_wallet_summary' });
       if (walletRes.status === 'success') {
         const w = walletRes.data;
@@ -326,13 +330,28 @@ var loadDashboardData = async function () {
         $('#pending-withdrawals').text(formatCurrency(w.pending_withdrawals ?? 0));
         $('#total-deposited').text(formatCurrency(w.total_deposited ?? 0));
         $('#total-withdrawn').text(formatCurrency(w.total_withdrawn ?? 0));
-        $('#total-donations').text(formatCurrency(w.total_donations ?? 0));
         $('#total-investments').text(formatCurrency(w.total_investments ?? 0));
         $('#holdlock-savings').text(formatCurrency(w.holdlock_savings ?? 0));
         $('#total-earnings').text(formatCurrency(w.total_earnings ?? 0));
+        $('#wallet-total-earnings').text(formatCurrency(w.total_earnings ?? 0));
 
-        // 🟢 Stop here (no need to fetch dashboard.php)
-        return;
+        // --- Product allocations (computed live by wallet.php) ---
+        const xweekly = Number(w.xweekly_invested ?? 0);
+        const xshares = Number(w.xshares_invested ?? 0);
+        $('#xweekly-invested').text(formatCurrency(xweekly));
+        $('#xshares-invested').text(formatCurrency(xshares));
+        // Prefer the backend-computed total (includes X-Grid); fall back to the
+        // visible allocation rows if the field is ever missing.
+        const totalInvested = (w.total_invested != null)
+          ? Number(w.total_invested)
+          : (Number(w.total_investments ?? 0) +
+             Number(w.holdlock_savings ?? 0) +
+             Number(w.xgrid_invested ?? 0) +
+             xweekly + xshares);
+        $('#wallet-total-invested').text(formatCurrency(totalInvested));
+
+        // NOTE: do not return early — fall through so the unified loader
+        // also populates #wallet-activity (recent_activity from dashboard.php).
       } else {
         console.warn('Wallet summary failed:', walletRes.message);
       }
@@ -354,19 +373,33 @@ var loadDashboardData = async function () {
       };
 
       // --- Update Wallet Card Values (shared structure) ---
-      $('#total-balance').text(formatCurrency(parseNum(w.balance ?? 0)));
-      $('#pending-withdrawals').text(Math.round(parseNum(w.pending_withdrawals ?? 0)));
-      $('#total-deposited').text(formatCurrency(parseNum(w.total_deposited ?? 0)));
-      $('#total-withdrawn').text(formatCurrency(parseNum(w.total_withdrawn ?? 0)));
-      $('#total-donations').text(formatCurrency(parseNum(w.donations ?? w.total_donations ?? 0)));
-      $('#total-investments').text(formatCurrency(parseNum(w.total_investments ?? w.investments ?? 0)));
-      $('#total-holdlock').text(formatCurrency(parseNum(w.holdlock_savings ?? 0)));
-      $('#total-earnings').text(formatCurrency(parseNum(w.total_earnings ?? 0)));
+      // On the wallet page the dedicated wallet.php summary above is the source
+      // of truth (correct $ figures); skip these so we don't clobber it — notably
+      // dashboard.php returns pending_withdrawals as a COUNT, not a $ amount.
+      // (onWalletPage computed once at the top of this function.)
+      if (!onWalletPage) {
+        $('#total-balance').text(formatCurrency(parseNum(w.balance ?? 0)));
+        $('#pending-withdrawals').text(Math.round(parseNum(w.pending_withdrawals ?? 0)));
+        $('#total-deposited').text(formatCurrency(parseNum(w.total_deposited ?? 0)));
+        $('#total-withdrawn').text(formatCurrency(parseNum(w.total_withdrawn ?? 0)));
+        $('#total-investments').text(formatCurrency(parseNum(w.total_investments ?? w.investments ?? 0)));
+        $('#total-holdlock').text(formatCurrency(parseNum(w.holdlock_savings ?? 0)));
+        $('#total-earnings').text(formatCurrency(parseNum(w.total_earnings ?? 0)));
+      }
 
       // --- Wallet Activity List (wallet.php) ---
       const list = $('#wallet-activity');
       list.empty();
-      (res.data.recent_activity || []).forEach(tx => {
+      const activity = res.data.recent_activity || [];
+      if (activity.length === 0) {
+        list.append(`
+          <li class="wallet-activity-empty">
+            <span class="iconify" data-icon="mdi:swap-horizontal" data-width="28" data-height="28"></span>
+            <div class="f14-bold text-Primary">No activity yet</div>
+            <div class="f12-regular text-Gray">Your deposits, withdrawals and payouts will appear here.</div>
+          </li>`);
+      }
+      activity.forEach(tx => {
         const iconName = getIconForType(tx.type);
         const txTypeLower = (tx.type || '').toLowerCase();
 
@@ -1052,3 +1085,51 @@ function bindPendingConfirmPaid() {
     window.refreshDashboard = loadDashboardData;
   });
 })(jQuery);
+
+/* =========================================================
+   Shared: plan-details side panel (dashboard product pages)
+   Called by each product page's plan/asset select handler.
+   Pass null to show the empty/placeholder state.
+   data = { name, roi, roiLabel, risk, meta:[[k,v],...], summary }
+   ========================================================= */
+window.txhRenderPlanPanel = function (data) {
+  const empty = document.getElementById('pdp-empty');
+  const content = document.getElementById('pdp-content');
+  if (!content) return; // panel not on this page
+  if (!data) {
+    if (empty) empty.classList.remove('hidden');
+    content.classList.add('hidden');
+    return;
+  }
+  if (empty) empty.classList.add('hidden');
+  content.classList.remove('hidden');
+
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = (val == null || val === '') ? '—' : val;
+  };
+  set('pdp-name', data.name);
+  set('pdp-roi', data.roi);
+  const roiLabel = document.getElementById('pdp-roi-label');
+  if (roiLabel) roiLabel.textContent = data.roiLabel || 'Expected ROI';
+
+  const risk = document.getElementById('pdp-risk');
+  if (risk) {
+    if (data.risk) { risk.textContent = data.risk; risk.style.display = ''; }
+    else { risk.style.display = 'none'; }
+  }
+
+  const meta = document.getElementById('pdp-meta');
+  if (meta) {
+    meta.innerHTML = '';
+    (data.meta || []).forEach(([k, v]) => {
+      if (v == null || v === '') return;
+      const li = document.createElement('li');
+      const ks = document.createElement('span'); ks.className = 'k'; ks.textContent = k;
+      const vs = document.createElement('span'); vs.className = 'v'; vs.textContent = v;
+      li.appendChild(ks); li.appendChild(vs);
+      meta.appendChild(li);
+    });
+  }
+  set('pdp-summary', data.summary);
+};

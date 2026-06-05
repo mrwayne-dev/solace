@@ -1,5 +1,5 @@
 /* =======================================================
-   holdlock.js — HealthRunCare HoldLock Frontend Logic (Final)
+   holdlock.js — TitanXHoldings X-Lock Frontend Logic (Final)
    ======================================================= */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -41,12 +41,14 @@ document.addEventListener('DOMContentLoaded', function () {
       lockAmountEl.removeAttribute('min');
       lockAmountEl.removeAttribute('max');
       lockBtn.disabled = true;
+      window.txhRenderPlanPanel && window.txhRenderPlanPanel(null);
       return;
     }
 
     const plan = window.__hrc_holdlock_plans.find(p => p.id === planId);
     if (!plan) {
       lockBtn.disabled = true;
+      window.txhRenderPlanPanel && window.txhRenderPlanPanel(null);
       return;
     }
 
@@ -74,6 +76,20 @@ document.addEventListener('DOMContentLoaded', function () {
     // Autofill min amount
     lockAmountEl.value = minVal;
     lockBtn.disabled = false;
+
+    window.txhRenderPlanPanel && window.txhRenderPlanPanel({
+      name: plan.name,
+      roi: plan.roi_range || '—',
+      roiLabel: 'Annualised ROI',
+      risk: plan.risk,
+      meta: [
+        ['Lock period', plan.lock_period_text],
+        ['Min – Max', maxVal ? `${pmin} – ${pmax}` : `${pmin}+`],
+        ['Payout', plan.payout],
+        ['Income source', plan.income_source],
+      ],
+      summary: plan.summary || plan.purpose,
+    });
   };
 
   // === START HOLDLOCK SUBMIT ===
@@ -87,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const amount = parseFloat(lockAmountEl?.value || 0);
 
       if (!planId) {
-        showToast('Please select a HoldLock plan.', 'error');
+        showToast('Please select a X-Lock plan.', 'error');
         toggleLoader(false);
         lockBtn.disabled = false;
         return;
@@ -119,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
 
-      const res = await fetchApi('/api/backend/holdlock.php', {
+      const res = await fetchApi('/api/backend/xlock.php', {
         action: 'start_holdlock',
         plan_id: planId,
         amount: amount
@@ -128,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
       toggleLoader(false);
 
       if (res.status === 'success') {
-        showToast('HoldLock started successfully.', 'success');
+        showToast('X-Lock started successfully.', 'success');
         lockAmountEl.value = '';
         planSelect.selectedIndex = 0;
         updateHoldlockDetails();
@@ -146,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // === SUMMARY DATA (CARDS) ===
   async function loadSummary() {
     toggleLoader(true);
-    const res = await fetchApi('/api/backend/holdlock.php', { action: 'get_summary' });
+    const res = await fetchApi('/api/backend/xlock.php', { action: 'get_summary' });
     toggleLoader(false);
 
     if (res.status === 'success') {
@@ -168,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // === LOAD PLANS + GRID RENDER ===
   async function loadPlans() {
-    const res = await fetchApi('/api/backend/holdlock.php', { action: 'get_plans' });
+    const res = await fetchApi('/api/backend/xlock.php', { action: 'get_plans' });
     if (res.status !== 'success') return;
 
     const plans = res.data?.plans || [];
@@ -223,7 +239,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // === LOAD ACTIVE LOCKS ===
   async function loadActiveLocks() {
     toggleLoader(true);
-    const res = await fetchApi('/api/backend/holdlock.php', { action: 'get_active' });
+    const res = await fetchApi('/api/backend/xlock.php', { action: 'get_active' });
     toggleLoader(false);
 
     activeLocksTbody.innerHTML = '';
@@ -253,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // === LOAD MATURED LOCKS ===
   async function loadMaturedLocks() {
-    const res = await fetchApi('/api/backend/holdlock.php', { action: 'get_matured' });
+    const res = await fetchApi('/api/backend/xlock.php', { action: 'get_matured' });
     maturedLocksTbody.innerHTML = '';
     const matured = res.data?.matured || [];
 
@@ -286,11 +302,11 @@ document.addEventListener('DOMContentLoaded', function () {
   window.initiateHoldlockUnlock = async function (holdlockId, earlyFlag = false) {
     const confirmMsg = earlyFlag
       ? 'This will perform an early unlock and apply penalty. Proceed?'
-      : 'Unlock this matured HoldLock and credit your wallet?';
+      : 'Unlock this matured X-Lock and credit your wallet?';
     if (!confirm(confirmMsg)) return;
 
     toggleLoader(true);
-    const res = await fetchApi('/api/backend/holdlock.php', {
+    const res = await fetchApi('/api/backend/xlock.php', {
       action: 'unlock',
       holdlock_id: holdlockId,
       early: earlyFlag ? 1 : 0
@@ -298,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function () {
     toggleLoader(false);
 
     if (res.status === 'success') {
-      showToast('HoldLock unlocked successfully.', 'success');
+      showToast('X-Lock unlocked successfully.', 'success');
       loadSummary();
       loadActiveLocks();
       loadMaturedLocks();

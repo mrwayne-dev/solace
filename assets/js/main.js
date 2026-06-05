@@ -1,5 +1,5 @@
 // =============================
-// main.js — HealthRunCare
+// main.js — TitanXHoldings
 // =============================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
       {
         image: "url('../../assets/images/bgimage2.webp')",
         title: "Healthcare, Connected and Simplified.",
-        subtitle: "HealthRunCare brings patients, doctors, and pharmacies together in one trusted digital platform. From diagnostics to payments, we make care clear, secure, and accessible."
+        subtitle: "TitanXHoldings brings patients, doctors, and pharmacies together in one trusted digital platform. From diagnostics to payments, we make care clear, secure, and accessible."
       },
       {
         image: "url('../../assets/images/bgimage.webp')",
@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
     automate: {
       title: "Automate",
       subtitle: "Streamline repetitive healthcare tasks with AI precision",
-      desc: "HealthRunCare automates appointment reminders, prescription renewals, claims processing, and medical record updates — freeing providers to focus on patients, not paperwork. Each workflow adapts to your team’s needs and improves over time.",
+      desc: "TitanXHoldings automates appointment reminders, prescription renewals, claims processing, and medical record updates — freeing providers to focus on patients, not paperwork. Each workflow adapts to your team’s needs and improves over time.",
       image: "../../assets/images/workflow-automate.png"
     },
     enrich: {
@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '/solutions/patients': {
       title: "AI & Patient Tools",
       description: `
-        HealthRunCare puts advanced healthcare directly in your hands. 
+        TitanXHoldings puts advanced healthcare directly in your hands. 
         Our AI-driven platform helps patients identify potential health concerns early, 
         track ongoing symptoms, and access remote consultations — all in a secure, easy-to-use space.
       `
@@ -366,15 +366,15 @@ document.addEventListener('DOMContentLoaded', () => {
     '/charity': {
       title: "Charity & Donations",
       description: `
-        Every act of care deserves to make an impact. Through HealthRunCare’s verified donation system, 
+        Every act of care deserves to make an impact. Through TitanXHoldings’s verified donation system, 
         your giving directly supports patients, clinics, and emergency programs — 
         without intermediaries or hidden fees.
       `
     },
     '/investment': {
-      title: "Investment Pools",
+      title: "X-Yield Pools",
       description: `
-        HealthRunCare transforms healthcare investment into measurable impact.  
+        TitanXHoldings transforms healthcare investment into measurable impact.  
         Our tokenized investment pools allow individuals and institutions to fund verified medical innovations 
         and infrastructure — while earning transparent ROI.
       `
@@ -382,12 +382,12 @@ document.addEventListener('DOMContentLoaded', () => {
     '/trust-fund': {
       title: "Trust Funds",
       description: `
-        HealthRunCare’s Trust Funds help families, patients, and employers plan ahead for health.  
+        TitanXHoldings’s Trust Funds help families, patients, and employers plan ahead for health.  
         Secure, automated, and compliant — healthcare peace of mind.
       `
     },
     '/infrastructure': {
-      title: "Mount Infrastructure",
+      title: "Mount X-Grid",
       description: `
         Healthcare access starts with infrastructure. Co-fund clinics, labs, 
         and telehealth centers in the communities that need them most.
@@ -442,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.smartsupp) return;
 
     window._smartsupp = window._smartsupp || {};
-    window._smartsupp.key = '74f4168b124ca112a5c2ecfde6804a6e6e6306e6';
+    window._smartsupp.key = 'acee1c8fc66bb651454e92b288dd5ddf2d428cc2';
 
     // Create Smartsupp script dynamically
     const s = document.createElement('script');

@@ -1,5 +1,5 @@
 # ===============================
-# HealthRunCare .htaccess
+# TitanXHoldings .htaccess
 # Unified Auto-Detect — Local + Production
 # ===============================
 
@@ -50,24 +50,24 @@ RewriteRule ^api/(.*)$ api/$1 [L,QSA]
 # PUBLIC ROUTES
 # -------------------------------
 RewriteRule ^$ pages/public/index.php [L,QSA]
-RewriteRule ^(about|contact|login|register|forgotpassword|logout|news|platform|solutions|whyhrc|charity|investment|minfrastructure|mdev|trustfund|holdlock)/?$ pages/public/$1.php [L,QSA]
+RewriteRule ^(about|contact|login|register|forgotpassword|platform|solutions|investment|xlock|xgrid|xweekly|xshares|xrewards|whytx)/?$ pages/public/$1.php [L,QSA]
 
 # -------------------------------
 # USER ROUTES
 # -------------------------------
 RewriteRule ^dashboard/?$ pages/user/dashboard.php [L,QSA]
-RewriteRule ^dashboard\.(charity|investment|wallet|trustfund|infrastructure|development|holdlock|transactions|logout)/?$ pages/user/$1.php [L,QSA]
+RewriteRule ^dashboard\.(investment|xlock|xgrid|xweekly|xshares|xrewards|wallet|transactions|profile|logout)/?$ pages/user/$1.php [L,QSA]
 
 # -------------------------------
 # ADMIN ROUTES
 # -------------------------------
 RewriteRule ^admin/?$ pages/admin/dashboard.php [L,QSA]
-RewriteRule ^admin\.(dashboard|users|wallets|donations|funds|transactions|announcements|login|register|forgotpassword|settings)/?$ pages/admin/$1.php [L,QSA]
+RewriteRule ^admin\.(dashboard|users|wallets|transactions|announcements|funds|login|register|forgotpassword)/?$ pages/admin/$1.php [L,QSA]
 
 # -------------------------------
 # ADMIN FUND SUB-PAGES
 # -------------------------------
-RewriteRule ^admin\.funds/(holdlock|trustfund|infrastructure|maintenance)/?$ pages/admin/funds/$1.php [L,QSA]
+RewriteRule ^admin\.funds/(xlock|xgrid|xweekly|xshares|xrewards)/?$ pages/admin/funds/$1.php [L,QSA]
 
 # -------------------------------
 # CATCH-ALL → 404
@@ -86,7 +86,17 @@ Header always set X-Content-Type-Options "nosniff"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
 Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-Header always set Content-Security-Policy "upgrade-insecure-requests;"
+# CSP keeps 'unsafe-inline' because the app relies on inline scripts AND ~36 inline
+# event handlers (onclick/onerror/onload, incl. the dashboard CSS-swap). It still blocks
+# injected EXTERNAL scripts, clickjacking, <base>/<object> hijacking, and form-action.
+# A nonce/'strict-dynamic' upgrade (full inline-XSS protection) is blocked until those
+# inline handlers are refactored to addEventListener — see security notes.
+# Third-party allowlist: Iconify (icons), Unicons (icon font CSS), Smartsupp (live chat).
+Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://code.iconify.design https://cdn.jsdelivr.net https://www.smartsuppchat.com https://*.smartsupp.com; style-src 'self' 'unsafe-inline' https://unicons.iconscout.com; font-src 'self' data: https://unicons.iconscout.com; img-src 'self' data: https:; connect-src 'self' https://*.smartsupp.com wss://*.smartsupp.com https://www.smartsuppchat.com; frame-src 'self' https://*.smartsupp.com https://www.smartsuppchat.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests;"
+# Strip the PHP version banner (info disclosure). The "Server: LiteSpeed" banner
+# must be removed in the LiteSpeed admin (Server Signature = off).
+Header always unset X-Powered-By
+Header unset X-Powered-By
 </IfModule>
 
 # ===============================

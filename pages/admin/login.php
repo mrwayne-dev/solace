@@ -1,124 +1,77 @@
+<?php require_once __DIR__ . '/../../config/assets.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Meta -->
   <meta charset="UTF-8">
-  <meta name="description" content="HealthRunCare Admin - Manage the platform, users, and operations securely.">
-  <meta name="author" content="HealthRunCare">
+  <meta name="description" content="TitanXHoldings Admin — manage the platform, users, and operations securely.">
+  <meta name="author" content="TitanXHoldings">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <link rel="canonical" href="https://healthruncare.com/admin.login">
-  <title>HealthRunCare – Admin Login</title>
+  <link rel="canonical" href="https://titanxholdings.com/admin.login">
+  <title>Admin Sign in | TitanXHoldings</title>
 
-  <!-- Preload + Apply -->
-  <link rel="preload" href="../../assets/css/bootstrap.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" href="../../assets/css/dashboard.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" href="../../assets/css/main.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" href="../../assets/icon/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="stylesheet" href="<?= txh_asset('/assets/css/txh-design.css') ?>">
 
-  <!-- Non-critical CSS -->
-  <link rel="stylesheet" href="../../assets/css/animation.min.css">
-  <link rel="stylesheet" href="../../assets/css/bootstrap-select.min.css">
-  <link rel="stylesheet" href="../../assets/fonts/font.css">
-  <link rel="stylesheet" href="../../assets/icon/style.css">
-
-  <!-- Fallback -->
-  <noscript>
-    <link rel="stylesheet" href="../../assets/css/bootstrap.css">
-    <link rel="stylesheet" href="../../assets/css/dashboard.css">
-    <link rel="stylesheet" href="../../assets/css/main.css">
-  </noscript>
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="../../assets/favicon/favicon-32x32.png">
-  <meta name="apple-mobile-web-app-title" content="HRC">
+  <link rel="icon" type="image/png" href="/assets/favicon/favicon-32x32.png" sizes="32x32">
+  <link rel="shortcut icon" href="/assets/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-title" content="TitanXHoldings">
 </head>
 
-<body style="background-color: white;">
-  <div id="wrapper">
-    <div id="page">
-      <div class="sign-in-wrap">
-        <div class="sign-in-box">
+<body class="txh-redesign">
 
-          <!-- LEFT SIDE -->
-          <div class="left">
-            <div class="content">
-              <h3 class="heading text-Primary mb-8 text-center">Admin Login</h3>
-              <div class="sub f14-regular text-GrayDark mb-24 text-center">
-                Sign in to access the HealthRunCare admin panel
-              </div>
+<main class="auth-page">
+  <div class="container">
+    <div class="form-card">
+      <div class="form-card__header">
+        <a href="/" aria-label="TitanXHoldings home" style="margin-bottom: var(--space-2);">
+          <img src="/assets/images/logo/titanx-black.png" alt="TitanXHoldings" style="height: 30px;">
+        </a>
+        <p class="eyebrow">
+          <span class="eyebrow__icon"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg></span>
+          Admin Console
+        </p>
+        <h1>Sign in to the console</h1>
+        <p>Authorised administrators only.</p>
+      </div>
 
-              <div class="sign-in-inner">
-                <form id="login-form" class="form-login flex flex-column gap24" autocomplete="off">
-                  <fieldset class="email">
-                    <div class="f14-regular mb-6">Admin Email</div>
-                    <input id="email" class="flex-grow form-control" type="email" name="email" placeholder="admin@example.com" required>
-                  </fieldset>
-
-                  <fieldset class="password">
-                    <div class="f14-regular mb-6">Password</div>
-                    <div class="relative">
-                      <input id="password" class="password-input form-control" type="password" name="password" placeholder="••••••••" required>
-                      <span class="show-pass cursor-pointer absolute" style="right:12px;top:50%;transform:translateY(-50%);">
-                        <span class="iconify view" data-icon="mdi:eye-outline" style="font-size:20px;"></span>
-                        <span class="iconify hide" data-icon="mdi:eye-off-outline" style="font-size:20px;display:none;"></span>
-                      </span>
-                    </div>
-                  </fieldset>
-
-                  <div class="forgot-password-link">
-                    <a href="/admin.forgotpassword" class="f14-regular f14-bold text-Primary">Forgot Password?</a>
-                  </div>
-
-                  <div class="tf-cart-checkbox mt-3 mb-3">
-                    <div class="tf-checkbox-wrapp">
-                      <input class="checkbox-item" type="checkbox" id="terms" checked>
-                      <div><i class="icon-check"></i></div>
-                    </div>
-                    <label for="terms" class="f14-regular">
-                      By signing in, you confirm your admin credentials are authorized.
-                    </label>
-                  </div>
-
-                  <button type="submit" class="tf-button style-1 label-01 w-100 bg-Primary text-White">
-                    Sign In
-                  </button>
-
-                  <div class="f14-regular text-center mt-4">
-                    Don't have an admin account? <a href="/admin.register" class="f14-bold text-Primary">Register</a>
-                  </div>
-
-                  <div class="text-center mt-4">
-                    <a href="/" class="tf-button style-1 bg-GrayLight text-Primary f14-bold" 
-                      style="padding:10px 24px; border-radius:8px; display:inline-flex; align-items:center; gap:8px;">
-                      <span class="iconify" data-icon="mdi:arrow-left"></span>
-                      Back to Home
-                    </a>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-
-          <!-- RIGHT SIDE -->
-          <div class="right">
-                        <img src="../../assets/images/admin_signin.png" alt="AI Health Illustration">
-            </div>
+      <form id="login-form" class="form-stack" autocomplete="off">
+        <div class="form-field">
+          <label class="form-field__label" for="email">Admin email</label>
+          <input id="email" name="email" type="email" class="form-field__input" placeholder="admin@titanxholdings.com" required>
         </div>
+
+        <div class="form-field form-field--with-action">
+          <label class="form-field__label" for="password">Password</label>
+          <input id="password" name="password" type="password" class="form-field__input" placeholder="••••••••" required>
+          <button type="button" class="form-field__action" aria-label="Show / hide password" onclick="(function(b){const i=b.previousElementSibling;i.type=i.type==='password'?'text':'password';})(this)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: var(--text-sm);">
+          <label style="display: inline-flex; align-items: center; gap: var(--space-2); color: var(--color-ink-muted); cursor: pointer;">
+            <input type="checkbox" id="terms" checked> Trusted device
+          </label>
+          <a href="/admin.forgotpassword" class="form-link">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn btn--primary" style="width: 100%;">Sign in</button>
+      </form>
+
+      <div class="form-footer">
+        Need an admin account? <a href="/admin.register">Register</a>
+        <span style="margin: 0 var(--space-2); opacity: 0.4;">·</span>
+        <a href="/">Back to site</a>
       </div>
     </div>
   </div>
+</main>
 
-  <!-- Loader -->
-  <div id="loader" class="hidden">
-    <div class="line-loader"><div></div><div></div><div></div><div></div><div></div></div>
-  </div>
+<div id="toast-container"></div>
+<div id="loader" class="hidden"><div class="line-loader"><div></div><div></div><div></div><div></div><div></div></div></div>
 
-  <!-- Toast -->
-  <div id="toast-container"></div>
-
-  <!-- Scripts -->
-  <script src="../../assets/js/api.js" defer></script>
-  <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<script src="<?= txh_asset('/assets/js/api.js') ?>" defer></script>
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 </body>
 </html>

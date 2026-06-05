@@ -1,7 +1,7 @@
 <?php
 /**
  * ============================================================
- * HealthRunCare — Infrastructure Backend (Final with Emails)
+ * TitanXHoldings — Infrastructure Backend (Final with Emails)
  * ============================================================
  * Location: /api/backend/infrastructure.php
  *
@@ -78,14 +78,22 @@ try {
 /* ----------------------------------------------------------
    Plans reference — matches UI
 -----------------------------------------------------------*/
-$plansRef = [
-    1 => ['id'=>1, 'name' => 'Basic Diagnostic Plan', 'roi_percent' => 9.0,  'duration_days' => 365,  'payout_option' => 'quarterly', 'min' => 10000],
-    2 => ['id'=>2, 'name' => 'Imaging Growth Plan',    'roi_percent' => 13.5, 'duration_days' => 540,  'payout_option' => 'quarterly', 'min' => 20000],
-    3 => ['id'=>3, 'name' => 'Advanced Radiology Plan','roi_percent' => 17.5, 'duration_days' => 730,  'payout_option' => 'monthly',   'min' => 50000],
-    4 => ['id'=>4, 'name' => 'Dialysis Infrastructure Plan','roi_percent' => 20.0, 'duration_days' => 900, 'payout_option' => 'quarterly','min' => 100000],
-    5 => ['id'=>5, 'name' => 'Complete Operating Room Equipment Plan','roi_percent' => 22.5,'duration_days'=>1095,'payout_option'=>'monthly','min'=>150000],
-    6 => ['id'=>6, 'name' => 'Hospital Diagnostic Wing Installation Plan','roi_percent'=>29.0,'duration_days'=>1095,'payout_option'=>'quarterly','min'=>500000],
-];
+$plansRef = [];
+try {
+    $planRows = $pdo->query("SELECT id, name, roi_percent, duration_days, payout_option, min_amount FROM infrastructure_plans")->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($planRows as $p) {
+        $plansRef[(int)$p['id']] = [
+            'id'            => (int)$p['id'],
+            'name'          => $p['name'],
+            'roi_percent'   => (float)$p['roi_percent'],
+            'duration_days' => (int)$p['duration_days'],
+            'payout_option' => $p['payout_option'],
+            'min'           => (float)$p['min_amount'],
+        ];
+    }
+} catch (Exception $e) {
+    error_log('xgrid plansRef build failed: ' . $e->getMessage());
+}
 
 if (!$action) respond('error', 'No action specified.');
 
@@ -144,10 +152,12 @@ switch ($action) {
        GET PLANS
        ====================== */
 case 'get_plans':
+    // NOTE: infrastructure_plans has no income_source column — selecting it threw
+    // an "Unknown column" error that silently emptied the plan dropdown.
     $stmt = $pdo->query("
-        SELECT 
-            id, name, purpose, income_source, min_amount, duration_days, 
-            roi_percent, payout_option, risk_level, summary, color, 
+        SELECT
+            id, name, purpose, min_amount, duration_days,
+            roi_percent, payout_option, risk_level, summary, color,
             repayment_mode, icon
         FROM infrastructure_plans
         ORDER BY id ASC

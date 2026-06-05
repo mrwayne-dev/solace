@@ -1,7 +1,7 @@
 <?php
 // ===============================================
 // FILE: /api/backend/investment.php
-// PURPOSE: Investment controller for HealthRunCare
+// PURPOSE: Investment controller for TitanXHoldings
 // ACTIONS: get_summary, get_plans, start_investment, get_active, unlock_investment
 // ===============================================
 
@@ -57,7 +57,7 @@ function jsonResponse($status, $message, $data = []) {
     exit;
 }
 
-function generateReference($prefix = 'HRC-INV') {
+function generateReference($prefix = 'TXH-INV') {
     return strtoupper($prefix . '-' . uniqid() . '-' . rand(1000, 9999));
 }
 
@@ -183,14 +183,18 @@ if ($action === 'start_investment') {
     $plan_id = (int) ($input['plan_id'] ?? 0);
     $amount = (float) ($input['amount'] ?? 0);
 
-    if ($plan_id <= 0 || !isset($PLANS[$plan_id])) jsonResponse('error', 'Invalid plan selected.');
+    if ($plan_id <= 0) jsonResponse('error', 'Invalid plan selected.');
     if ($amount <= 0) jsonResponse('error', 'Enter a valid investment amount.');
 
-    $plan = $PLANS[$plan_id];
+    // Fetch the selected plan from the catalog
+    $pstmt = $pdo->prepare("SELECT title, roi_percent, duration_days, min_amount, max_amount FROM investment_plans WHERE id = ? LIMIT 1");
+    $pstmt->execute([$plan_id]);
+    $plan = $pstmt->fetch(PDO::FETCH_ASSOC);
+    if (!$plan) jsonResponse('error', 'Invalid plan selected.');
 
     // ✅ Range validation
-    $min = (float)$plan['min'];
-    $max = (float)$plan['max'];
+    $min = (float)$plan['min_amount'];
+    $max = (float)$plan['max_amount'];
     if ($amount < $min || $amount > $max) {
         jsonResponse('error', "Amount must be between $$min and $$max for this plan.");
     }
@@ -218,7 +222,7 @@ if ($action === 'start_investment') {
         }
 
         $maturity_date = date('Y-m-d', strtotime("+{$duration_days} days"));
-        $reference = generateReference('HRC-INV');
+        $reference = generateReference('TXH-INV');
         $now = date('Y-m-d H:i:s');
 
         // Deduct wallet
@@ -228,7 +232,7 @@ if ($action === 'start_investment') {
         // Create investment
         $pdo->prepare("INSERT INTO investments (user_id, plan_name, amount, roi_percent, duration_days, status, maturity_date, roi_earned, created_at)
                        VALUES (?, ?, ?, ?, ?, 'active', ?, 0.00, ?)")
-            ->execute([$user_id, $plan['plan_name'], $amount, $roi_percent, $duration_days, $maturity_date, $now]);
+            ->execute([$user_id, $plan['title'], $amount, $roi_percent, $duration_days, $maturity_date, $now]);
 
         $investment_id = (int)$pdo->lastInsertId();
 
@@ -236,7 +240,7 @@ if ($action === 'start_investment') {
         $details = json_encode([
             'investment_id' => $investment_id,
             'plan_id' => $plan_id,
-            'plan_name' => $plan['plan_name']
+            'plan_name' => $plan['title']
         ]);
         $pdo->prepare("INSERT INTO transactions (user_id, type, amount, reference, status, details, created_at)
                        VALUES (?, 'investment', ?, ?, 'completed', ?, ?)")
@@ -251,7 +255,7 @@ if ($action === 'start_investment') {
                 'template' => 'investment_confirmed',
                 'variables' => [
                     'user_name' => $user_name,
-                    'plan_name' => $plan['plan_name'],
+                    'plan_name' => $plan['title'],
                     'amount' => number_format($amount, 2),
                     'roi_percent' => $roi_percent,
                     'duration_days' => $duration_days,
@@ -267,7 +271,7 @@ if ($action === 'start_investment') {
                     'variables' => [
                         'user_name' => $user_name,
                         'user_email' => $user_email,
-                        'plan_name' => $plan['plan_name'],
+                        'plan_name' => $plan['title'],
                         'amount' => number_format($amount, 2),
                         'reference' => $reference,
                     ]
@@ -324,7 +328,7 @@ if ($action === 'unlock_investment') {
         $pdo->prepare("UPDATE wallets SET balance = balance + ?, total_earnings = total_earnings + ? WHERE user_id = ?")
             ->execute([$total_payout, $roi_earned, $user_id]);
 
-        $reference = generateReference('HRC-INVPAY');
+        $reference = generateReference('TXH-INVPAY');
         $details = json_encode(['investment_id' => $inv_id, 'payout' => $total_payout, 'roi' => $roi_earned]);
         $now = date('Y-m-d H:i:s');
         $pdo->prepare("INSERT INTO transactions (user_id, type, amount, reference, status, details, created_at)

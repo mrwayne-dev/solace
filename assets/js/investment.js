@@ -1,6 +1,6 @@
 /* =======================================================
    investment.js — Final Dynamic Version (DB + Cards)
-   HealthRunCare Investments Frontend Logic
+   TitanXHoldings XYields Frontend Logic
    ======================================================= */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -17,15 +17,15 @@ document.addEventListener('DOMContentLoaded', function () {
   const cardOngoing = document.getElementById('card-ongoing-plans');
   const cardNextMaturity = document.getElementById('card-next-maturity');
 
-  const activeTableBody = document.querySelector('.list-transaction-content tbody');
+  const activeTableBody = document.getElementById('active-investments-table-body');
   const maturedTableBody = document.querySelector('.unlock-plans tbody');
   const plansGrid = document.getElementById('plans-grid'); // NEW
 
   // === INITIAL LOAD ===
   loadSummary();
   loadPlans();
-  loadActiveInvestments();
-  loadMaturedInvestments();
+  loadActiveXYields();
+  loadMaturedXYields();
 
   // === PLAN DETAILS UPDATE ===
   window.updatePlanDetails = function () {
@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
       amountEl.removeAttribute('min');
       amountEl.removeAttribute('max');
       investBtn.disabled = true;
+      window.txhRenderPlanPanel && window.txhRenderPlanPanel(null);
       return;
     }
 
@@ -54,6 +55,20 @@ document.addEventListener('DOMContentLoaded', function () {
         amountEl.placeholder = `$${cached.min.toLocaleString()} - $${cached.max.toLocaleString()}`;
       }
       investBtn.disabled = false;
+
+      window.txhRenderPlanPanel && window.txhRenderPlanPanel({
+        name: cached.title,
+        roi: (cached.roi_percent != null) ? (cached.roi_percent + '%') : '—',
+        roiLabel: 'Expected ROI',
+        risk: cached.risk,
+        meta: [
+          ['Term', termDuration.value],
+          ['Min – Max', (cached.min && cached.max) ? `$${(+cached.min).toLocaleString()} – $${(+cached.max).toLocaleString()}` : ''],
+          ['Payout', cached.payout_option],
+          ['Income source', cached.income],
+        ],
+        summary: cached.description,
+      });
       return;
     }
 
@@ -109,10 +124,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
       toggleLoader(false);
       if (res.status === 'success') {
-        showToast('Investment started successfully.', 'success');
+        showToast('X-Yield started successfully.', 'success');
         loadSummary();
-        loadActiveInvestments();
-        loadMaturedInvestments();
+        loadActiveXYields();
+        loadMaturedXYields();
         amountEl.value = '';
         planSelect.selectedIndex = 0;
         updatePlanDetails();
@@ -197,7 +212,7 @@ if (plansGrid) {
         <p class="f12-regular text-Black mb-16">${p.details}</p>
 
         <table class="plan-features">
-          <tr><td>Investment Range</td><td>${amountRange}</td></tr>
+          <tr><td>X-Yield Range</td><td>${amountRange}</td></tr>
           <tr><td>Term</td><td>${termText}</td></tr>
           <tr><td>ROI</td><td class="text-Green fw-bold">${roi}</td></tr>
           <tr><td>Risk Level</td><td class="text-${p.color} fw-bold">${p.risk}</td></tr>
@@ -217,7 +232,7 @@ if (plansGrid) {
   }
 
   // === LOAD ACTIVE INVESTMENTS ===
-  async function loadActiveInvestments() {
+  async function loadActiveXYields() {
     toggleLoader(true);
     const res = await fetchApi('/api/backend/investment.php', { action: 'get_active' });
     toggleLoader(false);
@@ -244,7 +259,7 @@ if (plansGrid) {
   }
 
   // === LOAD MATURED INVESTMENTS ===
-  async function loadMaturedInvestments() {
+  async function loadMaturedXYields() {
     if (!maturedTableBody) return;
     const res = await fetchApi('/api/backend/investment.php', { action: 'get_matured' });
     if (res.status === 'success') {
@@ -281,10 +296,10 @@ if (plansGrid) {
     toggleLoader(false);
 
     if (res.status === 'success') {
-      showToast('Investment unlocked successfully. Wallet credited.', 'success');
+      showToast('X-Yield unlocked successfully. Wallet credited.', 'success');
       loadSummary();
-      loadActiveInvestments();
-      loadMaturedInvestments();
+      loadActiveXYields();
+      loadMaturedXYields();
     } else {
       showToast(res.message || 'Failed to unlock investment.', 'error');
     }
@@ -318,7 +333,7 @@ if (plansGrid) {
 
   // Expose refresh functions globally
   window.hrc_loadSummary = loadSummary;
-  window.hrc_loadActiveInvestments = loadActiveInvestments;
-  window.hrc_loadMaturedInvestments = loadMaturedInvestments;
+  window.hrc_loadActiveXYields = loadActiveXYields;
+  window.hrc_loadMaturedXYields = loadMaturedXYields;
   window.hrc_loadPlans = loadPlans;
 });

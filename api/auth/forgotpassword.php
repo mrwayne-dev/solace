@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// FORGOT PASSWORD HANDLER — HealthRunCare
+// FORGOT PASSWORD HANDLER — TitanXHoldings
 // ========================================
 
 ini_set('display_errors', 0);

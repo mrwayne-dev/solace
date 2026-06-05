@@ -1,7 +1,7 @@
 <?php
 /**
  * ============================================================
- * HealthRunCare — Infrastructure Auto-Maturity Cron (Final)
+ * TitanXHoldings — Infrastructure Auto-Maturity Cron (Final)
  * ============================================================
  * Location: /api/cron/infrastructure_cron.php
  *

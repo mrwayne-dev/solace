@@ -1,6 +1,16 @@
 <?php
 require_once("../../config/database.php");
+require_once("../../api/utilities/helpers.php");
+session_start();
 header('Content-Type: application/json');
+
+// Admin Auth Check — exposes all users' pending withdrawals (PII + amounts).
+if (!isset($_SESSION["admin_id"])) {
+    logSecurityEvent('unauthorized_admin_access', ['endpoint' => 'get_pending_withdrawals', 'ip' => $_SERVER['REMOTE_ADDR'] ?? '', 'ua' => $_SERVER['HTTP_USER_AGENT'] ?? '']);
+    http_response_code(401);
+    echo json_encode(["status" => "error", "message" => "Unauthorized access"]);
+    exit;
+}
 
 try {
     $pdo = getPDO();

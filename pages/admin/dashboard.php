@@ -17,39 +17,11 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
 $admin_email = $_SESSION['admin_email'] ?? '';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- Meta -->
-    <meta charset="UTF-8">
-    <meta name="description" content="HealthRunCare Admin Dashboard - Overview">
-    <meta name="author" content="HealthRunCare">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow"> <!-- Likely for admin pages -->
-    <title>HealthRunCare Admin Dashboard</title>
-    <!-- Preload + Apply (critical CSS) -->
-    <link rel="preload" href="../../assets/css/bootstrap.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="../../assets/css/dashboard.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="../../assets/icon/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <!-- Load Non-critical CSS Normally -->
-    <link rel="stylesheet" href="../../assets/css/animation.min.css">
-    <link rel="stylesheet" href="../../assets/css/animation.css">
-    <link rel="stylesheet" href="../../assets/css/bootstrap-select.min.css">
-    <link rel="stylesheet" href="../../assets/fonts/font.css">
-    <link rel="stylesheet" href="../../assets/icon/style.css">
-    <!-- Fallback for browsers without preload support -->
-    <noscript>
-    <link rel="stylesheet" href="../../assets/css/bootstrap.css">
-    <link rel="stylesheet" href="../../assets/css/dashboard.css">
-    </noscript>
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="../../assets/favicon/favicon-32x32.png" sizes="32x32">
-    <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
-    <meta name="apple-mobile-web-app-title" content="HRC">
-    <link rel="manifest" href="../../assets/favicon/site.webmanifest">
-</head>
-<body class="counter-scroll">
+<?php
+  $page_title = "Admin Dashboard | TitanXHoldings";
+  include __DIR__ . "/_partials/head.php";
+?>
+<body class="counter-scroll txh-dash">
     <!-- #wrapper -->
     <div id="wrapper">
         <!-- #page -->
@@ -64,152 +36,11 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                 </div>
                 <!-- /preload -->
                 <!-- section-menu-left -->
-                <div class="section-menu-left">
-                    <div class="box-logo">
-                        <a href="/admin/dashboard" id="site-logo-inner">
-                            <img id="logo_header" alt="HRC Admin" src="/assets/images/healthruncarelogo.png" width="150px">
-                        </a>
-                        <div class="button-show-hide">
-                            <span class="iconify" data-icon="mdi:chevron-left"></span>
-                        </div>
-                    </div>
-
-                    <div class="section-menu-left-wrap">
-                        <div class="center">
-
-                            <!-- Navigation Label -->
-                            <div class="center-item">
-                                <div class="center-heading f14-regular text-Gray menu-heading mb-12">
-                                    Navigation
-                                </div>
-                            </div>
-
-                            <div class="center-item">
-                                <ul>
-
-                                    <!-- DASHBOARD -->
-                                    <li class="menu-item has-children active">
-                                        <a href="javascript:void(0);" class="menu-item-button active">
-                                            <div class="icon">
-                                                <span class="iconify" data-icon="mdi:view-dashboard-outline"></span>
-                                            </div>
-                                            <div class="text">Dashboard</div>
-                                        </a>
-                                        <ul class="sub-menu">
-                                            <li class="sub-menu-item active">
-                                                <a href="/admin/dashboard">
-                                                    <div class="text">Overview</div>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-
-                                    <!-- USERS -->
-                                    <li class="menu-item">
-                                        <a href="/admin.users" class="menu-item-button">
-                                            <div class="icon">
-                                                <span class="iconify" data-icon="mdi:account-group-outline"></span>
-                                            </div>
-                                            <div class="text">Users</div>
-                                        </a>
-                                    </li>
-
-                                    <!-- TRANSACTIONS -->
-                                    <li class="menu-item">
-                                        <a href="/admin.transactions" class="menu-item-button">
-                                            <div class="icon">
-                                                <span class="iconify" data-icon="mdi:receipt-text"></span>
-                                            </div>
-                                            <div class="text">Transactions</div>
-                                        </a>
-                                    </li>
-
-                                    <!-- WALLET MANAGEMENT -->
-                                    <li class="menu-item">
-                                        <a href="/admin.wallets" class="menu-item-button">
-                                            <div class="icon">
-                                                <span class="iconify" data-icon="mdi:wallet-outline"></span>
-                                            </div>
-                                            <div class="text">Wallet Management</div>
-                                        </a>
-                                    </li>
-
-                                    <!-- DONATIONS (UPDATED ICON) -->
-                                    <li class="menu-item">
-                                        <a href="/admin.donations" class="menu-item-button">
-                                            <div class="icon">
-                                                <span class="iconify" data-icon="mdi:hand-heart-outline"></span>
-                                            </div>
-                                            <div class="text">Donations</div>
-                                        </a>
-                                    </li>
-
-                                    <!-- FUND MANAGEMENT (Dropdown) -->
-                                    <li class="menu-item has-children">
-                                        <a href="javascript:void(0);" class="menu-item-button">
-                                            <div class="icon">
-                                                <span class="iconify" data-icon="mdi:money"></span>
-                                            </div>
-                                            <div class="text">Fund Management</div>
-                                        </a>
-                                        <ul class="sub-menu">
-                                            <li class="sub-menu-item"><a href="/admin.funds"><div class="text">Investments</div></a></li>
-                                            <li class="sub-menu-item"><a href="/admin.funds/holdlock"><div class="text">Holdlock</div></a></li>
-                                            <li class="sub-menu-item"><a href="/admin.funds/trustfund"><div class="text">Trustfund</div></a></li>
-                                            <li class="sub-menu-item"><a href="/admin.funds/infrastructure"><div class="text">Infrastructure</div></a></li>
-                                            <li class="sub-menu-item"><a href="/admin.funds/maintenance"><div class="text">Maintenance</div></a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /section-menu-left -->
+                <?php $active = "dashboard"; include __DIR__ . "/_partials/sidebar.php"; ?>
                 <!-- section-content-right -->
                 <div class="section-content-right">
                     <!-- header-dashboard -->
-                    <div class="header-dashboard">
-                        <div class="wrap">
-                            <div class="header-left">
-                                <div class="button-show-hide">
-                                    <i class="icon-menu"></i>
-                                </div>
-                                <h6>Admin Dashboard</h6>
-                            </div>
-                            <div class="header-grid">
-                                <div class="line1"></div>
-                                <div class="popup-wrap user type-header">
-                                    <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <span class="header-user wg-user">
-                                                <span class="image">
-                                                    <img src="/assets/images/avatar/default.png" alt="Admin Avatar">
-                                                </span>
-                                                <span class="content flex flex-column">
-                                                    <span class="label-02 text-Black name"><?= $admin_name ?></span>
-                                                    <span class="f14-regular text-Gray">Admin</span>
-                                                </span>
-                                            </span>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end has-content" aria-labelledby="dropdownMenuButton3" >
-                                            <li>
-                                                <a href="/admin/profile" class="user-item">
-                                                    <div class="body-title-2">Profile</div>
-                                                </a>
-                                            </li>
-                                            <li>
-                                            <a href="#" id="logout-btn" class="user-item">
-                                                <div class="body-title-2">Log out</div>
-                                            </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /header-dashboard -->
+                    <?php $page_heading = "Admin Dashboard"; include __DIR__ . "/_partials/topbar.php"; ?>
                     <!-- main-content -->
                     <div class="main-content">
                         <!-- main-content-wrap -->
@@ -238,34 +69,34 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                                         <div class="wallet-card-header">Total Revenue</div>
                                                         <div class="wallet-card-balance">$<span id="total-revenue">0.00</span></div>
                                                         <div class="wallet-card-footer">
-                                                            HRC-REV-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
+                                                            TXH-REV-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
                                                         </div>
                                                     </div>
 
-                                                    <!-- Total Donations -->
-                                                    <div class="wallet-card wallet-donations">
-                                                        <div class="wallet-card-header">Total Donations</div>
-                                                        <div class="wallet-card-balance">$<span id="total-donations">0.00</span></div>
+                                                    <!-- AUM (Total Allocated Capital) -->
+                                                    <div class="wallet-card wallet-aum">
+                                                        <div class="wallet-card-header">Total AUM</div>
+                                                        <div class="wallet-card-balance">$<span id="total-aum">0.00</span></div>
                                                         <div class="wallet-card-footer">
-                                                            HRC-DON-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
+                                                            TXH-AUM-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
                                                         </div>
                                                     </div>
 
-                                                    <!-- Active Investments -->
+                                                    <!-- Active X-Yield -->
                                                     <div class="wallet-card wallet-investments">
-                                                        <div class="wallet-card-header">Active Investments</div>
+                                                        <div class="wallet-card-header">Active X-Yield</div>
                                                         <div class="wallet-card-balance"><span id="active-investments">0</span></div>
                                                         <div class="wallet-card-footer">
-                                                            HRC-INV-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
+                                                            TXH-INV-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
                                                         </div>
                                                     </div>
 
                                                     <!-- Total Users -->
-                                                    <div class="wallet-card wallet-holdlock">
-                                                        <div class="wallet-card-header">Total Users</div>
+                                                    <div class="wallet-card wallet-xlock">
+                                                        <div class="wallet-card-header">Total Members</div>
                                                         <div class="wallet-card-balance"><span id="total-users">0</span></div>
                                                         <div class="wallet-card-footer">
-                                                            HRC-USR-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
+                                                            TXH-USR-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -292,10 +123,10 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                                                 <div class="dot bg-Primary"></div> <span>Revenue</span> <strong id="chart-revenue">0%</strong>
                                                             </li>
                                                             <li class="flex items-center gap6">
-                                                                <div class="dot bg-Green"></div> <span>Donations</span> <strong id="chart-donations">0%</strong>
+                                                                <div class="dot bg-Green"></div> <span>AUM</span> <strong id="chart-aum">0%</strong>
                                                             </li>
                                                             <li class="flex items-center gap6">
-                                                                <div class="dot bg-Accent"></div> <span>Investments</span> <strong id="chart-investments">0%</strong>
+                                                                <div class="dot bg-Accent"></div> <span>X-Yield</span> <strong id="chart-investments">0%</strong>
                                                             </li>
                                                             <li class="flex items-center gap6">
                                                                 <div class="dot bg-Purple"></div> <span>Users</span> <strong id="chart-users">0%</strong>
@@ -632,12 +463,12 @@ $admin_email = $_SESSION['admin_email'] ?? '';
     <!-- Toast Notifications -->
     <div id="toast-container"></div>
     
-<script src="../../assets/js/api.js" defer></script>
-<script src="../../assets/js/jquery.min.js"></script>
-<script src="../../assets/js/bootstrap.min.js"></script>
-<script src="../../assets/js/countto.js" defer></script>
-<script src="../../assets/js/bootstrap-select.min.js" defer></script>
-<script src="../../assets/js/admin/admin.js" defer></script>
+<script src="<?= txh_asset('../../assets/js/api.js') ?>" defer></script>
+<script src="<?= txh_asset('../../assets/js/jquery.min.js') ?>"></script>
+<script src="<?= txh_asset('../../assets/js/bootstrap.min.js') ?>"></script>
+<script src="<?= txh_asset('../../assets/js/countto.js') ?>" defer></script>
+<script src="<?= txh_asset('../../assets/js/bootstrap-select.min.js') ?>" defer></script>
+<script src="<?= txh_asset('../../assets/js/admin/admin.js') ?>" defer></script>
 
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

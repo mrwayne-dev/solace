@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// CARD USAGE API — HealthRunCare
+// CARD USAGE API — TitanXHoldings
 // Returns user-level distribution of activities
 // ========================================
 
@@ -21,14 +21,14 @@ $user_id = $_SESSION['user_id'];
 try {
     $pdo = getPDO(); // ✅ your actual function name
 
-    // Queries for each project type
+    // Queries for each TitanXHoldings product — keys must match the dashboard chart consumer
     $queries = [
-        'charity'        => "SELECT COALESCE(SUM(amount),0) FROM charity_donations WHERE user_id = ?",
-        'investment'     => "SELECT COALESCE(SUM(amount),0) FROM investments WHERE user_id = ?",
-        'holdlock'       => "SELECT COALESCE(SUM(amount),0) FROM holdlock WHERE user_id = ?",
-        'trustfund'      => "SELECT COALESCE(SUM(amount),0) FROM trustfund WHERE user_id = ?",
-        'infrastructure' => "SELECT COALESCE(SUM(amount),0) FROM infrastructure_contributions WHERE user_id = ?",
-        'maintenance'    => "SELECT COALESCE(SUM(amount),0) FROM maintenance WHERE user_id = ?"
+        'investment' => "SELECT COALESCE(SUM(amount),0)         FROM investments WHERE user_id = ?",
+        'xlock'      => "SELECT COALESCE(SUM(amount),0)         FROM holdlock WHERE user_id = ?",
+        'xweekly'    => "SELECT COALESCE(SUM(total_invested),0) FROM xweekly_programs WHERE user_id = ?",
+        'xshares'    => "SELECT COALESCE(SUM(amount),0)         FROM xshares_holdings WHERE user_id = ?",
+        'xgrid'      => "SELECT COALESCE(SUM(amount),0)         FROM infrastructure_contributions WHERE user_id = ?",
+        'xrewards'   => "SELECT COALESCE(SUM(total_price),0)    FROM xrewards_orders WHERE user_id = ? AND status <> 'cancelled'",
     ];
 
     $totals = [];
@@ -59,6 +59,7 @@ try {
     ]);
 
 } catch (Exception $e) {
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    error_log('card_usage.php: ' . $e->getMessage());
+    echo json_encode(['success' => false, 'message' => 'Unable to load card usage right now.']);
     exit;
 }

@@ -1,6 +1,6 @@
 /**
  * ============================================================
- *  HealthRunCare — Transaction.js
+ *  TitanXHoldings — Transaction.js
  *  Handles loading, searching, filtering, pagination & export
  * ============================================================
  */
@@ -46,12 +46,12 @@ $(document).ready(function () {
             : 'bg-Salmon';
 
         const row = `
-          <tr class="tf-table-item">
-            <td data-label="Transaction ID"><div class="f12-medium">#${tx.reference}</div></td>
-            <td data-label="Date"><div class="f12-medium">${tx.date}</div></td>
-            <td data-label="Type"><div class="f12-bold">${tx.type}</div></td>
-            <td data-label="Amount"><div class="f12-medium">$${tx.amount}</div></td>
-            <td data-label="Status"><div class="box-status ${colorClass}"><span class="font-poppins">${tx.status.toUpperCase()}</span></div></td>
+          <tr>
+            <td><div class="f12-medium">#${tx.reference}</div></td>
+            <td><div class="f12-medium">${tx.date}</div></td>
+            <td><div class="f12-bold">${tx.type}</div></td>
+            <td><div class="f12-medium">$${tx.amount}</div></td>
+            <td><div class="box-status ${colorClass}"><span class="font-poppins">${tx.status.toUpperCase()}</span></div></td>
           </tr>`;
         listEl.append(row);
       });

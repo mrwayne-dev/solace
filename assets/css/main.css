@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
 /* ==============================
    Fonts - Host Grotesk
    ============================== */
@@ -30,9 +32,6 @@
   font-display: swap;
 }
 
-/* ==============================
-   Variables
-   ============================== */
 :root {
   /* Colors */
   --color-primary: #386641;
@@ -87,12 +86,15 @@ html {
 body {
   margin: 0;
   padding: 0;
-  font-family: var(--font-family-base);
+  font-family: var(--txh-font-body);
   font-size: 1.6rem;
   line-height: 1.6;
   color: var(--color-text);
   background: var(--color-bg);
   overflow-x: hidden;
+}
+h1, h2, h3 {
+  font-family: var(--txh-font-display);
 }
 li { list-style: none; }
 a {
@@ -487,7 +489,7 @@ table { border-collapse: collapse; width: 100%; }
   background: var(--color-surface);
 }
 .whyhrc-hero {
-  background-image: url('../../assets/images/whyhrc-bg2.webp');
+  background-image: url('../../assets/images/whytx-bg2.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -552,7 +554,7 @@ table { border-collapse: collapse; width: 100%; }
   z-index: 1;
 }
 .charity-hero {
-  background-image: url('../../assets/images/charitybg.webp');
+  background-image: url('../../assets/images/vault-bg.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -565,7 +567,7 @@ table { border-collapse: collapse; width: 100%; }
   z-index: 1;
 }
 .investment-hero {
-  background-image: url('../../assets/images/investmentbg.webp');
+  background-image: url('../../assets/images/x-yield-card.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -578,7 +580,7 @@ table { border-collapse: collapse; width: 100%; }
   z-index: 1;
 }
 .holdlock-hero {
-  background-image: url('../../assets/images/holdlockbg.webp');
+  background-image: url('../../assets/images/x-lock-card.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -591,7 +593,7 @@ table { border-collapse: collapse; width: 100%; }
   z-index: 1;
 }
 .trustfund-hero {
-  background-image: url('../../assets/images/trustfundbg.webp');
+  background-image: url('../../assets/images/xtrust-bg.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -604,7 +606,7 @@ table { border-collapse: collapse; width: 100%; }
   z-index: 1;
 }
 .infrastructure-hero {
-  background-image: url('../../assets/images/infrastructurebg.webp');
+  background-image: url('../../assets/images/xgrid-bg.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -617,7 +619,7 @@ table { border-collapse: collapse; width: 100%; }
   z-index: 1;
 }
 .maintenance-hero {
-  background-image: url('../../assets/images/maintenancebg.webp');
+  background-image: url('../../assets/images/platform-bg.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -1413,7 +1415,7 @@ table { border-collapse: collapse; width: 100%; }
   color: rgba(255, 255, 255, 0.85);
 }
 .cta-visual--whyhrc {
-  background: url('../../assets/images/why-hrc-cta.png') center/cover no-repeat;
+  background: url('../../assets/images/why-txh-cta.png') center/cover no-repeat;
 }
 
 .cta-visual--whyhrc::before {

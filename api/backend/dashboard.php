@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 0);
+error_reporting(0);
 // ===============================================
 // FILE: /api/backend/dashboard.php
 // PURPOSE: Provides user dashboard data — wallet stats,
@@ -69,8 +71,8 @@ if ($action === 'get_wallet') {
         if (!$wallet) {
             // Auto-create wallet if not found
             $pdo->prepare("
-                INSERT INTO wallets (user_id, balance, total_deposited, total_withdrawn, total_donations, total_investments, holdlock_savings, total_earnings, pending_withdrawals)
-                VALUES (?, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00)
+                INSERT INTO wallets (user_id, balance, total_deposited, total_withdrawn, total_investments, holdlock_savings, total_earnings, pending_withdrawals)
+                VALUES (?, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00)
             ")->execute([$user_id]);
             $wallet = ['balance' => 0.00];
         }
@@ -108,8 +110,8 @@ $wallet = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$wallet) {
     // Create a default wallet if none exists
     $pdo->prepare("
-        INSERT INTO wallets (user_id, balance, total_deposited, total_withdrawn, total_donations, total_investments, holdlock_savings, total_earnings, pending_withdrawals)
-        VALUES (?, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00)
+        INSERT INTO wallets (user_id, balance, total_deposited, total_withdrawn, total_investments, holdlock_savings, total_earnings, pending_withdrawals)
+        VALUES (?, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00)
     ")->execute([$user_id]);
     $stmt->execute([$user_id]);
     $wallet = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -150,7 +152,7 @@ if (!$impact) {
 // ===========================================================
 // UPDATE IMPACT (if wallet contributions changed)
 // ===========================================================
-$total_contributions = (float)$wallet['total_donations'] + (float)$wallet['total_investments'] + (float)$wallet['holdlock_savings'];
+$total_contributions = (float)$wallet['total_investments'] + (float)$wallet['holdlock_savings'];
 if (abs((float)$impact['total_contributions'] - $total_contributions) > 0.01) {
     $pdo->prepare("UPDATE user_impacts SET total_contributions = ? WHERE user_id = ?")
         ->execute([$total_contributions, $user_id]);
@@ -198,7 +200,6 @@ echo json_encode([
             'balance' => (float)$wallet['balance'],
             'total_deposited' => (float)$wallet['total_deposited'],
             'total_withdrawn' => (float)$wallet['total_withdrawn'],
-            'donations' => (float)$wallet['total_donations'],
             'investments' => (float)$wallet['total_investments'],
             'holdlock_savings' => (float)$wallet['holdlock_savings'],
             'total_earnings' => (float)$wallet['total_earnings'],

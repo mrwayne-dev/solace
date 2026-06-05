@@ -1,19 +1,19 @@
   /* =======================================================
-    HealthRunCare - Infrastructure.js (Final Version)
-    Purpose: UI + API logic for the Infrastructure page
+    TitanXHoldings - X-Grid.js (Final Version)
+    Purpose: UI + API logic for the X-Grid page
     ======================================================= */
 
   document.addEventListener('DOMContentLoaded', () => {
-    loadInfrastructureSummary();
-    loadActiveInvestments();
-    loadMaturedInvestments();
-    loadInfrastructurePlans();
+    loadXGridSummary();
+    loadActiveXYields();
+    loadMaturedXYields();
+    loadXGridPlans();
 
     const form = document.getElementById('infrastructure-form');
     if (form) {
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        await startInfrastructure();
+        await startXGrid();
       });
     }
 
@@ -24,16 +24,16 @@
   /* =======================================================
     API WRAPPER
     ======================================================= */
-  async function callInfrastructureAPI(action, data = {}) {
-    return await fetchApi('/api/backend/infrastructure.php', { ...data, action });
+  async function callXGridAPI(action, data = {}) {
+    return await fetchApi('/api/backend/xgrid.php', { ...data, action });
   }
 
   /* =======================================================
     LOAD SUMMARY
     ======================================================= */
-  async function loadInfrastructureSummary() {
+  async function loadXGridSummary() {
     try {
-      const res = await callInfrastructureAPI('get_summary');
+      const res = await callXGridAPI('get_summary');
       if (res.status === 'success') {
         const { summary, wallet } = res.data;
         updateSummaryUI(summary, wallet);
@@ -41,7 +41,7 @@
         showToast(res.message || 'Failed to load summary', 'error');
       }
     } catch (err) {
-      console.error('Infrastructure Summary Error:', err);
+      console.error('X-Grid Summary Error:', err);
       showToast('Network error while loading summary', 'error');
     }
   }
@@ -64,13 +64,14 @@
   /* =======================================================
     LOAD PLANS (optional; for dynamic UI)
     ======================================================= */
-async function loadInfrastructurePlans() {
+async function loadXGridPlans() {
   const planSelect = document.getElementById('plan-select');
   if (!planSelect) return;
 
   try {
-    const res = await callInfrastructureAPI('get_plans');
+    const res = await callXGridAPI('get_plans');
     const plans = res.data?.plans || [];
+    window.__txh_xgrid_plans = plans;
 
     // Populate dropdown
     planSelect.innerHTML = '<option value="">Select a Plan</option>';
@@ -111,7 +112,7 @@ function renderInfraPlanCards(plans) {
           <p class="f12-regular text-Gray mb-12">${escapeHtml(p.purpose)}</p>
 
           <table class="plan-features">
-            <tr><td>Min Investment</td><td>$${Number(p.min_amount).toLocaleString()}</td></tr>
+            <tr><td>Min X-Yield</td><td>$${Number(p.min_amount).toLocaleString()}</td></tr>
             <tr><td>Pay-Off Period</td><td>${Math.round(p.duration_days / 30)} months</td></tr>
             <tr><td>ROI</td><td class="text-Green fw-bold">${p.roi_percent}%</td></tr>
             <tr><td>Risk Level</td><td class="text-${p.color} fw-bold">${escapeHtml(p.risk_level ?? '')}</td></tr>
@@ -154,12 +155,33 @@ function renderInfraPlanCards(plans) {
 
     const btn = document.getElementById('invest-btn');
     if (btn) btn.disabled = !selected.value;
+
+    if (window.txhRenderPlanPanel) {
+      const plan = (window.__txh_xgrid_plans || []).find(p => String(p.id) === String(selected.value));
+      if (!selected.value || !plan) {
+        window.txhRenderPlanPanel(null);
+      } else {
+        window.txhRenderPlanPanel({
+          name: plan.name,
+          roi: (plan.roi_percent != null) ? (plan.roi_percent + '%') : '—',
+          roiLabel: 'Expected ROI',
+          risk: plan.risk_level,
+          meta: [
+            ['Pay-off period', payoff],
+            ['Minimum', '$' + Number(plan.min_amount).toLocaleString()],
+            ['Repayment', plan.repayment_mode],
+            ['Income source', plan.income_source],
+          ],
+          summary: plan.summary || plan.purpose,
+        });
+      }
+    }
   }
 
   /* =======================================================
     START INFRASTRUCTURE CONTRIBUTION
     ======================================================= */
-  async function startInfrastructure() {
+  async function startXGrid() {
     const planSelect = document.getElementById('plan-select');
     const amountInput = document.getElementById('invest-amount');
 
@@ -175,21 +197,21 @@ function renderInfraPlanCards(plans) {
 
     try {
       toggleLoader(true);
-      const res = await callInfrastructureAPI('start_infrastructure', { plan_id, amount });
+      const res = await callXGridAPI('start_infrastructure', { plan_id, amount });
       toggleLoader(false);
 
       if (res.status === 'success') {
-        showToast('Infrastructure investment started successfully', 'success');
+        showToast('X-Grid investment started successfully', 'success');
         document.getElementById('infrastructure-form').reset();
         document.getElementById('invest-btn').disabled = true;
-        loadInfrastructureSummary();
-        loadActiveInvestments();
-        loadMaturedInvestments();
+        loadXGridSummary();
+        loadActiveXYields();
+        loadMaturedXYields();
       } else {
         showToast(res.message || 'Failed to start investment', 'error');
       }
     } catch (err) {
-      console.error('Start Infrastructure Error:', err);
+      console.error('Start X-Grid Error:', err);
       toggleLoader(false);
       showToast('Network error. Please try again.', 'error');
     }
@@ -198,20 +220,20 @@ function renderInfraPlanCards(plans) {
   /* =======================================================
     LOAD ACTIVE INVESTMENTS
     ======================================================= */
-  async function loadActiveInvestments() {
+  async function loadActiveXYields() {
     const tbody = document.getElementById('active-infra-tbody');
     if (!tbody) return;
 
     try {
       toggleLoader(true);
-      const res = await callInfrastructureAPI('get_active');
+      const res = await callXGridAPI('get_active');
       toggleLoader(false);
 
       const investments = res.data?.investments || [];
       tbody.innerHTML = '';
 
       if (!investments.length) {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-3">No active Infrastructure investments.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-3">No active X-Grid investments.</td></tr>`;
         return;
       }
 
@@ -230,7 +252,7 @@ function renderInfraPlanCards(plans) {
         tbody.appendChild(tr);
       });
     } catch (err) {
-      console.error('Load Active Investments Error:', err);
+      console.error('Load Active X-Yields Error:', err);
       toggleLoader(false);
     }
   }
@@ -238,12 +260,12 @@ function renderInfraPlanCards(plans) {
   /* =======================================================
     LOAD MATURED INVESTMENTS
     ======================================================= */
-  async function loadMaturedInvestments() {
+  async function loadMaturedXYields() {
     const tbody = document.getElementById('matured-infra-tbody');
     if (!tbody) return;
 
     try {
-      const res = await callInfrastructureAPI('get_matured');
+      const res = await callXGridAPI('get_matured');
       const investments = res.data?.investments || [];
       tbody.innerHTML = '';
 
@@ -263,7 +285,7 @@ function renderInfraPlanCards(plans) {
           <td>$${Number(inv.total_payout || 0).toFixed(2)}</td>
           <td>
             <button class="tf-button bg-Green text-White f12-regular" 
-              onclick="unlockInvestment(${inv.id}, false)">
+              onclick="unlockXYield(${inv.id}, false)">
               Unlock
             </button>
           </td>
@@ -271,14 +293,14 @@ function renderInfraPlanCards(plans) {
         tbody.appendChild(tr);
       });
     } catch (err) {
-      console.error('Load Matured Investments Error:', err);
+      console.error('Load Matured X-Yields Error:', err);
     }
   }
 
   /* =======================================================
     UNLOCK INVESTMENT
     ======================================================= */
-  async function unlockInvestment(investment_id, early = false) {
+  async function unlockXYield(investment_id, early = false) {
     const confirmMsg = early
       ? 'This will perform an early unlock and apply a penalty. Proceed?'
       : 'Unlock this matured investment and credit your wallet?';
@@ -286,14 +308,14 @@ function renderInfraPlanCards(plans) {
 
     try {
       toggleLoader(true);
-      const res = await callInfrastructureAPI('unlock', { investment_id, early: early ? 1 : 0 });
+      const res = await callXGridAPI('unlock', { investment_id, early: early ? 1 : 0 });
       toggleLoader(false);
 
       if (res.status === 'success') {
         showToast('Unlock processed successfully', 'success');
-        loadInfrastructureSummary();
-        loadActiveInvestments();
-        loadMaturedInvestments();
+        loadXGridSummary();
+        loadActiveXYields();
+        loadMaturedXYields();
       } else {
         showToast(res.message || 'Failed to process unlock', 'error');
       }
@@ -324,7 +346,7 @@ function renderInfraPlanCards(plans) {
     AUTO REFRESH (1 min)
     ======================================================= */
   setInterval(() => {
-    loadInfrastructureSummary();
-    loadActiveInvestments();
-    loadMaturedInvestments();
+    loadXGridSummary();
+    loadActiveXYields();
+    loadMaturedXYields();
   }, 60000);

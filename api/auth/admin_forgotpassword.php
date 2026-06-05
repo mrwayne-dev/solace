@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// ADMIN FORGOT PASSWORD — HealthRunCare
+// ADMIN FORGOT PASSWORD — TitanXHoldings
 // ========================================
 
 ini_set('display_errors', 0);

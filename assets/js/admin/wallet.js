@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * HealthRunCare Admin Wallet.js
+ * TitanXHoldings Admin Wallet.js
  * Purpose: Frontend logic for the Admin Wallet Management page.
  * Handles: Data fetching, metric rendering, table rendering, pagination, search/filter, and balance updates.
  * ============================================================

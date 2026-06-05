@@ -1,136 +1,86 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- Meta -->
-    <meta charset="UTF-8">
-    <meta name="description" content="HealthRunCare Charity - Join our platform to access AI-driven healthcare solutions and community support.">
-    <meta name="author" content="HealthRunCare">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://healthruncare.com/register">
-    <title>HealthRunCare – Create Account</title>
+<?php
+$page_title = 'Create your account | TitanXHoldings';
+$page_description = 'Open a TitanXHoldings account in minutes. FCA-authorised investment platform with FSCS-protected savings, fractional shares, and automated investing.';
+$page_path = '/register';
+$nav_variant = 'solid';
+include __DIR__ . '/_partials/head.php';
+?>
+<body class="txh-redesign">
 
-    <!-- Preload + Apply (critical CSS) -->
-    <link rel="preload" href="../../assets/css/bootstrap.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="../../assets/css/dashboard.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="../../assets/css/main.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="../../assets/icon/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<?php include __DIR__ . '/_partials/navbar.php'; ?>
 
-    <!-- Load Non-critical CSS Normally -->
-    <link rel="stylesheet" href="../../assets/css/animation.min.css">
-    <link rel="stylesheet" href="../../assets/css/animation.css">
-    <link rel="stylesheet" href="../../assets/css/bootstrap-select.min.css">
-    <link rel="stylesheet" href="../../assets/fonts/font.css">
-    <link rel="stylesheet" href="../../assets/icon/style.css">
+<main class="auth-page">
+  <div class="container">
+    <div class="form-card">
+      <div class="form-card__header">
+        <p class="eyebrow">
+          <span class="eyebrow__icon"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg></span>
+          New here
+        </p>
+        <h1>Open your account</h1>
+        <p>Takes about three minutes. FSCS-protected from your first deposit.</p>
+      </div>
 
-    <!-- Fallback for browsers without preload support -->
-    <noscript>
-        <link rel="stylesheet" href="../../assets/css/bootstrap.css">
-        <link rel="stylesheet" href="../../assets/css/dashboard.css">
-        <link rel="stylesheet" href="../../assets/css/main.css">
-    </noscript>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="../../assets/favicon/favicon-32x32.png" sizes="32x32">
-    <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
-    <meta name="apple-mobile-web-app-title" content="HRC">
-    <link rel="manifest" href="../../assets/favicon/site.webmanifest">
-</head>
-
-<body style="background-color: white;">
-    <div id="wrapper">
-        <div id="page">
-            <div class="sign-in-wrap">
-                <div class="sign-in-box">
-                    <!-- LEFT SIDE -->
-                    <div class="left">
-                        <div class="content">
-                            <h3 class="heading text-Primary mb-8 text-center">Create Your Account</h3>
-                            <div class="sub f14-regular text-GrayDark mb-24 text-center">
-                                Join HealthRunCare to access personalized healthcare solutions
-                            </div>
-
-                            <div class="sign-in-inner">
-                                <form id="register-form" class="form-login flex flex-column gap24" autocomplete="off">
-                                    <fieldset class="first-name">
-                                        <div class="f14-regular mb-6">First Name</div>
-                                        <input id="first_name" class="flex-grow form-control" type="text" name="first_name" placeholder="John" required>
-                                    </fieldset>
-
-                                    <fieldset class="last-name">
-                                        <div class="f14-regular mb-6">Last Name</div>
-                                        <input id="last_name" class="flex-grow form-control" type="text" name="last_name" placeholder="Doe" required>
-                                    </fieldset>
-
-                                    <fieldset class="email">
-                                        <div class="f14-regular mb-6">Email Address</div>
-                                        <input id="email" class="flex-grow form-control" type="email" name="email" placeholder="you@example.com" required>
-                                    </fieldset>
-
-                                    <fieldset class="password">
-                                        <div class="f14-regular mb-6">Password</div>
-                                        <div class="relative">
-                                            <input id="password" class="password-input form-control" type="password" id="password" name="password" placeholder="••••••••" required>
-                                            <span class="show-pass cursor-pointer absolute" style="right:12px;top:50%;transform:translateY(-50%);">
-                                                <span class="iconify view" data-icon="mdi:eye-outline" style="font-size:20px;"></span>
-                                                <span class="iconify hide" data-icon="mdi:eye-off-outline" style="font-size:20px;display:none;"></span>
-                                            </span>
-                                        </div>
-                                    </fieldset>
-
-                                    <div class="tf-cart-checkbox mt-3 mb-3">
-                                        <div class="tf-checkbox-wrapp">
-                                            <input class="checkbox-item" type="checkbox" id="terms" checked>
-                                            <div><i class="icon-check"></i></div>
-                                        </div>
-                                        <label for="terms" class="f14-regular">
-                                            By signing up, you agree to our
-                                            <a href="/terms" class="f14-bold">Terms & Conditions</a>
-                                        </label>
-                                    </div>
-
-                                    <button type="submit" class="tf-button style-1 label-01 w-100 bg-Primary text-White">
-                                        Sign Up
-                                    </button>
-
-                                    <div class="f14-regular text-center mt-4">
-                                        Already have an account?
-                                        <a href="/login" class="f14-bold text-Primary">Sign In</a>
-                                    </div>
-                                                                        <div class="text-center mt-4">
-                                        <a href="/" class="tf-button style-1 bg-GrayLight text-Primary f14-bold" 
-                                        style="padding:10px 24px; border-radius:8px; display:inline-flex; align-items:center; gap:8px;">
-                                            <span class="iconify" data-icon="mdi:arrow-left"></span>
-                                            Back to Home
-                                        </a>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- RIGHT SIDE -->
-                    <div class="right">
-                        <img src="../../assets/images/signup.png" alt="Healthcare Registration Illustration">
-                    </div>
-                </div>
-            </div>
+      <form id="register-form" class="form-stack" autocomplete="off">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
+          <div class="form-field">
+            <label class="form-field__label" for="first_name">First name</label>
+            <input id="first_name" name="first_name" type="text" class="form-field__input" placeholder="John" required>
+          </div>
+          <div class="form-field">
+            <label class="form-field__label" for="last_name">Last name</label>
+            <input id="last_name" name="last_name" type="text" class="form-field__input" placeholder="Doe" required>
+          </div>
         </div>
-    </div>
 
-    <div id="loader" class="hidden">
-    <div class="line-loader">
-        <div></div><div></div><div></div><div></div><div></div>
-    </div>
-    </div>
+        <div class="form-field">
+          <label class="form-field__label" for="email">Email address</label>
+          <input id="email" name="email" type="email" class="form-field__input" placeholder="you@example.com" required>
+        </div>
 
-    <!-- Toast Notifications -->
-    <div id="toast-container"></div>
-    <!-- Scripts -->
-    <script src="../../assets/js/api.js" defer></script>
-    <!-- Iconify CDN -->
-    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
-    
+        <div class="form-field form-field--with-action">
+          <label class="form-field__label" for="password">Password</label>
+          <input id="password" name="password" type="password" class="form-field__input" placeholder="••••••••" required>
+          <button type="button" class="form-field__action" aria-label="Show / hide password" onclick="(function(b){const i=b.previousElementSibling;i.type=i.type==='password'?'text':'password';})(this)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+          <p class="form-field__hint">Minimum 8 characters. Include a number or symbol.</p>
+        </div>
+
+        <label style="display: inline-flex; align-items: flex-start; gap: var(--space-2); font-size: var(--text-sm); color: var(--color-ink-muted); cursor: pointer; line-height: 1.5;">
+          <input type="checkbox" id="terms" checked style="margin-top: 3px;">
+          <span>By signing up, you agree to our <a href="/terms" class="form-link" style="text-decoration-color: var(--color-ink-primary);">Terms &amp; Conditions</a> and acknowledge our Privacy Policy.</span>
+        </label>
+
+        <button type="submit" class="btn btn--primary" style="width: 100%;">Create account</button>
+      </form>
+
+      <!-- Verify step — revealed after sign-up (OTP emailed) -->
+      <form id="verify-form" class="form-stack hidden" autocomplete="off">
+        <div class="form-field">
+          <label class="form-field__label" for="verify-otp">Enter the 6-digit code</label>
+          <input id="verify-otp" type="text" inputmode="numeric" class="form-field__input" placeholder="••••••" maxlength="6" required>
+          <p class="form-field__hint">We emailed a code to verify your address. Check your inbox (and spam folder).</p>
+        </div>
+        <button type="submit" class="btn btn--primary" style="width: 100%;">Verify &amp; continue</button>
+        <p style="text-align:center; font-size: var(--text-sm); margin-top: var(--space-3);">
+          Didn't get it? <a href="#" id="verify-resend" class="form-link">Resend code</a>
+        </p>
+      </form>
+
+      <div class="form-footer">
+        Already have an account? <a href="/login">Sign in</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="toast-container"></div>
+<div id="loader" class="hidden"><div class="line-loader"><div></div><div></div><div></div><div></div><div></div></div></div>
+
+<?php include __DIR__ . '/_partials/footer.php'; ?>
+
+<script src="<?= txh_asset('/assets/js/api.js') ?>" defer></script>
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 </body>
 </html>

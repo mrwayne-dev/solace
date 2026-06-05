@@ -14,6 +14,7 @@
   --Green: #386641;
 }
 
+
 /* Reset Browsers
 -------------------------------------------------------------- */
 html,
@@ -206,7 +207,7 @@ button,
 input,
 select,
 textarea {
-  font-family: "Host Grotesk", sans-serif;
+  font-family: var(--txh-font-body);
   font-weight: 400;
   color: var(--Black);
   -webkit-font-smoothing: antialiased;
@@ -524,7 +525,7 @@ h3, .h3,
 h4, .h4,
 h5, .h5,
 h6, .h6 {
-  font-family: "Host Grotesk", sans-serif;
+  font-family: var(--txh-font-display);
   margin: 0;
   font-weight: 800;
   text-rendering: optimizeLegibility;
@@ -7750,7 +7751,7 @@ select {
   }
 }
 /* ============================================
-   HealthRunCare - Login Page Styles (Unified)
+   TitanXHoldings - Login Page Styles (Unified)
    ============================================ */
 
 /* Base Layout */
@@ -7901,14 +7902,14 @@ html, body {
   gap: 12px;
   min-width: 280px;
   max-width: 360px;
-  padding: 14px 18px;
-  border-radius: 10px;
+  padding: 14px 18px 14px 20px;
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
   color: #fff;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
   animation: slideIn 0.4s ease forwards, fadeOut 0.4s ease 3.6s forwards;
-  background: var(--Black);
+  background: #1A1A1A;
   pointer-events: auto;
   overflow: hidden;
   position: relative;
@@ -7921,39 +7922,21 @@ html, body {
   left: 0;
   top: 0;
   height: 100%;
-  width: 5px;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
+  width: 4px;
 }
 
-/* Toast types */
-.toast.success {
-  background: #1b5e20;
-}
-.toast.success::before {
-  background: #66bb6a;
-}
+/* Toast types — neutral dark card, colored accent bar + icon */
+.toast.success::before { background: #386641; }
+.toast.success .iconify { color: #6FBF73; }
 
-.toast.error {
-  background: #b71c1c;
-}
-.toast.error::before {
-  background: #ef5350;
-}
+.toast.error::before { background: #CC0000; }
+.toast.error .iconify { color: #F26464; }
 
-.toast.info {
-  background: #1565c0;
-}
-.toast.info::before {
-  background: #42a5f5;
-}
+.toast.info::before { background: #FFFFFF; }
+.toast.info .iconify { color: #FFFFFF; }
 
-.toast.warning {
-  background: #f57f17;
-}
-.toast.warning::before {
-  background: #ffca28;
-}
+.toast.warning::before { background: #E8A33D; }
+.toast.warning .iconify { color: #E8A33D; }
 
 /* Icon */
 .toast .iconify {

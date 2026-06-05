@@ -1,7 +1,7 @@
 <?php
 /**
  * ============================================================
- * HealthRunCare — PROCESS WITHDRAWAL ACTION (ADMIN)
+ * TitanXHoldings — PROCESS WITHDRAWAL ACTION (ADMIN)
  * ============================================================
  * POST: id, action (complete|cancel), [reason]
  * Actions:
@@ -14,8 +14,18 @@
 require_once("../../config/database.php");
 require_once("../../api/utilities/email_temps.php"); 
 require_once("../backend/email.php"); // Contains the sendEmail function
+require_once("../../api/utilities/helpers.php");
 
+session_start();
 header('Content-Type: application/json');
+
+// Admin Auth Check — this endpoint approves/cancels withdrawals and credits wallets.
+if (!isset($_SESSION["admin_id"])) {
+    logSecurityEvent('unauthorized_admin_access', ['endpoint' => 'process_withdrawal', 'ip' => $_SERVER['REMOTE_ADDR'] ?? '', 'ua' => $_SERVER['HTTP_USER_AGENT'] ?? '']);
+    http_response_code(401);
+    echo json_encode(["status" => "error", "message" => "Unauthorized access"]);
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['status' => 'error', 'message' => 'Invalid request method']);
@@ -122,5 +132,6 @@ sendEmail([
 
 } catch (Exception $e) {
     if ($pdo->inTransaction()) $pdo->rollBack();
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+    error_log('process_withdrawal.php: ' . $e->getMessage());
+    echo json_encode(['status' => 'error', 'message' => 'Could not process the withdrawal. Please try again.']);
 }

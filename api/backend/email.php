@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// EMAIL HANDLER — HealthRunCare (Finalized v2)
+// EMAIL HANDLER — TitanXHoldings (Finalized v2)
 // ========================================
 
 require_once __DIR__ . '/../../vendor/autoload.php';

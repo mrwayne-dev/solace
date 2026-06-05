@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// ADMIN LOGIN — HealthRunCare (Finalized)
+// ADMIN LOGIN — TitanXHoldings (Finalized)
 // ========================================
 
 ini_set('display_errors', 0);
@@ -27,11 +27,20 @@ try {
 
     // --- Parse JSON input ---
     $input = json_decode(file_get_contents('php://input'), true);
-    $email = trim($input['email'] ?? '');
+    $email = strtolower(trim($input['email'] ?? ''));
     $password = trim($input['password'] ?? '');
 
     if (!$email || !$password) {
         echo json_encode(['status' => 'error', 'message' => 'Email and password are required.']);
+        exit;
+    }
+
+    // --- Brute-force throttle (per-IP) ---
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    if (loginThrottleExceeded($pdo, $ip)) {
+        logSecurityEvent('login_lockout', ['scope' => 'admin', 'ip' => $ip, 'email' => $email, 'ua' => $_SERVER['HTTP_USER_AGENT'] ?? '']);
+        http_response_code(429);
+        echo json_encode(['status' => 'error', 'message' => 'Too many failed attempts. Please wait ~15 minutes and try again.']);
         exit;
     }
 
@@ -41,6 +50,7 @@ try {
     $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$admin || !password_verify($password, $admin['password'])) {
+        recordLoginFailure($pdo, $ip, $email);
         echo json_encode(['status' => 'error', 'message' => 'Invalid email or password.']);
         exit;
     }
@@ -54,7 +64,8 @@ try {
     // --- Update last login timestamp ---
     $pdo->prepare("UPDATE admins SET last_login = NOW() WHERE id = ?")->execute([$admin['id']]);
 
-    // --- Prepare session ---
+    // --- Prepare session (regenerate ID first to prevent session fixation) ---
+    session_regenerate_id(true);
     $_SESSION['admin_id'] = $admin['id'];
     $_SESSION['admin_email'] = $admin['email'];
     $_SESSION['admin_name'] = $admin['full_name'] ?: ($admin['name'] ?? 'Administrator');

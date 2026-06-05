@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// ADMIN REGISTRATION — HealthRunCare
+// ADMIN REGISTRATION — TitanXHoldings
 // ========================================
 
 ini_set('display_errors', 0);
@@ -9,6 +9,7 @@ ob_start();
 
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../config/constants.php';
+require_once __DIR__ . '/../../config/env.php';
 require_once __DIR__ . '/../backend/email.php';
 
 session_start([
@@ -25,13 +26,19 @@ try {
     $pdo = getPDO();
     $input = json_decode(file_get_contents('php://input'), true);
 
-    $first_name = trim($input['first_name'] ?? '');
-    $last_name  = trim($input['last_name'] ?? '');
-    $email      = trim($input['email'] ?? '');
-    $password   = trim($input['password'] ?? '');
+    $username    = trim($input['username'] ?? '');
+    $email       = strtolower(trim($input['email'] ?? ''));
+    $password    = trim($input['password'] ?? '');
+    $invite_code = trim($input['invite_code'] ?? '');
 
-    if (!$first_name || !$last_name || !$email || !$password) {
+    if (!$username || !$email || !$password || !$invite_code) {
         echo json_encode(['status' => 'error', 'message' => 'All fields are required.']);
+        exit;
+    }
+
+    // --- Verify admin invite code (constant-time; empty server code never matches) ---
+    if (ADMIN_INVITE_CODE === '' || !hash_equals(ADMIN_INVITE_CODE, $invite_code)) {
+        echo json_encode(['status' => 'error', 'message' => 'Invalid admin invite code.']);
         exit;
     }
 
@@ -40,16 +47,27 @@ try {
         exit;
     }
 
-    // Check existing email
+    if (strlen($password) < 8) {
+        echo json_encode(['status' => 'error', 'message' => 'Password must be at least 8 characters long.']);
+        exit;
+    }
+
+    // One email = one role: reject if used by an admin OR a user
     $check = $pdo->prepare("SELECT id FROM admins WHERE email = ?");
     $check->execute([$email]);
     if ($check->fetch()) {
         echo json_encode(['status' => 'error', 'message' => 'Email already registered.']);
         exit;
     }
+    $userCheck = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+    $userCheck->execute([$email]);
+    if ($userCheck->fetch()) {
+        echo json_encode(['status' => 'error', 'message' => 'This email cannot be used for an admin account.']);
+        exit;
+    }
 
     $hashed = password_hash($password, PASSWORD_DEFAULT);
-    $name = "{$first_name} {$last_name}";
+    $name = $username;
 
     // Insert into admins table
     $stmt = $pdo->prepare("

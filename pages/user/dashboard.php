@@ -17,40 +17,11 @@ $user_id = $_SESSION['user_id'] ?? null;
 $user_email = $_SESSION['email'] ?? null;
 $user_role = $_SESSION['role'] ?? 'user';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- Meta -->
-    <meta charset="UTF-8">
-    <meta name="description" content="HealthRunCare is a unified healthcare platform connecting patients, doctors, pharmacies, and employers through AI-driven, secure solutions.">
-    <meta name="author" content="HealthRunCare">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://healthruncare.com/ ">
-    <title>HealthRunCare User Dashboard</title>
-   <!-- Preload + Apply (critical CSS) -->
-    <link rel="preload" href="../../assets/css/bootstrap.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="../../assets/css/dashboard.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="../../assets/icon/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <!-- Load Non-critical CSS Normally -->
-    <link rel="stylesheet" href="../../assets/css/animation.min.css">
-    <link rel="stylesheet" href="../../assets/css/animation.css">
-    <link rel="stylesheet" href="../../assets/css/bootstrap-select.min.css">
-    <link rel="stylesheet" href="../../assets/fonts/font.css">
-    <link rel="stylesheet" href="../../assets/icon/style.css">
-    <!-- Fallback for browsers without preload support -->
-    <noscript>
-    <link rel="stylesheet" href="../../assets/css/bootstrap.css">
-    <link rel="stylesheet" href="../../assets/css/dashboard.css">
-    </noscript>
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="../../assets/favicon/favicon-32x32.png" sizes="32x32">
-    <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
-    <meta name="apple-mobile-web-app-title" content="HRC">
-    <link rel="manifest" href="../../assets/favicon/site.webmanifest">
-</head>
-<body class="counter-scroll">
+<?php
+  $page_title = "Dashboard | TitanXHoldings";
+  include __DIR__ . "/_partials/head.php";
+?>
+<body class="counter-scroll txh-dash">
     <!-- #wrapper -->
     <div id="wrapper">
         <!-- #page -->
@@ -66,146 +37,11 @@ $user_role = $_SESSION['role'] ?? 'user';
                 <!-- /preload -->
                 <!-- section-menu-left -->
                  <!-- testing my commit -->
-                <div class="section-menu-left">
-                    <div class="box-logo">
-                        <a href="/dashboard" id="site-logo-inner">
-                            <img class="" id="logo_header" alt="HRC" src="/assets/images/healthruncarelogo.png" width="150px">
-                        </a>
-                        <div class="button-show-hide">
-                            <span class="iconify" data-icon="mdi:chevron-left"></span>
-                        </div>
-                    </div>
-                    <div class="section-menu-left-wrap">
-                        <div class="center">
-                            <div class="center-item">
-                                <div class="center-heading f14-regular text-Gray menu-heading mb-12">Navigation</div>
-                            </div>
-                            <div class="center-item">
-                                <ul class="">
-                                    <li class="menu-item active has-children">
-                                        <a href="javascript:void(0);" class="menu-item-button active">
-                                            <div class="icon">
-                                                <span class="iconify" data-icon="mdi:view-dashboard-outline"></span>
-                                            </div>
-                                            <div class="text">Dashboard</div>
-                                        </a>
-                                        <ul class="sub-menu">
-                                            <li class="sub-menu-item active">
-                                                <a href="/dashboard" class="">
-                                                    <div class="text">Overview</div>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="menu-item has-children">
-                                        <a href="javascript:void(0);" class="menu-item-button">
-                                            <div class="icon">
-                                                <span class="iconify" data-icon="mdi:wallet-outline"></span>
-                                            </div>
-                                            <div class="text">My Wallet</div>
-                                        </a>
-                                        <ul class="sub-menu">
-                                            <li class="sub-menu-item">
-                                                <a href="/dashboard.wallet" class="">
-                                                    <div class="text">Wallet</div>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/dashboard.transactions" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:receipt-text-outline"></span></div>
-                                            <div class="text">Transaction</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/dashboard.charity" class="menu-item-button">
-                                            <div class="icon">
-                                                <span class="iconify" data-icon="mdi:heart-outline"></span>
-                                            </div>
-                                            <div class="text">Charity</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/dashboard.investment" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:chart-timeline-variant"></span></div>
-                                            <div class="text">Investments</div>
-                                        </a>
-                                    </li>
-                                     <li class="menu-item">
-                                        <a href="/dashboard.holdlock" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:lock-outline"></span></div>
-                                            <div class="text">Holdlock</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/dashboard.trustfund" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:account-cash-outline"></span></div>
-                                            <div class="text">Trustfund</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/dashboard.infrastructure" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:office-building-outline"></span></div>
-                                            <div class="text">Infrastructure</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/dashboard.development" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:tools"></span></div>
-                                            <div class="text">Maintenance Dev</div>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /section-menu-left -->
+                <?php $active = "dashboard"; include __DIR__ . "/_partials/sidebar.php"; ?>
                 <!-- section-content-right -->
                 <div class="section-content-right">
                     <!-- header-dashboard -->
-                    <div class="header-dashboard">
-                        <div class="wrap">
-                            <div class="header-left">
-                                <div class="button-show-hide">
-                                    <i class="icon-menu"></i>
-                                </div>
-                                <h6>User Dashboard</h6>
-                            </div>
-                            <div class="header-grid">
-                                <div class="line1"></div>
-                                <div class="popup-wrap user type-header">
-                                    <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <span class="header-user wg-user">
-                                                <span class="image">
-                                                    <img src="/assets/images/avatar/default.png" alt="">
-                                                </span>
-                                                <span class="content flex flex-column">
-                                                    <span class="label-02 text-Black name"><?= $user_name ?></span>
-                                                    <span class="f14-regular text-Gray">User</span>
-                                                </span>
-                                            </span>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end has-content" aria-labelledby="dropdownMenuButton3" >
-                                            <li>
-                                                <a href="/dashboard.transactions" class="user-item">
-                                                    <div class="body-title-2">Transactions</div>
-                                                </a>
-                                            </li>
-                                            <li>
-                                            <a href="#" id="logout-btn" class="user-item">
-                                                <div class="body-title-2">Log out</div>
-                                            </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /header-dashboard -->
+                    <?php $page_heading = "Dashboard"; include __DIR__ . "/_partials/topbar.php"; ?>
                     <!-- main-content -->
                     <div class="main-content">
                         <!-- main-content-wrap -->
@@ -234,34 +70,34 @@ $user_role = $_SESSION['role'] ?? 'user';
         <div class="wallet-card-header">Main Wallet</div>
         <div class="wallet-card-balance">$<span id="total-balance">0.00</span></div>
         <div class="wallet-card-footer">
-          HRC-MAIN-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>
+          TXH-MAIN-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>
         </div>
       </div>
 
-      <!-- Donations Wallet -->
-      <div class="wallet-card wallet-donations">
-        <div class="wallet-card-header">Donations Wallet</div>
-        <div class="wallet-card-balance">$<span id="total-donations">0.00</span></div>
+      <!-- Total Earnings -->
+      <div class="wallet-card wallet-green">
+        <div class="wallet-card-header">Total Earnings</div>
+        <div class="wallet-card-balance">$<span id="total-earnings">0.00</span></div>
         <div class="wallet-card-footer">
-          HRC-DON-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>
+          TXH-ERN-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>
         </div>
       </div>
 
-      <!-- Investments -->
+      <!-- X-Yields -->
       <div class="wallet-card wallet-investments">
-        <div class="wallet-card-header">Investments</div>
+        <div class="wallet-card-header">X-Yield</div>
         <div class="wallet-card-balance">$<span id="total-investments">0.00</span></div>
         <div class="wallet-card-footer">
-          HRC-INV-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>
+          TXH-INV-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>
         </div>
       </div>
 
-      <!-- HoldLock Savings -->
+      <!-- X-Lock Savings -->
       <div class="wallet-card wallet-holdlock">
-        <div class="wallet-card-header">HoldLock Savings</div>
+        <div class="wallet-card-header">X-Lock Savings</div>
         <div class="wallet-card-balance">$<span id="total-holdlock">0.00</span></div>
         <div class="wallet-card-footer">
-          HRC-HLD-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>
+          TXH-HLD-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>
         </div>
       </div>
 
@@ -295,8 +131,8 @@ $user_role = $_SESSION['role'] ?? 'user';
             <strong id="card-valid">08/26</strong>
           </li>
           <li>
-            <span>HRC ID</span>
-            <strong id="card-id">HRC-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>-9011-3298</strong>
+            <span>TXH ID</span>
+            <strong id="card-id">TXH-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>-9011-3298</strong>
             </li>
           <li>
             <span>Card Holder</span>
@@ -304,7 +140,7 @@ $user_role = $_SESSION['role'] ?? 'user';
           </li>
           <li>
             <span>Bank Name</span>
-            <strong id="card-bank">HealthRunCare Bank</strong>
+            <strong id="card-bank">TitanXHoldings Bank</strong>
           </li>
         </ul>
       </div>
@@ -314,16 +150,16 @@ $user_role = $_SESSION['role'] ?? 'user';
         <canvas id="cardUsageChart" width="200" height="200"></canvas>
         <ul class="chart-legend flex justify-center gap16 mt-12 flex-wrap">
           <li class="flex items-center gap6">
-            <div class="dot bg-Primary"></div> <span>Charity</span> <strong>40%</strong>
+            <div class="dot bg-Primary"></div> <span>X-Lock</span> <strong>40%</strong>
           </li>
           <li class="flex items-center gap6">
-            <div class="dot bg-Accent"></div> <span>Investments</span> <strong>25%</strong>
+            <div class="dot bg-Accent"></div> <span>X-Yield</span> <strong>25%</strong>
           </li>
           <li class="flex items-center gap6">
-            <div class="dot bg-Purple"></div> <span>HoldLock</span> <strong>20%</strong>
+            <div class="dot bg-Purple"></div> <span>X-Shares</span> <strong>20%</strong>
           </li>
           <li class="flex items-center gap6">
-            <div class="dot bg-Gainsboro"></div> <span>Donations</span> <strong>15%</strong>
+            <div class="dot bg-Gainsboro"></div> <span>X-Grid</span> <strong>15%</strong>
           </li>
         </ul>
       </div>
@@ -332,58 +168,6 @@ $user_role = $_SESSION['role'] ?? 'user';
 </div>
 
 
-
-                                        <!-- ============================= -->
-                                        <!-- HEALTH IMPACT SECTION (Full Width) -->
-                                        <!-- ============================= -->
-                                        <div class="col-12 mb-32">
-                                            <div class="wg-box style-1 bg-Gainsboro shadow-none widget-tabs mb-32">
-                                                <div>
-                                                    <div class="title mb-16">
-                                                        <div class="label-01">Health Impact</div>
-                                                    </div>
-                                                    <div class="flex justify-between">
-                                                        <div class="flex gap16 items-center flex-wrap">
-                                                            <div class="block-legend">
-                                                                <div class="dot bg-Green"></div>
-                                                                <div class="f12-medium"> <span class="text-Gray">Total Contributions</span> <span class="f12-bold" id="total-contributions">$0</span></div>
-                                                            </div>
-                                                            <div class="block-legend">
-                                                                <div class="dot bg-Primary"></div>
-                                                                <div class="f12-medium"> <span class="text-Gray">People Helped</span> <span class="f12-bold" id="people-helped">0</span></div>
-                                                            </div>
-                                                            <div class="block-legend">
-                                                                <div class="dot bg-LimeGreen"></div>
-                                                                <div class="f12-medium"> <span class="text-Gray">Impact Score</span> <span class="f12-bold" id="impact-score">0%</span></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="widget-content-tab">
-                                                    <div class="widget-content-inner active">
-                                                        <!-- sStats -->
-                                                        <div class="flex gap24 mb-0 flex-md-row flex-column">
-                                                            <div class="w-full">
-                                                                <div class="wg-card style-1 bg-White mb-0">
-                                                                    <div class="f12-medium text-GrayDark">Communites Helped</div>
-                                                                    <div class="content">
-                                                                        <h6 class="counter text-Primary" id="communities-helped">0</h6>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="w-full">
-                                                                <div class="wg-card style-1 bg-White mb-0">
-                                                                    <div class="f12-medium text-GrayDark">Packages Funded</div>
-                                                                    <div class="content">
-                                                                        <h6 class="counter text-Primary" id="packages-funded">0</h6>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
 
                                         <!-- ============================= -->
                                         <!-- LATEST UPDATES AND RECENT ACTIVITY (Side by Side) -->
@@ -399,15 +183,15 @@ $user_role = $_SESSION['role'] ?? 'user';
                                                         <div class="updates-list text-White">
                                                             <div class="update-item flex gap16 items-start mb-20">
                                                                 <div class="update-content">
-                                                                    <div class="f14-bold">Community Spotlight</div>
-                                                                    <div class="f12-regular text-Gainsboro">HRC partnered with local health organizations for free screenings.</div>
+                                                                    <div class="f14-bold">New X-Shares assets listed</div>
+                                                                    <div class="f12-regular text-Gainsboro">Tesla (TSLA) and Meta (META) fractional positions are now available in X-Shares.</div>
                                                                     <div class="f12-regular text-LightGray mt-4">3 days ago</div>
                                                                 </div>
                                                             </div>
                                                             <div class="update-item flex gap16 items-start mb-0">
                                                                 <div class="update-content">
-                                                                    <div class="f14-bold">New Partnership</div>
-                                                                    <div class="f12-regular text-Gainsboro">HealthRunCare partners with Wales Public Health for rural outreach.</div>
+                                                                    <div class="f14-bold">X-Grid pool now open</div>
+                                                                    <div class="f12-regular text-Gainsboro">A new infrastructure co-investment pool is accepting allocations, with quarterly distributions.</div>
                                                                     <div class="f12-regular text-LightGray mt-4">5 days ago</div>
                                                                 </div>
                                                             </div>
@@ -466,12 +250,12 @@ $user_role = $_SESSION['role'] ?? 'user';
     <!-- Toast Notifications -->
     <div id="toast-container"></div>
     
-<script src="../../assets/js/api.js" defer></script>
-<script src="../../assets/js/jquery.min.js"></script>
-<script src="../../assets/js/bootstrap.min.js"></script>
-<script src="../../assets/js/countto.js" defer></script>
-<script src="../../assets/js/bootstrap-select.min.js" defer></script>
-<script src="../../assets/js/dashboard.js" defer></script>
+<script src="<?= txh_asset('../../assets/js/api.js') ?>" defer></script>
+<script src="<?= txh_asset('../../assets/js/jquery.min.js') ?>"></script>
+<script src="<?= txh_asset('../../assets/js/bootstrap.min.js') ?>"></script>
+<script src="<?= txh_asset('../../assets/js/countto.js') ?>" defer></script>
+<script src="<?= txh_asset('../../assets/js/bootstrap-select.min.js') ?>" defer></script>
+<script src="<?= txh_asset('../../assets/js/dashboard.js') ?>" defer></script>
 
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -493,14 +277,14 @@ async function renderCardUsageChart() {
     // 🟢 Use the correct structure from your PHP output
     const data = result.percentages; // not result.data
 
-    const labels = ["Charity", "Investments", "HoldLock", "Trustfund", "Infrastructure", "Development"];
+    const labels = ["X-Lock", "X-Yield", "X-Weekly", "X-Shares", "X-Grid", "X-Rewards"];
     const datasetValues = [
-      data.charity || 0,
+      data.xlock || 0,
       data.investment || 0,
-      data.holdlock || 0,
-      data.trustfund || 0,
-      data.infrastructure || 0,
-      data.maintenance || 0
+      data.xweekly || 0,
+      data.xshares || 0,
+      data.xgrid || 0,
+      data.xrewards || 0
     ];
 
     new Chart(ctx, {

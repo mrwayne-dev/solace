@@ -1,9 +1,9 @@
 /**
  * FILE: /assets/js/admin/funds.js
  * ============================================================
- * HealthRunCare Admin Funds.js
- * Purpose: Frontend logic for the Admin Fund Management (Investments) page.
- * Handles: Metrics, Investment Plan CRUD, Active Investment list/pagination/edit.
+ * TitanXHoldings Admin Funds.js
+ * Purpose: Frontend logic for the Admin Fund Management (XYields) page.
+ * Handles: Metrics, XYield Plan CRUD, Active XYield list/pagination/edit.
  * Assumes global utility functions (fetchApi, formatCurrency, showToast, showModal, closeModal) are available.
  * ============================================================
  */
@@ -35,7 +35,7 @@
     // --- Core Data Fetcher & UI Renderer ---
 
     /**
-     * Loads all data for the funds dashboard (Metrics, Plans, Active Investments).
+     * Loads all data for the funds dashboard (Metrics, Plans, Active XYields).
      */
     async function loadFundsDashboard() {
         // Show loading indicators
@@ -61,7 +61,7 @@
             const data = res.data;
             updateMetrics(data.metrics);
             renderPlansTable(data.plans);
-            renderActiveInvestmentsTable(data.active_investments);
+            renderActiveXYieldsTable(data.active_investments);
             renderActivePagination(data.active_page, data.active_total_pages);
             
             if (typeof window.counter === 'function') {
@@ -90,7 +90,7 @@
     }
     
     /**
-     * Renders the Investment Plans table.
+     * Renders the XYield Plans table.
      */
     function renderPlansTable(plans) {
         const tableBody = $('#plans-table-body');
@@ -137,9 +137,9 @@
     }
 
     /**
-     * Renders the Active Investments table.
+     * Renders the Active XYields table.
      */
-    function renderActiveInvestmentsTable(investments) {
+    function renderActiveXYieldsTable(investments) {
         const tableBody = $('#active-investments-body');
         tableBody.empty();
 
@@ -169,7 +169,7 @@
     }
     
     /**
-     * Renders the pagination for the Active Investments table.
+     * Renders the pagination for the Active XYields table.
      */
     function renderActivePagination(currentPage, totalPages) {
         const paginationEl = $('#active-pagination');
@@ -240,8 +240,8 @@
         }
     }
 
-    /** Fetches investment data and populates the Edit Investment modal. */
-    async function setupEditInvestmentModal(id) {
+    /** Fetches investment data and populates the Edit XYield modal. */
+    async function setupEditXYieldModal(id) {
         try {
             window.showToast('Loading investment details...', 'info');
             const res = await fetchApi('/api/admin/funds.php', {
@@ -265,7 +265,7 @@
                 $('#inv-roi').prop('disabled', isFinal);
                 
                 window.showModal('#edit-investment-modal');
-                window.showToast('Investment details loaded.', 'success');
+                window.showToast('X-Yield details loaded.', 'success');
             } else {
                 window.showToast(res.message || 'Failed to load investment details for editing.', 'error');
             }
@@ -292,12 +292,12 @@
             setupEditPlanModal(id);
         });
 
-        // 3. Edit Investment Action Button (delegated click handler on investments table)
+        // 3. Edit XYield Action Button (delegated click handler on investments table)
         $(document).on('click', '.action-edit-investment', function(e) {
             e.preventDefault();
             e.stopPropagation();
             const id = $(this).data('id');
-            setupEditInvestmentModal(id);
+            setupEditXYieldModal(id);
         });
         
         // 4. Toggle Plan Status (for 'active' or 'hidden') - uses edit_plan action
@@ -371,14 +371,14 @@
             }
         });
 
-        // 6. Edit Investment Form Submission
+        // 6. Edit XYield Form Submission
         $('#edit-investment-form').on('submit', async function(e) {
             e.preventDefault();
             
             const id = $('#inv-id').val();
             const newStatus = $('#inv-status').val();
             
-            if (!confirm(`Confirm changes for Investment ID ${id}. Status will be set to: ${newStatus.toUpperCase()}. Wallet will be adjusted if status changes to 'completed' or 'cancelled'.`)) {
+            if (!confirm(`Confirm changes for XYield ID ${id}. Status will be set to: ${newStatus.toUpperCase()}. Wallet will be adjusted if status changes to 'completed' or 'cancelled'.`)) {
                  return;
             }
 
@@ -400,7 +400,7 @@
                 currentActivePage = 1; 
                 loadFundsDashboard(); 
             } else {
-                window.showToast(res.message || `Investment update failed.`, 'error');
+                window.showToast(res.message || `XYield update failed.`, 'error');
             }
         });
         

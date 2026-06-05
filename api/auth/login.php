@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// USER LOGIN — HealthRunCare
+// USER LOGIN — TitanXHoldings
 // ========================================
 
 ini_set('display_errors', 0);
@@ -27,7 +27,7 @@ try {
 
     // --- Get input data ---
     $input = json_decode(file_get_contents('php://input'), true);
-    $email = trim($input['email'] ?? '');
+    $email = strtolower(trim($input['email'] ?? ''));
     $password = trim($input['password'] ?? '');
 
     if (!$email || !$password) {
@@ -35,12 +35,22 @@ try {
         exit;
     }
 
+    // --- Brute-force throttle (per-IP) ---
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    if (loginThrottleExceeded($pdo, $ip)) {
+        logSecurityEvent('login_lockout', ['scope' => 'user', 'ip' => $ip, 'email' => $email, 'ua' => $_SERVER['HTTP_USER_AGENT'] ?? '']);
+        http_response_code(429);
+        echo json_encode(['status' => 'error', 'message' => 'Too many failed attempts. Please wait ~15 minutes and try again.']);
+        exit;
+    }
+
     // --- Retrieve user ---
-    $stmt = $pdo->prepare("SELECT id, name, full_name, email, password, status FROM users WHERE email = ?");
+    $stmt = $pdo->prepare("SELECT id, name, full_name, email, password, status, role, profile_picture, email_verified FROM users WHERE email = ?");
     $stmt->execute([$email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$user) {
+        recordLoginFailure($pdo, $ip, $email);
         echo json_encode(['status' => 'error', 'message' => 'Invalid email or password.']);
         exit;
     }
@@ -53,15 +63,29 @@ try {
 
     // --- Verify password ---
     if (!password_verify($password, $user['password'])) {
+        recordLoginFailure($pdo, $ip, $email);
         echo json_encode(['status' => 'error', 'message' => 'Invalid email or password.']);
         exit;
     }
 
-    // --- Setup session ---
+    // --- Block unverified accounts (existing accounts are backfilled to verified) ---
+    if (isset($user['email_verified']) && (int)$user['email_verified'] === 0) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Please verify your email to continue. We can send you a new code.',
+            'data' => ['requires_verification' => true, 'user_id' => (int)$user['id']]
+        ]);
+        exit;
+    }
+
+    // --- Setup session (regenerate ID first to prevent session fixation) ---
+    session_regenerate_id(true);
     $displayName = $user['full_name'] ?: ($user['name'] ?? 'User');
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['email'] = $user['email'];
     $_SESSION['full_name'] = $displayName;
+    $_SESSION['role'] = $user['role'] ?? 'user';
+    $_SESSION['profile_picture'] = $user['profile_picture'] ?: '/assets/images/avatar/default.png';
 
     // --- Prepare login details ---
     $ip = $_SERVER['REMOTE_ADDR'] ?? 'Unknown';

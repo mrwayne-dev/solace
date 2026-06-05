@@ -1,5 +1,5 @@
 /* =======================================================
-    HealthRunCare - API.js
+    TitanXHoldings - API.js
     Purpose: Unified frontend API logic for Auth & Backend
     ======================================================= */
 
@@ -150,7 +150,7 @@ function displayMessage(message, isError = true) {
     if (activeForm) activeForm.prepend(messageBox);
   }
 
-  messageBox.innerHTML = message;
+  messageBox.textContent = message; // textContent (not innerHTML) — never render messages as HTML
   messageBox.className = `auth-message ${isError ? 'error' : 'success'}`;
   messageBox.style.display = 'block';
 }
@@ -233,12 +233,15 @@ if (loginForm) {
     const res = await fetchApi(getAuthEndpoint('login'), { email, password });
     if (res.status === 'success') {
       showToast('Login successful! Redirecting...', 'success');
+      const isAdmin = window.location.pathname.includes('/admin');
       setTimeout(() => {
-        const isAdmin = window.location.pathname.includes('/admin');
-setTimeout(() => {
-  window.location.href = res.data?.redirect || (isAdmin ? '/admin' : '/pages/user/dashboard.php');
-}, 1000);
-      }, 1000);
+        window.location.href = res.data?.redirect || (isAdmin ? '/admin' : '/pages/user/dashboard.php');
+      }, 600);
+    } else if (res.data?.requires_verification) {
+      // Unverified account — reveal the OTP step instead of failing outright.
+      pendingVerifyUserId = res.data.user_id;
+      showToast(res.message || 'Please verify your email to continue.', 'info');
+      revealVerifyStep(loginForm);
     } else {
       showToast(res.message || 'Login failed. Please try again.', 'error');
     }
@@ -258,25 +261,86 @@ if (registerForm) {
     const email     = (document.getElementById('email') || registerForm.querySelector('input[name="email"]'))?.value.trim() || '';
     const password  = (document.getElementById('password') || registerForm.querySelector('input[name="password"]'))?.value.trim() || '';
 
-    if (!firstName || !lastName || !email || !password) {
-      showToast('Please complete all fields.', 'error');
-      return displayMessage('Please complete all fields.', true);
+    const isAdmin = window.location.pathname.includes('/admin');
+    let data;
+    if (isAdmin) {
+      // Admin sign-up: username + invite code (no first/last name).
+      const username   = (document.getElementById('username') || registerForm.querySelector('input[name="username"]'))?.value.trim() || '';
+      const inviteCode = (document.getElementById('invite_code') || registerForm.querySelector('input[name="invite_code"]'))?.value.trim() || '';
+      if (!username || !inviteCode || !email || !password) {
+        showToast('Please complete all fields.', 'error');
+        return displayMessage('Please complete all fields.', true);
+      }
+      data = { username, invite_code: inviteCode, email, password };
+    } else {
+      if (!firstName || !lastName || !email || !password) {
+        showToast('Please complete all fields.', 'error');
+        return displayMessage('Please complete all fields.', true);
+      }
+      data = { first_name: firstName, last_name: lastName, email, password };
     }
 
-    const data = { first_name: firstName, last_name: lastName, email, password };
     const res = await fetchApi(getAuthEndpoint('register'), data);
-    if (res.status === 'success') {
+    if (res.status === 'success' && res.data?.requires_verification) {
+      // Email verification required — reveal the OTP step.
+      pendingVerifyUserId = res.data.user_id;
+      showToast(res.message || 'Check your email for a 6-digit code.', 'success');
+      revealVerifyStep(registerForm);
+    } else if (res.status === 'success') {
+      // Fallback (e.g. admin register) — straight redirect.
       showToast('Registration successful! Redirecting...', 'success');
       setTimeout(() => {
-        const isAdmin = window.location.pathname.includes('/admin');
-setTimeout(() => {
-  window.location.href = res.data?.redirect || (isAdmin ? '/admin' : '/pages/user/dashboard.php');
-}, 1000);
-      }, 1000);
+        window.location.href = res.data?.redirect || (isAdmin ? '/admin' : '/pages/user/dashboard.php');
+      }, 600);
     } else {
       showToast(res.message || 'Registration failed. Try again.', 'error');
     }
   });
+}
+
+/* =======================================================
+    EMAIL VERIFICATION (shared by register + login pages)
+    ======================================================= */
+let pendingVerifyUserId = null;
+
+// Hide the primary auth form and show the OTP verify step.
+function revealVerifyStep(primaryForm) {
+  const verifyForm = document.getElementById('verify-form');
+  if (!verifyForm) return;
+  if (primaryForm) primaryForm.classList.add('hidden');
+  verifyForm.classList.remove('hidden');
+  document.getElementById('verify-otp')?.focus();
+}
+
+const verifyForm = document.getElementById('verify-form');
+if (verifyForm) {
+  verifyForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const otp = document.getElementById('verify-otp')?.value.trim() || '';
+    if (!pendingVerifyUserId) return showToast('Please sign up or sign in first.', 'error');
+    if (!otp) return showToast('Enter the 6-digit code.', 'error');
+
+    const res = await fetchApi('/api/auth/verify_email.php', { user_id: pendingVerifyUserId, otp });
+    if (res.status === 'success') {
+      showToast(res.message || 'Email verified! Redirecting...', 'success');
+      setTimeout(() => {
+        window.location.href = res.data?.redirect || '/dashboard';
+      }, 600);
+    } else {
+      showToast(res.message || 'Verification failed. Try again.', 'error');
+    }
+  });
+
+  const resendLink = document.getElementById('verify-resend');
+  if (resendLink) {
+    resendLink.addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (!pendingVerifyUserId) return showToast('Please sign up or sign in first.', 'error');
+      const res = await fetchApi('/api/auth/verify_email.php', { user_id: pendingVerifyUserId, resend: true });
+      showToast(res.message || (res.status === 'success' ? 'A new code has been sent.' : 'Could not resend code.'),
+        res.status === 'success' ? 'success' : 'error');
+    });
+  }
 }
 
 /* =======================================================

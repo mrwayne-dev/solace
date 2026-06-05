@@ -20,45 +20,12 @@ $user_email = $_SESSION['email'] ?? null;
 $user_role = $_SESSION['role'] ?? 'user';
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- Meta -->
-    <meta charset="UTF-8">
-    <meta name="description" content="HealthRunCare Wallet - Manage your contributions, donations, and investments securely.">
-    <meta name="author" content="HealthRunCare">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://healthruncare.com/wallet">
-    <title>HealthRunCare Wallet</title>
+<?php
+  $page_title = "Wallet | TitanXHoldings";
+  include __DIR__ . "/_partials/head.php";
+?>
 
-   <!-- Preload + Apply (critical CSS) -->
-    <link rel="preload" href="../../assets/css/bootstrap.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="../../assets/css/dashboard.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="../../assets/icon/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-
-    <!-- Load Non-critical CSS Normally -->
-    <link rel="stylesheet" href="../../assets/css/animation.min.css">
-    <link rel="stylesheet" href="../../assets/css/animation.css">
-    <link rel="stylesheet" href="../../assets/css/bootstrap-select.min.css">
-    <link rel="stylesheet" href="../../assets/fonts/font.css">
-    <link rel="stylesheet" href="../../assets/icon/style.css">
-
-    <!-- Fallback for browsers without preload support -->
-    <noscript>
-    <link rel="stylesheet" href="../../assets/css/bootstrap.css">
-    <link rel="stylesheet" href="../../assets/css/dashboard.css">
-    </noscript>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="../../assets/favicon/favicon-32x32.png" sizes="32x32">
-    <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
-    <meta name="apple-mobile-web-app-title" content="HRC">
-    <link rel="manifest" href="../../assets/favicon/site.webmanifest">
-</head>
-
-<body class="counter-scroll">
+<body class="counter-scroll txh-dash">
 
     <!-- #wrapper -->
     <div id="wrapper">
@@ -74,153 +41,11 @@ $user_role = $_SESSION['role'] ?? 'user';
                 </div>
                 <!-- /preload -->
                 <!-- section-menu-left -->
-                <div class="section-menu-left">
-                    <div class="box-logo">
-                        <a href="/dashboard" id="site-logo-inner">
-                            <img class="" id="logo_header" alt="HRC" src="/assets/images/healthruncarelogo.png" width="150px">
-                        </a>
-                        <div class="button-show-hide">
-                            <span class="iconify" data-icon="mdi:chevron-left"></span>
-                        </div>
-                    </div>
-                    <div class="section-menu-left-wrap">
-                        <div class="center">
-                            <div class="center-item">
-                                <div class="center-heading f14-regular text-Gray menu-heading mb-12">Navigation</div>
-                            </div>
-                            <div class="center-item">
-                                <ul class="">
-                                    <li class="menu-item has-children">
-                                        <a href="javascript:void(0);" class="menu-item-button">
-                                            <div class="icon">
-                                                <span class="iconify" data-icon="mdi:view-dashboard-outline"></span>
-                                            </div>
-                                            <div class="text">Dashboard</div>
-                                        </a>
-                                        <ul class="sub-menu">
-                                            <li class="sub-menu-item">
-                                                <a href="/dashboard" class="">
-                                                    <div class="text">Overview</div>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="menu-item active has-children">
-                                        <a href="javascript:void(0);" class="menu-item-button active">
-                                            <div class="icon">
-                                                <span class="iconify" data-icon="mdi:wallet-outline"></span>
-                                            </div>
-                                            <div class="text">My Wallet</div>
-                                        </a>
-                                        <ul class="sub-menu">
-                                            <li class="sub-menu-item active">
-                                                <a href="/dashboard.wallet" class="">
-                                                    <div class="text">Wallet</div>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/dashboard.transactions" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:receipt-text-outline"></span></div>
-                                            <div class="text">Transaction</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/dashboard.charity" class="menu-item-button">
-                                            <div class="icon">
-                                                <span class="iconify" data-icon="mdi:heart-outline"></span>
-                                            </div>
-                                            <div class="text">Charity</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/dashboard.investment" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:chart-timeline-variant"></span></div>
-                                            <div class="text">Investments</div>
-                                        </a>
-                                    </li>
-                                     <li class="menu-item">
-                                        <a href="/dashboard.holdlock" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:lock-outline"></span></div>
-                                            <div class="text">Holdlock</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/dashboard.trustfund" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:account-cash-outline"></span></div>
-                                            <div class="text">Trustfund</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/dashboard.infrastructure" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:office-building-outline"></span></div>
-                                            <div class="text">Infrastructure</div>
-                                        </a>
-                                    </li>
-                                    <li class="menu-item">
-                                        <a href="/dashboard.development" class="menu-item-button">
-                                            <div class="icon"><span class="iconify" data-icon="mdi:tools"></span></div>
-                                            <div class="text">Maintenance Dev</div>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /section-menu-left -->
+                <?php $active = "wallet"; include __DIR__ . "/_partials/sidebar.php"; ?>
                 <!-- section-content-right -->
                 <div class="section-content-right">
                     <!-- header-dashboard -->
-                    <div class="header-dashboard">
-                        <div class="wrap">
-                            <div class="header-left">
-                                <div class="button-show-hide">
-                                    <i class="icon-menu"></i>
-                                </div>
-                                <h6>Wallet</h6>
-                            </div>
-                            <div class="header-grid">
-                                <div class="line1"></div>
-                                <div class="popup-wrap user type-header">
-                                    <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <span class="header-user wg-user">
-                                                <span class="image">
-                                                    <img src="<?= htmlspecialchars($_SESSION['profile_picture'] ?? '/assets/images/avatar/default.png') ?>" alt="">
-                                                </span>
-                                                <span class="content flex flex-column">
-                                                    <span class="label-02 text-Black name"><?= $user_name ?></span>
-                                                    <span class="f14-regular text-Gray">User</span>
-                                                </span>
-                                            </span>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end has-content" aria-labelledby="dropdownMenuButton3" >
-                                            <li>
-                                                <a href="#" id="pending-deposits-btn" class="user-item">
-                                                    <div class="body-title-2">
-                                                        Pending Actions <span id="pending-count" class="text-Primary"></span>
-                                                    </div>
-                                                </a>
-                                                </li>
-                                            <li>
-                                                <a href="/dashboard.transactions" class="user-item">
-                                                    <div class="body-title-2">Transactions</div>
-                                                </a>
-                                            </li>
-                                           <li>
-                                            <a href="#" id="logout-btn" class="user-item">
-                                                <div class="body-title-2">Log out</div>
-                                            </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /header-dashboard -->
+                    <?php $page_heading = "Wallet"; include __DIR__ . "/_partials/topbar.php"; ?>
                     <!-- main-content -->
                     <div class="main-content">
                         <!-- main-content-wrap -->
@@ -228,102 +53,142 @@ $user_role = $_SESSION['role'] ?? 'user';
                             <!-- main-content-wrap -->
                             <div class="main-content-wrap">
                                 <div class="tf-container">
-                                    <!-- Wallet Balance Summary Section -->
+                                    <!-- ============================================================
+                                         ROW 1 · PORTFOLIO SUMMARY (hero) + LIFETIME ACTIVITY
+                                         ============================================================ -->
                                     <div class="row mb-32">
-                                        <div class="col-lg-3 col-md-6 mb-24">
-                                            <div class="wg-card style-1 bg-Primary">
-                                                <div class="title-box">
-                                                    <span class="iconify" data-icon="mdi:wallet" style="color: var(--White);"></span>
-                                                    <div class="f12-medium text-White">Total Balance (USD)</div>
+                                        <!-- Hero balance -->
+                                        <div class="col-lg-8 col-md-12 mb-24">
+                                            <div class="wallet-card wallet-main wallet-hero">
+                                                <div class="wallet-hero-top">
+                                                    <div class="title-box flex items-center gap-2">
+                                                        <span class="iconify" data-icon="mdi:wallet"></span>
+                                                        <span class="f12-medium text-White">Total Balance (USD)</span>
+                                                    </div>
+                                                    <span class="box-status bg-Green f12-medium flex items-center gap-2">
+                                                        <span class="iconify" data-icon="mdi:shield-check"></span> Active
+                                                    </span>
                                                 </div>
-                                                <div class="content">
-                                                    <h6 class="counter text-White">$<span id="total-balance">0.00</span></h6>
+
+                                                <div class="wallet-hero-balance">
+                                                    <h2 class="counter text-White">$<span id="total-balance">0.00</span></h2>
+                                                    <div class="wallet-hero-change f14-regular">
+                                                        <span class="iconify" data-icon="mdi:trending-up"></span>
+                                                        +$<span id="total-earnings">0.00</span> earned to date
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-md-6 mb-24">
-                                            <div class="wg-card style-1 bg-Primary">
-                                                <div class="title-box">
-                                                    <span class="iconify" data-icon="mdi:clock-outline" style="color: var(--White);"></span>
-                                                    <div class="f12-medium text-White">Pending Withdrawals</div>
-                                                </div>
-                                                <div class="content">
-                                                    <h6 class="counter text-White"><span id="pending-withdrawals">0</span></h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-md-6 mb-24">
-                                            <div class="wg-card style-1 bg-Primary">
-                                                <div class="title-box">
-                                                    <span class="iconify" data-icon="mdi:arrow-down-bold" style="color: var(--White);"></span>
-                                                    <div class="f12-medium text-White">Total Deposited</div>
-                                                </div>
-                                                <div class="content">
-                                                    <h6 class="counter text-White">$<span id="total-deposited">0.00</span></h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-md-6 mb-24">
-                                            <div class="wg-card style-1 bg-Primary">
-                                                <div class="title-box">
-                                                    <span class="iconify" data-icon="mdi:arrow-up-bold" style="color: var(--White);"></span>
-                                                    <div class="f12-medium text-White">Total Withdrawn</div>
-                                                </div>
-                                                <div class="content">
-                                                    <h6 class="counter text-White">$<span id="total-withdrawn">0.00</span></h6>
+
+                                                <div class="wallet-hero-substats">
+                                                    <div class="wallet-substat">
+                                                        <div class="f12-regular">Invested across products</div>
+                                                        <div class="f14-bold text-White">$<span id="wallet-total-invested">0.00</span></div>
+                                                    </div>
+                                                    <div class="wallet-substat">
+                                                        <div class="f12-regular">Pending withdrawals</div>
+                                                        <div class="f14-bold text-White">$<span id="pending-withdrawals">0.00</span></div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-3 col-md-6 mb-24">
-                                            <div class="wg-card style-1 bg-Primary">
-                                                <div class="title-box">
-                                                    <span class="iconify" data-icon="mdi:heart-outline" style="color: var(--White);"></span>
-                                                    <div class="f12-medium text-White">Total Donations</div>
+
+                                        <!-- Lifetime activity -->
+                                        <div class="col-lg-4 col-md-12 mb-24">
+                                            <div class="wg-box wallet-lifetime h-full">
+                                                <div class="title mb-16">
+                                                    <div class="label-01 text-Primary">Lifetime activity</div>
                                                 </div>
-                                                <div class="content">
-                                                    <h6 class="counter text-White">$<span id="total-donations">0.00</span></h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-md-6 mb-24">
-                                            <div class="wg-card style-1 bg-Primary">
-                                                <div class="title-box">
-                                                    <span class="iconify" data-icon="mdi:swap-horizontal" style="color: var(--White);"></span>
-                                                    <div class="f12-medium text-White">Total Investments</div>
-                                                </div>
-                                                <div class="content">
-                                                    <h6 class="counter text-White">$<span id="total-investments">0.00</span></h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-md-6 mb-24">
-                                            <div class="wg-card style-1 bg-Primary">
-                                                <div class="title-box">
-                                                    <span class="iconify" data-icon="mdi:lock-outline" style="color: var(--White);"></span>
-                                                    <div class="f12-medium text-White">Holdlock Savings</div>
-                                                </div>
-                                                <div class="content">
-                                                    <h6 class="counter text-White">$<span id="holdlock-savings">0.00</span></h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-md-6 mb-24">
-                                            <div class="wg-card style-1 bg-Primary">
-                                                <div class="title-box">
-                                                    <span class="iconify" data-icon="mdi:trending-up" style="color: var(--White);"></span>
-                                                    <div class="f12-medium text-White">Total Earnings</div>
-                                                </div>
-                                                <div class="content">
-                                                    <h6 class="counter text-White">$<span id="total-earnings">0.00</span></h6>
-                                                </div>
+                                                <ul class="wallet-stat-list">
+                                                    <li>
+                                                        <span class="wallet-stat-label f14-regular text-Gray">
+                                                            <span class="iconify" data-icon="mdi:arrow-down-bold"></span> Total deposited
+                                                        </span>
+                                                        <span class="f14-bold text-Primary">$<span id="total-deposited">0.00</span></span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="wallet-stat-label f14-regular text-Gray">
+                                                            <span class="iconify" data-icon="mdi:arrow-up-bold"></span> Total withdrawn
+                                                        </span>
+                                                        <span class="f14-bold text-Primary">$<span id="total-withdrawn">0.00</span></span>
+                                                    </li>
+                                                    <li>
+                                                        <span class="wallet-stat-label f14-regular text-Gray">
+                                                            <span class="iconify" data-icon="mdi:trending-up"></span> Total earnings
+                                                        </span>
+                                                        <span class="f14-bold text-Green">$<span id="wallet-total-earnings">0.00</span></span>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <!-- Deposit and Withdraw Sections -->
+                                    <!-- ============================================================
+                                         ROW 2 · PORTFOLIO ALLOCATION (where your money is)
+                                         ============================================================ -->
+                                    <div class="row mb-32">
+                                        <div class="col-12">
+                                            <div class="wg-box">
+                                                <div class="title mb-16 flex justify-between items-center">
+                                                    <div class="label-01 text-Primary">Your portfolio</div>
+                                                    <a href="/dashboard.investment" class="view-all f12-regular text-Primary">
+                                                        Manage <span class="iconify ml-2" data-icon="mdi:chevron-right"></span>
+                                                    </a>
+                                                </div>
+                                                <ul class="wallet-alloc-list">
+                                                    <li class="wallet-alloc-item">
+                                                        <a href="/dashboard.investment">
+                                                            <span class="wallet-alloc-icon"><span class="iconify" data-icon="mdi:chart-timeline-variant"></span></span>
+                                                            <span class="wallet-alloc-meta">
+                                                                <span class="f14-bold text-Primary">X-Yield</span>
+                                                                <span class="f12-regular text-Gray">Fixed-duration plans</span>
+                                                            </span>
+                                                            <span class="wallet-alloc-value f14-bold text-Primary">$<span id="total-investments">0.00</span></span>
+                                                            <span class="iconify wallet-alloc-arrow" data-icon="mdi:chevron-right"></span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="wallet-alloc-item">
+                                                        <a href="/dashboard.xlock">
+                                                            <span class="wallet-alloc-icon"><span class="iconify" data-icon="mdi:lock-outline"></span></span>
+                                                            <span class="wallet-alloc-meta">
+                                                                <span class="f14-bold text-Primary">X-Lock</span>
+                                                                <span class="f12-regular text-Gray">Fixed-term savings</span>
+                                                            </span>
+                                                            <span class="wallet-alloc-value f14-bold text-Primary">$<span id="holdlock-savings">0.00</span></span>
+                                                            <span class="iconify wallet-alloc-arrow" data-icon="mdi:chevron-right"></span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="wallet-alloc-item">
+                                                        <a href="/dashboard.xweekly">
+                                                            <span class="wallet-alloc-icon"><span class="iconify" data-icon="mdi:calendar-refresh-outline"></span></span>
+                                                            <span class="wallet-alloc-meta">
+                                                                <span class="f14-bold text-Primary">X-Weekly</span>
+                                                                <span class="f12-regular text-Gray">Automated weekly investing</span>
+                                                            </span>
+                                                            <span class="wallet-alloc-value f14-bold text-Primary">$<span id="xweekly-invested">0.00</span></span>
+                                                            <span class="iconify wallet-alloc-arrow" data-icon="mdi:chevron-right"></span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="wallet-alloc-item">
+                                                        <a href="/dashboard.xshares">
+                                                            <span class="wallet-alloc-icon"><span class="iconify" data-icon="mdi:chart-pie-outline"></span></span>
+                                                            <span class="wallet-alloc-meta">
+                                                                <span class="f14-bold text-Primary">X-Shares</span>
+                                                                <span class="f12-regular text-Gray">Fractional equity</span>
+                                                            </span>
+                                                            <span class="wallet-alloc-value f14-bold text-Primary">$<span id="xshares-invested">0.00</span></span>
+                                                            <span class="iconify wallet-alloc-arrow" data-icon="mdi:chevron-right"></span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ============================================================
+                                         ROW 3 · MOVE MONEY (deposit / withdraw)
+                                         ============================================================ -->
                                     <div class="row mb-32">
                                         <!-- Deposit Section -->
-                                        <div class="col-lg-6 col-md-12 mb-24">
+                                        <div class="col-lg-6 col-md-12 mb-24" id="deposit-panel">
                                             <div class="wg-box deposit-form">
                                                 <div class="title mb-16 flex justify-between items-center">
                                                     <div class="label-01 text-Primary flex items-center gap-2">
@@ -331,10 +196,8 @@ $user_role = $_SESSION['role'] ?? 'user';
                                                         Deposit Funds
                                                     </div>
                                                 </div>
-
                                                 <div class="content">
                                                     <form id="deposit-form" class="form-style-1">
-                                                        <!-- Amount -->
                                                         <div class="mb-20 position-relative">
                                                             <label class="f14-regular text-Black mb-8">Deposit Amount (USD)</label>
                                                             <div class="input-group">
@@ -342,19 +205,12 @@ $user_role = $_SESSION['role'] ?? 'user';
                                                                 <input class="wallet-input form-control" type="number" placeholder="Enter amount" min="1" id="deposit-amount">
                                                             </div>
                                                         </div>
-
-                                                        <!-- Payment Method -->
                                                         <div class="mb-20">
                                                             <label class="f14-regular text-Black mb-8">Payment Method</label>
                                                             <select class="form-select custom-select" id="deposit-method">
-                                                                <option selected disabled>Select Method</option>
-                                                                <option value="secure_exchange">Secure Exchange</option>
-                                                                <option value="cash_mailing">Cash Mailing</option>
-                                                                <option value="wire_transfer">Wire Transfer</option>
+                                                                <option value="secure_exchange" selected>Secure Exchange</option>
                                                             </select>
                                                         </div>
-
-                                                        <!-- CTA -->
                                                         <button type="submit" class="tf-button style-default w-full f14-bold bg-Green text-White hover:bg-Primary transition-colors duration-300">
                                                             Deposit Now
                                                         </button>
@@ -364,7 +220,7 @@ $user_role = $_SESSION['role'] ?? 'user';
                                         </div>
 
                                         <!-- Withdraw Section -->
-                                        <div class="col-lg-6 col-md-12 mb-24">
+                                        <div class="col-lg-6 col-md-12 mb-24" id="withdraw-panel">
                                             <div class="wg-box withdraw-form">
                                                 <div class="title mb-16 flex justify-between items-center">
                                                     <div class="label-01 text-Primary flex items-center gap-2">
@@ -372,10 +228,8 @@ $user_role = $_SESSION['role'] ?? 'user';
                                                         Withdraw Funds
                                                     </div>
                                                 </div>
-
                                                 <div class="content">
                                                     <form id="withdraw-form" class="form-style-1">
-                                                        <!-- Amount -->
                                                         <div class="mb-20 position-relative">
                                                             <label class="f14-regular text-Black mb-8">Withdrawal Amount (USD)</label>
                                                             <div class="input-group">
@@ -383,19 +237,14 @@ $user_role = $_SESSION['role'] ?? 'user';
                                                                 <input class="wallet-input form-control" type="number" placeholder="Enter amount" min="1" id="withdraw-amount">
                                                             </div>
                                                         </div>
-
-                                                        <!-- Withdrawal Method -->
                                                         <div class="mb-20">
                                                             <label class="f14-regular text-Black mb-8">Withdrawal Method</label>
                                                             <select class="form-select custom-select" id="withdraw-method">
                                                                 <option selected disabled>Select Method</option>
                                                                 <option value="local_bank">Local Bank</option>
                                                                 <option value="wallet_address">Wallet Address</option>
-                                                                <option value="cash_mailing">Cash Mailing</option>
                                                             </select>
                                                         </div>
-
-                                                        <!-- CTA -->
                                                         <button type="submit" class="tf-button style-default w-full f14-bold bg-Green text-White hover:bg-Primary transition-colors duration-300">
                                                             Withdraw Now
                                                         </button>
@@ -405,12 +254,14 @@ $user_role = $_SESSION['role'] ?? 'user';
                                         </div>
                                     </div>
 
-                                    <!-- Wallet Activity Section -->
+                                    <!-- ============================================================
+                                         ROW 4 · WALLET ACTIVITY
+                                         ============================================================ -->
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="wg-box">
                                                 <div class="title mb-16 flex justify-between items-center">
-                                                    <div class="label-01">Wallet Activity</div>
+                                                    <div class="label-01 text-Primary">Wallet Activity</div>
                                                     <div class="view-all">
                                                         <a href="/dashboard.transactions" class="f12-regular text-Primary">
                                                             View All
@@ -638,18 +489,18 @@ $user_role = $_SESSION['role'] ?? 'user';
 
 
 <!-- core libs: jquery then bootstrap -->
-<script src="../../assets/js/jquery.min.js"></script>
-<script src="../../assets/js/bootstrap.min.js"></script>
+<script src="<?= txh_asset('../../assets/js/jquery.min.js') ?>"></script>
+<script src="<?= txh_asset('../../assets/js/bootstrap.min.js') ?>"></script>
 
 <!-- app/network layer (deferred) -->
-<script src="../../assets/js/api.js" defer></script>
+<script src="<?= txh_asset('../../assets/js/api.js') ?>" defer></script>
 
 <!-- plugins (deferred if they support it) -->
-<script src="../../assets/js/countto.js" defer></script>
-<script src="../../assets/js/bootstrap-select.min.js" defer></script>
+<script src="<?= txh_asset('../../assets/js/countto.js') ?>" defer></script>
+<script src="<?= txh_asset('../../assets/js/bootstrap-select.min.js') ?>" defer></script>
 
 <!-- main dashboard behaviour (deferred so it runs after DOM is parsed and after api.js) -->
-<script src="../../assets/js/dashboard.js" defer></script>
+<script src="<?= txh_asset('../../assets/js/dashboard.js') ?>" defer></script>
 
     <!-- Iconify CDN -->
     <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>

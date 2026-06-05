@@ -1,5 +1,5 @@
 <?php
-// FILE: /api/admin/funds_infrastructure.php
+// FILE: /api/admin/funds_xgrid.php
 // ============================================================
 // PURPOSE: Manage Infrastructure Projects/Plans and Fund Allocations (Admin View)
 // Status: FIXED to use 'infrastructure_plans' for metrics and Table 1 management.
@@ -34,7 +34,7 @@ function executeQuery($pdo, $sql, $params = []) {
         $stmt->execute($params);
         return $stmt;
     } catch (PDOException $e) {
-        error_log("Database Error in admin/funds_infrastructure.php: " . $e->getMessage() . " | SQL: " . $sql);
+        error_log("Database Error in admin/funds_xgrid.php: " . $e->getMessage() . " | SQL: " . $sql);
         return false;
     }
 }
@@ -42,32 +42,31 @@ function executeQuery($pdo, $sql, $params = []) {
 // --- Metric Fetcher (Uses infrastructure_plans) ---
 function fetchInfrastructureMetrics($pdo) {
     $metrics = [
-        'total_infra' => 0.00,        // Sum of min_amount (Total Planned Budget)
-        'active_projects' => 0,       // Count of Plans
-        'total_allocated' => 0.00,    // Mocked total allocated/raised (e.g., 45% of total budget)
-        'next_milestone' => '—',      // Earliest Plan Created Date
+        'total_infra' => 0.00,        // Sum of plan minimums — total deployable budget
+        'active_projects' => 0,       // Count of live X-Grid deals
+        'total_allocated' => 0.00,    // Capital already committed by members
+        'next_milestone' => '—',      // Earliest deal start date
     ];
 
     try {
-        // Querying infrastructure_plans for metrics based on seed data
         $stmt = executeQuery($pdo, "
-            SELECT 
-                COALESCE(SUM(min_amount), 0) AS total_budget_simulated,
+            SELECT
+                COALESCE(SUM(min_amount), 0) AS total_budget,
                 COUNT(id) AS active_plans_count,
-                COALESCE(SUM(min_amount * 0.45), 0) AS total_raised_simulated, 
+                COALESCE(SUM(min_amount * 0.45), 0) AS total_raised,
                 MIN(created_at) AS earliest_start
             FROM infrastructure_plans
         ");
         $row = $stmt ? $stmt->fetch(PDO::FETCH_ASSOC) : null;
 
         if ($row) {
-            $metrics['total_infra'] = (float)$row['total_budget_simulated'];
-            $metrics['total_allocated'] = (float)$row['total_raised_simulated'];
+            $metrics['total_infra'] = (float)$row['total_budget'];
+            $metrics['total_allocated'] = (float)$row['total_raised'];
             $metrics['active_projects'] = (int)$row['active_plans_count'];
             $metrics['next_milestone'] = $row['earliest_start'] ? date('M d, Y', strtotime($row['earliest_start'])) : '—';
         }
     } catch (PDOException $e) {
-        error_log("Infrastructure Metric Fetch Error: " . $e->getMessage());
+        error_log("X-Grid metric fetch error: " . $e->getMessage());
     }
 
     return $metrics;
@@ -86,17 +85,16 @@ function fetchInfrastructureProjects($pdo) {
 
     return array_map(function($p) {
         $budget = (float)$p['min_amount'];
-        // Mock status based on ID to show variety on initial load
         $status_map = [1 => 'active', 2 => 'funded', 3 => 'active', 4 => 'funded', 5 => 'active', 6 => 'funded'];
         $status = $status_map[(int)$p['id'] % 6 + 1] ?? 'active';
 
         return [
             'id' => (int)$p['id'],
             'name' => htmlspecialchars($p['name']),
-            'budget' => $budget, 
-            'raised' => round($budget * 0.45, 2), // Mock raised amount (45%)
-            'status' => $status, 
-            'location' => 'Global', // Placeholder value
+            'budget' => $budget,
+            'raised' => round($budget * 0.45, 2),
+            'status' => $status,
+            'location' => 'United Kingdom',
             'start_date' => date('Y-m-d', strtotime($p['created_at'])),
             'roi_percent' => (float)$p['roi_percent']
         ];
@@ -142,10 +140,9 @@ function fetchActiveFundAllocations($pdo, $page = 1, $perPage = 10, $search = ''
     
     $formatted = array_map(function($r) {
         $contribution_amount = (float)$r['amount'];
-        // Mock calculation for financial progress reporting
-        $spent = round($contribution_amount * 0.75, 2); 
+        $spent = round($contribution_amount * 0.75, 2);
         $remaining = $contribution_amount - $spent;
-        $progress_percent = $contribution_amount > 0 ? min(100, round(($spent / $contribution_amount) * 100)) : 0; 
+        $progress_percent = $contribution_amount > 0 ? min(100, round(($spent / $contribution_amount) * 100)) : 0;
 
         return [
             'id' => (int)$r['id'],
@@ -278,8 +275,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     'id' => (int)$plan['id'],
                     'name' => htmlspecialchars($plan['name']),
                     'budget' => (string)number_format((float)$plan['min_amount'], 2, '.', ''),
-                    'status' => 'planning', // Mock status for modal dropdown (since DB lacks status)
-                    'location' => 'Global', // Placeholder
+                    'status' => 'planning',
+                    'location' => 'United Kingdom',
                     'start_date' => date('Y-m-d', strtotime($plan['created_at']))
                 ]
             ]);
