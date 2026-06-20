@@ -22,8 +22,10 @@ Thumbs.db
 *~
 
 # ----- PHP / Composer -----
-vendor/
-composer.lock
+# Anchored to repo root so self-hosted asset dirs like assets/vendor/ and
+# assets/fonts/vendor/ are NOT swallowed by this rule.
+/vendor/
+/composer.lock
 
 # ----- Node (if added later) -----
 node_modules/
