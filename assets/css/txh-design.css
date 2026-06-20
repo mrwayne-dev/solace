@@ -1,5 +1,5 @@
 /* =================================================================
- * TitanXHoldings Design System
+ * Solace Mining Design System
  * Adapted from crestmark-design-spec.md (2026-05-31)
  *
  * Activation: add class="txh-redesign" to <body> on any page that
@@ -8,8 +8,7 @@
  * ================================================================= */
 
 /* --- Font ----------------------------------------------------------- */
-@import url('https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url('../fonts/vendor/webfonts.css');
 
 /* =================================================================
  * DESIGN TOKENS — scoped to .txh-redesign so legacy pages untouched
@@ -17,21 +16,21 @@
 .txh-redesign {
   /* --- Colour: surfaces ----------------------------------------- */
   --color-bg-page:          #FFFFFF;
-  --color-bg-dark:          #0D0D0D;
-  --color-bg-dark-40:       rgba(13, 13, 13, 0.40);
-  --color-surface-warm:     #F8F7F5;
-  --color-surface-warm-alt: #FAF9F5;
+  --color-bg-dark:          #0E1334;   /* Sapphire */
+  --color-bg-dark-40:       rgba(14, 19, 52, 0.40);
+  --color-surface-warm:     #F2F7FD;   /* faint ice */
+  --color-surface-warm-alt: #F8FBFE;
   --color-surface-card:     #FFFFFF;
 
   /* --- Colour: ink ---------------------------------------------- */
-  --color-ink-primary:      #1A1A1A;
-  --color-ink-body:         #0D0D0D;
+  --color-ink-primary:      #0A0A0A;   /* Rich Black */
+  --color-ink-body:         #0A0A0A;   /* Rich Black */
   --color-ink-muted:        #636363;
   --color-ink-white:        #FFFFFF;
 
   /* --- Colour: accents (per spec — dark CTA primary, red sparing) */
-  --color-accent-dark:      #1A1A1A;   /* CTA pill primary */
-  --color-accent-red:       #CC0000;   /* Brand mark + alerts only */
+  --color-accent-dark:      #004DC0;   /* Tech Blue CTA */
+  --color-accent-red:       #004DC0;   /* Tech Blue brand mark */
 
   /* --- Status semantics (TXH-specific, not in Crestmark) -------- */
   --status-success:         #386641;
@@ -291,7 +290,7 @@
   color: var(--color-ink-white);
 }
 .txh-redesign .btn--primary:hover {
-  background: #2A2A2A;
+  background: #0E1334;
 }
 
 /* Nav CTA — white pill */
@@ -1048,7 +1047,7 @@
 }
 
 @media (max-width: 768px) {
-  .txh-redesign .hero { min-height: 88vh; }
+  .txh-redesign .hero { min-height: 100vh; }
   .txh-redesign .hero__subtitle { font-size: 16px; line-height: 22px; }
 }
 
@@ -1087,40 +1086,77 @@
 }
 .txh-redesign .footer__nav a:hover { opacity: 0.6; }
 
+/* Secondary legal links row — smaller, muted */
+.txh-redesign .footer__legal {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding-bottom: var(--space-5);
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+}
+.txh-redesign .footer__legal a {
+  color: var(--color-ink-muted);
+  transition: color var(--dur-base) var(--ease-out);
+}
+.txh-redesign .footer__legal a:hover { color: var(--color-accent-dark); }
+
 .txh-redesign .footer__sep {
   color: var(--color-ink-body);
   opacity: 0.5;
 }
 
+/* Copyright — centered */
 .txh-redesign .footer__credits {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  text-align: center;
   padding: var(--space-5) 0;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
   font-size: var(--text-sm);
   color: var(--color-ink-muted);
 }
 
-.txh-redesign .footer__socials {
-  display: inline-flex;
-  gap: var(--space-4);
-  align-items: center;
-}
 
-.txh-redesign .footer__socials a {
-  color: var(--color-ink-primary);
-  display: inline-flex;
+/* --- Legal documents (privacy / terms / etc.) -------------------- */
+.txh-redesign .legal-doc { max-width: 820px; margin: 0 auto; }
+.txh-redesign .legal-doc__title {
+  font-size: clamp(34px, 5vw, 48px);
+  line-height: 1.1;
+  margin: 14px 0 8px;
 }
-
-@media (max-width: 768px) {
-  .txh-redesign .footer__credits {
-    flex-direction: column;
-    gap: var(--space-3);
-    text-align: center;
-  }
+.txh-redesign .legal-doc__meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+  margin-bottom: var(--space-5);
 }
-
+.txh-redesign .legal-doc__intro {
+  font-size: var(--text-body-lg);
+  line-height: 1.55;
+  color: var(--color-ink-body);
+  padding-bottom: var(--space-8);
+  margin-bottom: var(--space-8);
+  border-bottom: 1px solid rgba(10, 10, 10, 0.08);
+}
+.txh-redesign .legal-doc__section { margin-bottom: var(--space-8); }
+.txh-redesign .legal-doc__section h2 {
+  font-size: 21px;
+  line-height: 1.25;
+  margin-bottom: var(--space-3);
+}
+.txh-redesign .legal-doc__section p {
+  color: var(--color-ink-muted);
+  line-height: 1.7;
+}
+.txh-redesign .legal-doc__section a {
+  color: var(--color-accent-dark);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 
 /* --- Utility: hidden ---------------------------------------------- */
 .txh-redesign .hidden { display: none !important; }
@@ -1188,7 +1224,7 @@
   font-size: 14px;
   font-weight: 500;
   color: #fff;
-  background: #1A1A1A;
+  background: #0A0A0A;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
   position: relative;
   overflow: hidden;
@@ -1205,7 +1241,7 @@
 }
 .txh-redesign .toast.success::before { background: #386641; }
 .txh-redesign .toast.success .iconify { color: #6FBF73; }
-.txh-redesign .toast.error::before { background: #CC0000; }
+.txh-redesign .toast.error::before { background: #004DC0; }
 .txh-redesign .toast.error .iconify { color: #F26464; }
 .txh-redesign .toast.info::before { background: #FFFFFF; }
 .txh-redesign .toast.info .iconify { color: #FFFFFF; }
@@ -1335,4 +1371,286 @@
   font-size: var(--text-sm);
   color: var(--color-ink-muted);
   text-decoration: line-through;
+}
+
+
+/* =================================================================
+ * FLOATING DOCK NAVBAR + CENTERED HERO  (Solace Mining redesign)
+ * Overrides the legacy sticky .navbar with a floating pill.
+ * ================================================================= */
+
+/* The wrapper is transparent and fixed; the pill is .navbar__inner */
+.txh-redesign .navbar--dock {
+  display: block;            /* override legacy main.css `.navbar{display:none}` ≤992px */
+  position: fixed;
+  top: var(--space-4);
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 200;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  padding: 0;
+}
+
+.txh-redesign .navbar--dock .navbar__inner {
+  min-height: 0;
+  padding: 9px 10px 9px 18px;
+  gap: var(--space-5);
+  border-radius: 999px;
+  background: rgba(14, 19, 52, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 34px rgba(7, 8, 15, 0.35),
+              inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  transition: background-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+.txh-redesign .navbar--dock.is-scrolled .navbar__inner {
+  background: rgba(8, 9, 18, 0.88);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+/* Keep the dock white/visible on scroll — defeat legacy .navbar.is-scrolled
+   rules that turn the wrapper white and the text dark. */
+.txh-redesign .navbar--dock.is-scrolled {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: none;
+}
+.txh-redesign .navbar--dock.is-scrolled .navbar__brand,
+.txh-redesign .navbar--dock.is-scrolled .navbar__wordmark { color: #fff; }
+.txh-redesign .navbar--dock.is-scrolled .navbar__link { color: rgba(255, 255, 255, 0.82); }
+.txh-redesign .navbar--dock.is-scrolled .navbar__link:hover { color: #fff; }
+.txh-redesign .navbar--dock.is-scrolled .navbar__toggle { color: #fff; }
+
+/* Placeholder brand: mark + wordmark */
+.txh-redesign .navbar--dock .navbar__brand { color: #fff; gap: var(--space-2); }
+.txh-redesign .navbar__mark { width: 28px; height: 28px; flex: 0 0 auto; display: inline-flex; }
+.txh-redesign .navbar__mark svg,
+.txh-redesign .navbar__mark img { width: 100%; height: 100%; display: block; object-fit: contain; }
+.txh-redesign .navbar__wordmark {
+  font-family: var(--font-display);
+  font-weight: var(--fw-semibold);
+  font-size: 18px;
+  letter-spacing: -0.3px;
+  line-height: 1;
+  color: #fff;
+}
+.txh-redesign .navbar__wordmark em { font-style: normal; font-weight: var(--fw-regular); color: #D8ECF9; }
+
+/* Links + actions on the dark pill */
+.txh-redesign .navbar--dock .navbar__links { gap: var(--space-5); }
+.txh-redesign .navbar--dock .navbar__link {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}
+.txh-redesign .navbar--dock .navbar__link:hover { color: #fff; opacity: 1; }
+.txh-redesign .navbar__actions { display: inline-flex; align-items: center; gap: var(--space-2); }
+.txh-redesign .navbar--dock .btn { min-height: 38px; padding: 8px 16px; font-size: var(--text-sm); }
+.txh-redesign .navbar--dock .btn--ghost {
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.30);
+}
+.txh-redesign .navbar--dock .navbar__toggle { color: #fff; }
+
+/* Fixed dock floats over hero pages; non-hero pages get top clearance */
+.txh-redesign .navbar--dock + :not(.hero) { padding-top: 132px; }
+
+/* Secondary button visible on light surfaces (plans-section "Sign in") */
+.txh-redesign .btn--line {
+  background: transparent;
+  color: var(--color-ink-primary);
+  box-shadow: inset 0 0 0 1px rgba(10, 10, 10, 0.18);
+}
+.txh-redesign .btn--line:hover { background: rgba(10, 10, 10, 0.04); }
+
+/* Centered hero variant */
+.txh-redesign .hero--center .hero__inner { align-items: center; }
+.txh-redesign .hero--center .hero__content {
+  align-items: center;
+  text-align: center;
+  max-width: 820px;
+  margin: 0 auto;
+}
+.txh-redesign .hero--center .hero__subtitle { margin-inline: auto; }
+.txh-redesign .hero--center .hero__cta-row { justify-content: center; }
+.txh-redesign .hero--center .eyebrow { justify-content: center; }
+
+/* How-it-works steps (homepage) */
+.txh-redesign .steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+  counter-reset: stepnum;
+}
+.txh-redesign .step {
+  position: relative;
+  counter-increment: stepnum;
+  background: var(--color-surface-card);
+  border: 1px solid rgba(10, 10, 10, 0.08);
+  border-radius: 16px;
+  padding: var(--space-10) var(--space-8);
+  min-height: 230px;
+  text-align: left;
+  overflow: hidden;
+  transition: transform .25s var(--ease-out), box-shadow .25s var(--ease-out), border-color .25s var(--ease-out);
+}
+.txh-redesign .step:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 77, 192, 0.25);
+  box-shadow: 0 20px 44px -22px rgba(14, 19, 52, 0.35);
+}
+/* Faint oversized ghost numeral in the corner */
+.txh-redesign .step::after {
+  content: counter(stepnum);
+  position: absolute;
+  right: 18px; bottom: -14px;
+  font-family: var(--font-display);
+  font-size: 120px;
+  font-weight: 600;
+  line-height: 1;
+  color: rgba(0, 77, 192, 0.05);
+  pointer-events: none;
+}
+.txh-redesign .step__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #2C6BFF, #004DC0);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 500;
+  box-shadow: 0 8px 18px -6px rgba(0, 77, 192, 0.5);
+  margin-bottom: var(--space-6);
+}
+.txh-redesign .step__title { font-size: 22px; line-height: 1.2; margin-bottom: var(--space-3); }
+.txh-redesign .step__desc { color: var(--color-ink-muted); font-size: 15px; line-height: 1.55; }
+
+/* --- Dock responsive --------------------------------------------- */
+@media (max-width: 1040px) {
+  .txh-redesign .steps { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 992px) {
+  /* Defeat legacy main.css `.navbar.navbar-mobile-active` fullscreen-green overlay:
+     keep our dock as a floating dropdown, not a slide-in panel. */
+  .txh-redesign .navbar--dock,
+  .txh-redesign .navbar--dock.navbar-mobile-active {
+    display: block;
+    position: fixed;
+    top: var(--space-4); left: 0; right: 0;
+    width: 100%; height: auto;
+    background: transparent;
+    backdrop-filter: none; -webkit-backdrop-filter: none;
+    padding: 0; margin: 0;
+    opacity: 1; transform: none; overflow: visible;
+    align-items: stretch;
+  }
+
+  .txh-redesign .navbar--dock .navbar__links,
+  .txh-redesign .navbar--dock .navbar__actions { display: none; }
+  .txh-redesign .navbar--dock .navbar__toggle { display: inline-flex; }
+
+  /* Expand the pill into a dropdown card when toggled */
+  .txh-redesign .navbar--dock .navbar__inner {
+    flex-wrap: wrap;
+    border-radius: 20px;
+    padding: 10px 12px 10px 18px;
+    transition: padding .25s var(--ease-out);
+  }
+  .txh-redesign .navbar--dock .navbar__brand { order: 1; margin-right: auto; }
+  .txh-redesign .navbar--dock .navbar__toggle { order: 2; }
+
+  /* Open state: give the dropdown room to breathe */
+  .txh-redesign .navbar--dock.navbar-mobile-active .navbar__inner {
+    padding: 12px 14px 16px;
+  }
+  .txh-redesign .navbar--dock.navbar-mobile-active .navbar__links {
+    display: flex; flex-direction: column; align-items: stretch;
+    order: 3; width: 100%; gap: 4px;
+    margin-top: var(--space-4); padding-top: var(--space-4);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    opacity: 0; transform: translateY(-6px);
+    transition: opacity .25s var(--ease-out), transform .25s var(--ease-out);
+  }
+  .txh-redesign .navbar--dock.navbar-mobile-active .navbar__link {
+    padding: 13px 14px; border-radius: 12px; color: #fff;
+    font-size: var(--text-body);
+    transition: background-color .2s var(--ease-out);
+  }
+  .txh-redesign .navbar--dock.navbar-mobile-active .navbar__link:hover,
+  .txh-redesign .navbar--dock.navbar-mobile-active .navbar__link:active {
+    background: rgba(255, 255, 255, 0.08); opacity: 1;
+  }
+  .txh-redesign .navbar--dock.navbar-mobile-active .navbar__actions {
+    display: flex; order: 4; width: 100%; gap: var(--space-3);
+    margin-top: var(--space-4); padding-top: var(--space-4);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .txh-redesign .navbar--dock.navbar-mobile-active .navbar__actions .btn {
+    flex: 1; min-height: 46px;
+  }
+  .txh-redesign .navbar--dock.navbar-mobile-active.appear .navbar__links { opacity: 1; transform: none; }
+}
+
+/* --- Hamburger → X (main.js toggles .active on the button) --------- */
+.txh-redesign .navbar__burger {
+  position: relative;
+  display: inline-block;
+  width: 22px;
+  height: 16px;
+}
+.txh-redesign .navbar__burger i {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform .3s var(--ease-out), top .3s var(--ease-out), opacity .2s var(--ease-out);
+}
+.txh-redesign .navbar__burger i:nth-child(1) { top: 0; }
+.txh-redesign .navbar__burger i:nth-child(2) { top: 7px; }
+.txh-redesign .navbar__burger i:nth-child(3) { top: 14px; }
+.txh-redesign .navbar__toggle.active .navbar__burger i:nth-child(1) { top: 7px; transform: rotate(45deg); }
+.txh-redesign .navbar__toggle.active .navbar__burger i:nth-child(2) { opacity: 0; }
+.txh-redesign .navbar__toggle.active .navbar__burger i:nth-child(3) { top: 7px; transform: rotate(-45deg); }
+@media (max-width: 560px) {
+  .txh-redesign .steps { grid-template-columns: 1fr; }
+}
+
+/* Footer placeholder wordmark (dark, on light footer) */
+.txh-redesign .footer__wordmark {
+  font-family: var(--font-display);
+  font-weight: var(--fw-semibold);
+  font-size: 22px;
+  letter-spacing: -0.4px;
+  color: var(--color-ink-primary);
+}
+.txh-redesign .footer__wordmark em { font-style: normal; font-weight: var(--fw-regular); color: var(--color-accent-dark); }
+
+/* Mining contract tiers: 3 across the top, last row (Platinum/VIP) centered */
+.txh-redesign .plan-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-6);
+}
+.txh-redesign .plan-grid .plan-card {
+  flex: 0 1 calc((100% - 2 * var(--space-6)) / 3);
+  min-width: 260px;
+  margin: 0;
+}
+@media (max-width: 860px) {
+  .txh-redesign .plan-grid .plan-card { flex-basis: calc((100% - var(--space-6)) / 2); }
+}
+@media (max-width: 560px) {
+  .txh-redesign .plan-grid .plan-card { flex-basis: 100%; }
 }

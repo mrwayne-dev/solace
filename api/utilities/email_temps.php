@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// EMAIL TEMPLATES — TitanXHoldings (Optimized and Consistent)
+// EMAIL TEMPLATES — Solace Mining (Optimized and Consistent)
 // ========================================
 /**
  * Returns all email templates used in the system.
@@ -12,16 +12,16 @@
  */
 function getEmailTemplates() {
     $year = date('Y');
-    // IMPORTANT: Update this URL to your actual logo path accessible via the web
-    $logoUrl = 'https://titanxholdings.com/assets/images/logo/titanx-white.png';
-    $appName = 'TitanXHoldings';
-    $supportEmail = 'support@titanxholdings.com'; // Define support email for easy updates
-    $websiteUrl = 'https://titanxholdings.com/'; // Define main website URL
-    $adminUrl = 'https://titanxholdings.com/admin'; // Define Admin Login URL
+    // Header band is dark blue, so the white logo is used there.
+    $logoUrl = APP_URL . '/assets/images/logo/solacewhitelogo.png';
+    $appName = 'Solace Mining';
+    $supportEmail = 'support@solacemining.org'; // Define support email for easy updates
+    $websiteUrl = 'https://solacemining.org/'; // Define main website URL
+    $adminUrl = 'https://solacemining.org/admin'; // Define Admin Login URL
 
     // TXH email color palette — light mode email
     $colors = [
-        'primary'           => '#CC0000',   // TXH brand red
+        'primary'           => '#004DC0',   // Solace Mining tech blue
         'primary_light'     => '#FFFFFF',   // Email outer body — white
         'surface'           => '#FFFFFF',   // Email card surface — white
         'background'        => '#F8F8F8',   // Subtle neutral for data blocks
@@ -29,7 +29,7 @@ function getEmailTemplates() {
         'muted'             => '#6B7C7D',   // Muted text
         'border'            => 'rgba(28, 38, 40, 0.1)', // Hairline border
         'success'           => '#22C55E',   // Success green
-        'danger'            => '#CC0000',   // TXH brand red (used for security/CTA)
+        'danger'            => '#CC0000',   // Functional danger red (security/declines)
         'warning_bg'        => '#FEF3C7',   // Warning block background (warm light)
         'warning_border'    => '#F59E0B',   // Warning block border (amber)
         'highlight_text'    => '#1C2628',   // Contrast text color
@@ -43,13 +43,13 @@ function getEmailTemplates() {
     // 2. Consistent Alert Block for Security/Cancellation/Warning
     $alertBlockStyle = "background-color: {$colors['background']}; border-left: 4px solid {{color}}; padding: 14px 18px; margin: 20px 0; border-radius: 0 6px 6px 0;";
 
-    // Header structure — TXH red brand band
+    // Header structure — Solace Mining brand band with white logo
     $header = "
         <table role='presentation' cellspacing='0' cellpadding='0' border='0' width='100%' style='background:{$colors['primary']};'>
             <tr>
                 <td style='padding: 20px 28px; border-bottom: 1px solid {$colors['primary']};'>
-                    <a href='{$websiteUrl}' target='_blank'>
-                        <img src='{$logoUrl}' alt='{$appName} Logo' style='max-width:150px; height:auto; vertical-align:middle; border:0;'>
+                    <a href='{$websiteUrl}' target='_blank' style='text-decoration:none;'>
+                        <img src='{$logoUrl}' alt='" . htmlspecialchars($appName) . "' height='34' style='display:inline-block;height:34px;width:auto;border:0;outline:none;text-decoration:none;vertical-align:middle;'>
                     </a>
                 </td>
             </tr>
@@ -1114,7 +1114,7 @@ function getEmailTemplates() {
                 <div style='background-color: {$colors['background']}; padding: 18px; margin: 20px 0; border-radius: 8px; border: 1px solid {$colors['border']};'>
                     {{message_body}}
                 </div>
-                <p>This is a direct message from the TitanXHoldings Administration team.</p>
+                <p>This is a direct message from the Solace Mining Administration team.</p>
                 <p>If you have questions, reply to this email or contact <a href='mailto:{$supportEmail}' style='color:{$colors['primary']};'>{$supportEmail}</a>.</p>
                 <p style='margin-top:24px;'>Best regards,<br><strong>The {$appName} Administration</strong></p>
             "),
@@ -1214,6 +1214,42 @@ function getEmailTemplates() {
                     <p style='margin: 6px 0;'><strong>Reference:</strong> {{reference}}</p>
                 </div>
                 <p>Please log in to the admin dashboard to review the full details and process accordingly.</p>
+                <p style='margin-top:24px;'>Best regards,<br><strong>The {$appName} Team</strong></p>
+            "),
+        ],
+        // Contact form → notification to support/admin
+        'contact_message' => [
+            'subject' => 'New contact message: {{subject}}',
+            'html' => $wrap("
+                <h2 style='color: {$colors['primary']}; margin-top: 0;'>New Contact Form Submission</h2>
+                <p>A new message was submitted through the website contact form.</p>
+                <div style='{$dataBlockStyle}'>
+                    <p style='margin: 6px 0;'><strong>Name:</strong> {{name}}</p>
+                    <p style='margin: 6px 0;'><strong>Email:</strong> <a href='mailto:{{email}}' style='color:{$colors['primary']};'>{{email}}</a></p>
+                    <p style='margin: 6px 0;'><strong>Message Type:</strong> {{type}}</p>
+                    <p style='margin: 6px 0;'><strong>Role / Interest:</strong> {{service}}</p>
+                    <p style='margin: 6px 0;'><strong>Subject:</strong> {{subject}}</p>
+                    <p style='margin: 6px 0;'><strong>Attachment:</strong> {{attachment}}</p>
+                </div>
+                <p style='font-weight:600; margin-bottom:6px;'>Message:</p>
+                <div style='background-color: {$colors['background']}; padding: 16px; margin: 6px 0 18px; border-radius: 6px; border: 1px solid {$colors['border']};'>
+                    {{message_body}}
+                </div>
+                <p style='margin: 6px 0; font-size: 12px; color:{$colors['muted']};'>Submitted {{submitted_at}} · IP {{ip}}</p>
+                <p>Reply directly to this email to respond to {{name}}.</p>
+            "),
+        ],
+        // Contact form → auto-acknowledgement to the sender
+        'contact_received' => [
+            'subject' => 'We received your message — ' . $appName,
+            'html' => $wrap("
+                <h2 style='color: {$colors['text']}; margin-top: 0;'>Thanks for reaching out, {{name}}.</h2>
+                <p>We've received your message and a member of our team will get back to you shortly — typically within 2 working hours.</p>
+                <div style='{$dataBlockStyle}'>
+                    <p style='margin: 6px 0;'><strong>Subject:</strong> {{subject}}</p>
+                    <p style='margin: 6px 0;'><strong>Reference:</strong> {{reference}}</p>
+                </div>
+                <p>If your enquiry is urgent, you can also reach us on Telegram at <a href='https://t.me/+13173661701' style='color:{$colors['primary']};'>+1 317 366 1701</a> or by replying to this email.</p>
                 <p style='margin-top:24px;'>Best regards,<br><strong>The {$appName} Team</strong></p>
             "),
         ],

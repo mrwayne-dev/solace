@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// ADMIN RESET PASSWORD — TitanXHoldings
+// ADMIN RESET PASSWORD — Solace Mining
 // ========================================
 
 ini_set('display_errors', 0);

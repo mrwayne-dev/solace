@@ -1,6 +1,6 @@
 <?php
-$page_title = 'Create your account | TitanXHoldings';
-$page_description = 'Open a TitanXHoldings account in minutes. FCA-authorised investment platform with FSCS-protected savings, fractional shares, and automated investing.';
+$page_title = 'Create your account | Solace Mining';
+$page_description = 'Open a Solace Mining account in minutes. crypto mining platform with secured savings, fractional shares, and automated investing.';
 $page_path = '/register';
 $nav_variant = 'solid';
 include __DIR__ . '/_partials/head.php';
@@ -18,10 +18,11 @@ include __DIR__ . '/_partials/head.php';
           New here
         </p>
         <h1>Open your account</h1>
-        <p>Takes about three minutes. FSCS-protected from your first deposit.</p>
+        <p>Takes about three minutes. secured from your first deposit.</p>
       </div>
 
       <form id="register-form" class="form-stack" autocomplete="off">
+        <input type="hidden" id="ref" value="<?= htmlspecialchars($_GET['ref'] ?? '', ENT_QUOTES) ?>">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
           <div class="form-field">
             <label class="form-field__label" for="first_name">First name</label>
@@ -81,6 +82,6 @@ include __DIR__ . '/_partials/head.php';
 <?php include __DIR__ . '/_partials/footer.php'; ?>
 
 <script src="<?= txh_asset('/assets/js/api.js') ?>" defer></script>
-<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<script src="<?= txh_asset('/assets/js/main.js') ?>" defer></script>
 </body>
 </html>

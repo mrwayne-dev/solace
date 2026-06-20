@@ -1,6 +1,6 @@
 <?php
-$page_title = 'Reset your password | TitanXHoldings';
-$page_description = 'Reset your TitanXHoldings account password securely. Enter your email to receive a one-time reset code.';
+$page_title = 'Reset your password | Solace Mining';
+$page_description = 'Reset your Solace Mining account password securely. Enter your email to receive a one-time reset code.';
 $page_path = '/forgotpassword';
 $nav_variant = 'solid';
 include __DIR__ . '/_partials/head.php';
@@ -63,5 +63,6 @@ include __DIR__ . '/_partials/head.php';
 <?php include __DIR__ . '/_partials/footer.php'; ?>
 
 <script src="<?= txh_asset('/assets/js/api.js') ?>" defer></script>
+<script src="<?= txh_asset('/assets/js/main.js') ?>" defer></script>
 </body>
 </html>

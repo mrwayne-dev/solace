@@ -1,6 +1,6 @@
 <?php
 // ============================================================
-// ENVIRONMENT CONFIGURATION — TitanXHoldings
+// ENVIRONMENT CONFIGURATION — Solace Mining
 //
 // This file no longer stores any secrets. It's a thin loader
 // that reads .env at the project root and exposes those values
@@ -44,7 +44,7 @@ $require = static function (string $key) use ($envValues) {
 };
 
 // --- Environment flag ---------------------------------------------------
-$env = $_SERVER['TXH_ENV'] ?? ($envValues['APP_ENV'] ?? 'production');
+$env = $_SERVER['SLM_ENV'] ?? ($envValues['APP_ENV'] ?? 'production');
 define('ENV', $env);
 define('APP_ENV', (in_array($env, ['dev', 'development', 'local'], true) ? 'local' : 'production'));
 
@@ -52,7 +52,7 @@ define('APP_ENV', (in_array($env, ['dev', 'development', 'local'], true) ? 'loca
 // Drives NOWPayments callback/redirect URLs and email links. Defined here
 // (not in constants.php) so the .env value always wins regardless of the
 // order in which callers include constants.php vs env.php.
-if (!defined('APP_URL')) define('APP_URL', $envv('APP_URL', 'https://titanxholdings.com'));
+if (!defined('APP_URL')) define('APP_URL', $envv('APP_URL', 'https://solacemining.org'));
 
 // --- Database (all required) --------------------------------------------
 define('DB_HOST', $require('DB_HOST'));
@@ -66,7 +66,7 @@ define('SMTP_PORT',      (int) $envv('SMTP_PORT', 465));
 define('SMTP_USER',      $envv('SMTP_USER', ''));
 define('SMTP_PASS',      $envv('SMTP_PASS', ''));
 define('SMTP_FROM',      $require('SMTP_FROM'));
-define('SMTP_FROM_NAME', $envv('SMTP_FROM_NAME', 'TitanXHoldings'));
+define('SMTP_FROM_NAME', $envv('SMTP_FROM_NAME', 'Solace Mining'));
 define('SMTP_SECURE',    $envv('SMTP_SECURE', 'ssl'));
 
 // --- NOWPayments (optional — only required for deposits) ----------------
@@ -76,7 +76,7 @@ define('NOWPAY_IPN_SECRET', $envv('NOWPAYMENTS_IPN_SECRET', ''));
 define('NOWPAY_CA_BUNDLE',  __DIR__ . '/certs/cacert.pem');
 
 // --- Admin --------------------------------------------------------------
-define('ADMIN_CONTACT_EMAIL', $envv('SMTP_TO', $envv('SMTP_FROM', 'support@titanxholdings.com')));
+define('ADMIN_CONTACT_EMAIL', $envv('SMTP_TO', $envv('SMTP_FROM', 'support@solacemining.org')));
 define('ADMIN_INVITE_CODE',   $envv('ADMIN_INVITE_CODE', ''));
 
 // --- Error Display ------------------------------------------------------

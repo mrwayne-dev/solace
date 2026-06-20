@@ -18,7 +18,7 @@ $admin_email = $_SESSION['admin_email'] ?? '';
 ?>
 
 <?php
-  $page_title = "Admin Dashboard | TitanXHoldings";
+  $page_title = "Admin Dashboard | Solace Mining";
   include __DIR__ . "/_partials/head.php";
 ?>
 <body class="counter-scroll txh-dash">
@@ -58,7 +58,7 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                                 <div class="section-header flex justify-between items-center mb-16">
                                                     <h6 class="label-01">Dashboard Overview</h6>
                                                     <a href="#" class="f14-regular flex items-center gap8 text-Primary" onclick="refreshDashboard()">
-                                                        <span class="iconify" data-icon="mdi:refresh"></span> Refresh Stats
+                                                        <i class="iconify ph ph-arrows-clockwise"></i> Refresh Stats
                                                     </a>
                                                 </div>
 
@@ -69,7 +69,7 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                                         <div class="wallet-card-header">Total Revenue</div>
                                                         <div class="wallet-card-balance">$<span id="total-revenue">0.00</span></div>
                                                         <div class="wallet-card-footer">
-                                                            TXH-REV-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
+                                                            SLM-REV-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
                                                         </div>
                                                     </div>
 
@@ -78,16 +78,16 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                                         <div class="wallet-card-header">Total AUM</div>
                                                         <div class="wallet-card-balance">$<span id="total-aum">0.00</span></div>
                                                         <div class="wallet-card-footer">
-                                                            TXH-AUM-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
+                                                            SLM-AUM-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
                                                         </div>
                                                     </div>
 
-                                                    <!-- Active X-Yield -->
+                                                    <!-- Active Contracts -->
                                                     <div class="wallet-card wallet-investments">
-                                                        <div class="wallet-card-header">Active X-Yield</div>
+                                                        <div class="wallet-card-header">Active Contracts</div>
                                                         <div class="wallet-card-balance"><span id="active-investments">0</span></div>
                                                         <div class="wallet-card-footer">
-                                                            TXH-INV-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
+                                                            SLM-INV-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
                                                         </div>
                                                     </div>
 
@@ -96,7 +96,7 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                                         <div class="wallet-card-header">Total Members</div>
                                                         <div class="wallet-card-balance"><span id="total-users">0</span></div>
                                                         <div class="wallet-card-footer">
-                                                            TXH-USR-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
+                                                            SLM-USR-<?= str_pad($admin_id, 3, '0', STR_PAD_LEFT) ?>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -126,7 +126,7 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                                                 <div class="dot bg-Green"></div> <span>AUM</span> <strong id="chart-aum">0%</strong>
                                                             </li>
                                                             <li class="flex items-center gap6">
-                                                                <div class="dot bg-Accent"></div> <span>X-Yield</span> <strong id="chart-investments">0%</strong>
+                                                                <div class="dot bg-Accent"></div> <span>Contracts</span> <strong id="chart-investments">0%</strong>
                                                             </li>
                                                             <li class="flex items-center gap6">
                                                                 <div class="dot bg-Purple"></div> <span>Users</span> <strong id="chart-users">0%</strong>
@@ -202,29 +202,29 @@ $admin_email = $_SESSION['admin_email'] ?? '';
 
                                                             <div class="quick-actions-grid">
                                                                 <button id="send-email-btn" class="quick-action-btn bg-GrayLight text-Black">
-                                                                    <span class="iconify" data-icon="mdi:email-send-outline"></span>
+                                                                    <i class="iconify ph ph-paper-plane-tilt"></i>
                                                                     Send Email
                                                                 </button>
 
                                                                 <button id="set-deposit-address-btn" class="quick-action-btn bg-Green text-White">
-                                                                    <span class="iconify" data-icon="mdi:cog-outline"></span>
+                                                                    <i class="iconify ph ph-gear"></i>
                                                                     Set Deposit Address
                                                                 </button>
 
                                                                 <button id="view-deposit-address-btn" class="quick-action-btn bg-Black text-White">
-                                                                    <span class="iconify" data-icon="mdi:eye-outline"></span>
+                                                                    <i class="iconify ph ph-eye"></i>
                                                                     View Deposit Addresses
                                                                 </button>
 
 
 
                                                                 <a href="/admin/transactions/pending" class="quick-action-btn bg-Accent text-Black">
-                                                                    <span class="iconify" data-icon="mdi:cash-plus"></span>
+                                                                    <i class="iconify ph ph-plus-circle"></i>
                                                                     Pending Deposits
                                                                 </a>
 
                                                                 <a href="/admin/withdrawals/pending" class="quick-action-btn bg-Green text-White">
-                                                                    <span class="iconify" data-icon="mdi:bank-transfer-out"></span>
+                                                                    <i class="iconify ph ph-bank"></i>
                                                                     Pending Withdrawals
                                                                 </a>
                                                             </div>
@@ -471,9 +471,8 @@ $admin_email = $_SESSION['admin_email'] ?? '';
 <script src="<?= txh_asset('../../assets/js/admin/admin.js') ?>" defer></script>
 
 <!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/assets/vendor/chartjs/chart.umd.min.js"></script>
 
 <!-- Iconify CDN -->
-<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 </body>
 </html>

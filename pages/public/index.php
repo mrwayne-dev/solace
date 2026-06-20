@@ -4,15 +4,15 @@
 <head>
   <!-- Meta -->
   <meta charset="UTF-8">
-  <meta name="description" content="TitanXHoldings is an FCA-authorised investment platform with high-yield savings, fractional shares, automated weekly investing, and infrastructure co-investments — all in one wallet, FSCS-protected up to £85,000.">
-  <meta name="author" content="TitanXHoldings">
+  <meta name="description" content="Solace Mining is a crypto mining investment platform — choose a tier, earn a fixed daily profit for 5 days, and get your principal back, all from one secure wallet with a 10% referral commission.">
+  <meta name="author" content="Solace Mining">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://titanxholdings.com/">
+  <link rel="canonical" href="https://solacemining.org/">
 
 
   <!-- Title -->
-  <title>TitanXHoldings – Build Wealth on Autopilot</title>
+  <title>Solace Mining – Build Wealth on Autopilot</title>
 
   <!-- Preload CSS -->
   <link rel="preload" href="<?= txh_asset('../../assets/css/main.css') ?>" as="style">
@@ -20,10 +20,6 @@
   <!-- Preload Fonts -->
   <link rel="preload" href="../../assets/fonts/HostGrotesk-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="../../assets/fonts/HostGrotesk-Bold.woff2" as="font" type="font/woff2" crossorigin>
-
-  <!-- Unicons CDN -->
-  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
-  
   <!-- Stylesheets -->
   <link rel="stylesheet" href="<?= txh_asset('../../assets/css/main.css') ?>">
   <link rel="stylesheet" href="<?= txh_asset('../../assets/css/responsive.css') ?>">
@@ -33,13 +29,13 @@
   <link rel="icon" type="image/png" href="../../assets/favicon/favicon-32x32.png" sizes="32x32">
   <link rel="shortcut icon" href="../../assets/favicon/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
-  <meta name="apple-mobile-web-app-title" content="TitanXHoldings">
+  <meta name="apple-mobile-web-app-title" content="Solace Mining">
   <link rel="manifest" href="../../assets/favicon/site.webmanifest">
   
     <!-- Smartsupp Live Chat script -->
   <script type="text/javascript">
   var _smartsupp = _smartsupp || {};
-  _smartsupp.key = 'acee1c8fc66bb651454e92b288dd5ddf2d428cc2';
+  _smartsupp.key = '3c2dbbfc4e90eff8ecbbe0a2f4936d2be60ccec7';
   window.smartsupp||(function(d) {
     var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
     s=d.getElementsByTagName('script')[0];c=d.createElement('script');
@@ -52,38 +48,11 @@
 </head>
 <body class="txh-redesign">
 
-<!-- =================== NAVBAR (Crestmark D.12 adapted) =================== -->
-<nav class="navbar" data-navbar>
-  <div class="container">
-    <div class="navbar__inner">
-      <a href="/" class="navbar__brand" aria-label="TitanXHoldings home">
-        <img class="navbar__logo navbar__logo--light" src="../../assets/images/logo/titanx-white.png" width="1714" height="308" alt="TitanXHoldings" loading="lazy">
-        <img class="navbar__logo navbar__logo--dark" src="../../assets/images/logo/titanx-black.png" width="1714" height="308" alt="TitanXHoldings" loading="lazy">
-      </a>
-
-      <ul class="navbar__links">
-        <li><a href="/whytx" class="navbar__link">Why TXH</a></li>
-        <li><a href="/platform" class="navbar__link">Platform</a></li>
-        <li><a href="/solutions" class="navbar__link">Solutions</a></li>
-        <li><a href="/about" class="navbar__link">About</a></li>
-        <li><a href="/contact" class="navbar__link">Contact</a></li>
-      </ul>
-
-      <a href="/login" class="btn btn--nav navbar__cta">Sign in</a>
-
-      <button class="navbar__toggle" aria-label="Toggle menu" data-nav-toggler>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <line x1="3" y1="6"  x2="21" y2="6"/>
-          <line x1="3" y1="12" x2="21" y2="12"/>
-          <line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-      </button>
-    </div>
-  </div>
-</nav>
+<!-- =================== NAVBAR (floating dock) =================== -->
+<?php include __DIR__ . '/_partials/navbar.php'; ?>
 
 <!-- =================== HERO (Crestmark C.2 adapted) =================== -->
-<section class="hero" id="hero">
+<section class="hero hero--center" id="hero">
   <div class="hero__bg" aria-hidden="true">
     <picture>
       <source type="image/avif" srcset="/assets/images/txh-home.avif">
@@ -98,17 +67,17 @@
         <span class="eyebrow__icon">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="6"/></svg>
         </span>
-        FCA-Authorised · FSCS-Protected
+        Daily payouts · Principal returned
       </p>
 
-      <h1 class="hero__title">Build wealth on autopilot.</h1>
+      <h1 class="hero__title">Mine smarter. Earn daily.</h1>
 
       <p class="hero__subtitle">
-        High-yield savings, fractional shares, automated weekly investing, and infrastructure co-investments — in one regulated wallet, FSCS-protected up to £85,000, and engineered to compound while you sleep.
+        Choose a mining tier, earn a fixed daily profit for five days, and get your principal back when the contract completes — all from one secure wallet, with a 10% referral commission on every miner you bring.
       </p>
 
       <div class="hero__cta-row">
-        <a href="/platform" class="btn btn--primary">See how it works</a>
+        <a href="/#plans" class="btn btn--primary">See the plans</a>
         <a href="/register" class="btn btn--ghost">Open an account</a>
       </div>
     </div>
@@ -128,12 +97,12 @@
           </span>
           The Platform
         </p>
-        <h2 class="section-header__title">Smarter investing.</h2>
+        <h2 class="section-header__title">Smarter mining.</h2>
         <p class="section-header__body">
-          TitanXHoldings gives everyday savers access to the products institutions use — fixed-term yield, fractional equity, automated DCA, and infrastructure co-investments — in one wallet with one statement and one set of FSCS-protected protections. Set a strategy, fund the wallet, and compound.
+          Solace Mining packages institutional-grade mining into simple, fixed-profit contracts. Pick a tier from Bronze to VIP, fund your wallet, and earn a set daily return for five days — your principal returns when the contract completes.
         </p>
         <div class="section-header__cta">
-          <a href="/platform" class="btn btn--primary">See how it works</a>
+          <a href="/#how-it-works" class="btn btn--primary">See how it works</a>
         </div>
       </div>
 
@@ -157,7 +126,7 @@
       </p>
       <h2 class="section-header__title">One wallet. Every way to grow it.</h2>
       <p class="section-header__body">
-        TitanXHoldings is a single platform with six regulated products — fixed-term savings, automated weekly investing, fractional equity, infrastructure co-investments, and a loyalty rewards layer. Fund the wallet once; route capital wherever your strategy needs it next.
+        Solace Mining is built around five mining tiers — Bronze, Silver, Gold, Platinum, and VIP. Fund your wallet once, choose the tier that fits your deposit, and route your capital wherever your strategy needs it next.
       </p>
     </div>
 
@@ -168,8 +137,8 @@
             <rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>
           </svg>
         </span>
-        <h3 class="card-feature__title">Fixed-term savings, above the high street</h3>
-        <p class="card-feature__desc">Lock in a rate at enrolment. Capital is FSCS-protected up to £85,000 and pays out automatically on maturity.</p>
+        <h3 class="card-feature__title">Fixed daily profit</h3>
+        <p class="card-feature__desc">Lock in a tier and earn a fixed daily rate for the full five-day contract — credited to your wallet every single day.</p>
       </article>
 
       <article class="card-feature">
@@ -178,8 +147,8 @@
             <path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>
           </svg>
         </span>
-        <h3 class="card-feature__title">Fractional equity with scheduled payouts</h3>
-        <p class="card-feature__desc">Own positions you couldn't reach whole. Weekly, monthly, or quarterly distributions, settled to your wallet.</p>
+        <h3 class="card-feature__title">Principal returned in full</h3>
+        <p class="card-feature__desc">When your contract completes, your original deposit returns to your wallet. The rate quoted is the rate paid.</p>
       </article>
 
       <article class="card-feature">
@@ -188,8 +157,8 @@
             <path d="M3 12a9 9 0 1 1 9 9"/><path d="M3 12l4-4M3 12l4 4"/>
           </svg>
         </span>
-        <h3 class="card-feature__title">Automated weekly contributions</h3>
-        <p class="card-feature__desc">Set a strategy, fund it weekly, pause or cancel whenever. No early-exit penalty on active programs.</p>
+        <h3 class="card-feature__title">Reinvest and compound</h3>
+        <p class="card-feature__desc">Roll a completed contract straight into a new tier to compound your earnings — or withdraw at any time.</p>
       </article>
 
       <article class="card-feature">
@@ -198,8 +167,8 @@
             <path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/>
           </svg>
         </span>
-        <h3 class="card-feature__title">FCA-authorised. FSCS-protected.</h3>
-        <p class="card-feature__desc">Client money sits in segregated accounts at a UK-regulated banking partner. Eligible deposits covered up to £85,000.</p>
+        <h3 class="card-feature__title">Secure by design</h3>
+        <p class="card-feature__desc">Funds sit in a secured wallet with segregated cold storage and an audit-grade reference on every transaction.</p>
       </article>
     </div>
   </div>
@@ -207,144 +176,59 @@
 
 
 
-<!-- =================== PRODUCT SUITE (Crestmark C.6 / D.6 image-top grid) =================== -->
-<section class="section section--white">
+<!-- =================== HOW IT WORKS (doc nav) =================== -->
+<section class="section section--white" id="how-it-works">
   <div class="container">
-    <div class="section-header" style="margin-bottom: var(--space-10);">
+    <div class="section-header section-header--center" style="margin-bottom: var(--space-10);">
       <p class="eyebrow">
         <span class="eyebrow__icon">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="6"/></svg>
         </span>
-        Products
+        How it works
       </p>
-      <h2 class="section-header__title">The product suite.</h2>
+      <h2 class="section-header__title">From sign-up to payout in six steps.</h2>
       <p class="section-header__body">
-        Six regulated products, one wallet, one statement. Pick the ones that match your goals — or use them together to build a portfolio that compounds across short, medium, and long horizons.
+        No jargon, no lock-in surprises. Create an account, fund your wallet, pick a tier, and watch your profit accrue every day.
       </p>
-      <div class="section-header__cta">
-        <a href="/platform" class="btn btn--primary">Explore the platform</a>
-      </div>
     </div>
 
-    <div class="grid-2">
-      <!-- X-Lock -->
-      <a href="/xlock" class="card-image" aria-label="X-Lock — fixed-term savings">
-        <div class="card-image__media">
-          <picture>
-      <source type="image/avif" srcset="/assets/images/x-lock.avif">
-      <source type="image/webp" srcset="/assets/images/x-lock.webp">
-      <img src="/assets/images/x-lock.webp" alt="" width="1800" height="1080" loading="lazy">
-    </picture>
-        </div>
-        <div class="card-image__body">
-          <span class="card-image__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-              <rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>
-            </svg>
-          </span>
-          <h3 class="card-image__title">X-Lock</h3>
-          <p class="card-image__desc">Fixed-term savings with rates well above the high street. Capital is FSCS-protected up to £85,000 and pays out automatically on maturity.</p>
-        </div>
-      </a>
-
-      <!-- X-Yield -->
-      <a href="/investment" class="card-image" aria-label="X-Yield — fixed-duration investment plans">
-        <div class="card-image__media">
-          <picture>
-      <source type="image/avif" srcset="/assets/images/x-yield.avif">
-      <source type="image/webp" srcset="/assets/images/x-yield.webp">
-      <img src="/assets/images/x-yield.webp" alt="" width="1800" height="1080" loading="lazy">
-    </picture>
-        </div>
-        <div class="card-image__body">
-          <span class="card-image__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-              <path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>
-            </svg>
-          </span>
-          <h3 class="card-image__title">X-Yield</h3>
-          <p class="card-image__desc">Fixed-duration investment plans with a known ROI and a known maturity date. Choose a tier, fund it, and watch it compound.</p>
-        </div>
-      </a>
-
-      <!-- X-Weekly -->
-      <a href="/xweekly" class="card-image" aria-label="X-Weekly — automated weekly contributions">
-        <div class="card-image__media">
-          <picture>
-      <source type="image/avif" srcset="/assets/images/x-weekly.avif">
-      <source type="image/webp" srcset="/assets/images/x-weekly.webp">
-      <img src="/assets/images/x-weekly.webp" alt="" width="1800" height="1080" loading="lazy">
-    </picture>
-        </div>
-        <div class="card-image__body">
-          <span class="card-image__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-              <path d="M3 12a9 9 0 1 1 9 9"/><path d="M3 12l4-4M3 12l4 4"/>
-            </svg>
-          </span>
-          <h3 class="card-image__title">X-Weekly</h3>
-          <p class="card-image__desc">Automated weekly contributions deployed into your chosen strategy. Pause, resume, or cancel from your dashboard any time.</p>
-        </div>
-      </a>
-
-      <!-- X-Shares -->
-      <a href="/xshares" class="card-image" aria-label="X-Shares — fractional equity positions">
-        <div class="card-image__media">
-          <picture>
-      <source type="image/avif" srcset="/assets/images/x-shares.avif">
-      <source type="image/webp" srcset="/assets/images/x-shares.webp">
-      <img src="/assets/images/x-shares.webp" alt="" width="1800" height="1080" loading="lazy">
-    </picture>
-        </div>
-        <div class="card-image__body">
-          <span class="card-image__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-              <circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>
-            </svg>
-          </span>
-          <h3 class="card-image__title">X-Shares</h3>
-          <p class="card-image__desc">Own fractional positions in real companies, with payouts on a weekly, monthly, or quarterly schedule.</p>
-        </div>
-      </a>
-
-      <!-- X-Rewards -->
-      <a href="/xrewards" class="card-image" aria-label="X-Rewards — loyalty redemption">
-        <div class="card-image__media">
-          <img src="/assets/images/x-rewards.webp" width="1080" height="1350" alt="" loading="lazy">
-        </div>
-        <div class="card-image__body">
-          <span class="card-image__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-              <path d="M20 12v10H4V12"/><path d="M2 7h20v5H2zM12 22V7M12 7H8a2.5 2.5 0 0 1 0-5c2 0 4 5 4 5zM12 7h4a2.5 2.5 0 0 0 0-5c-2 0-4 5-4 5z"/>
-            </svg>
-          </span>
-          <h3 class="card-image__title">X-Rewards</h3>
-          <p class="card-image__desc">Redeem accumulated yield for curated rewards at a 40% member discount. Devices, vouchers, experiences and travel.</p>
-        </div>
-      </a>
-
-      <!-- X-Grid -->
-      <a href="/xgrid" class="card-image" aria-label="X-Grid — infrastructure co-investments">
-        <div class="card-image__media">
-          <picture>
-      <source type="image/avif" srcset="/assets/images/xgrid-bg.avif">
-      <source type="image/webp" srcset="/assets/images/xgrid-bg.webp">
-      <img src="/assets/images/xgrid-bg.webp" alt="" width="1920" height="1080" loading="lazy">
-    </picture>
-        </div>
-        <div class="card-image__body">
-          <span class="card-image__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-              <path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/>
-            </svg>
-          </span>
-          <h3 class="card-image__title">X-Grid</h3>
-          <p class="card-image__desc">Infrastructure co-investments normally reserved for institutions — clear minimums, projected returns, quarterly performance reports.</p>
-        </div>
-      </a>
+    <div class="steps">
+      <article class="step">
+        <span class="step__num">1</span>
+        <h3 class="step__title">Create account</h3>
+        <p class="step__desc">Register in under a minute and verify your email to unlock your secure wallet.</p>
+      </article>
+      <article class="step">
+        <span class="step__num">2</span>
+        <h3 class="step__title">Fund your wallet</h3>
+        <p class="step__desc">Deposit crypto to your balance — funds are confirmed and ready to mine instantly.</p>
+      </article>
+      <article class="step">
+        <span class="step__num">3</span>
+        <h3 class="step__title">Choose a plan</h3>
+        <p class="step__desc">Pick a mining tier from Bronze to VIP to match your deposit and target daily profit.</p>
+      </article>
+      <article class="step">
+        <span class="step__num">4</span>
+        <h3 class="step__title">Earn daily profit</h3>
+        <p class="step__desc">Your fixed daily rate is credited to your wallet every single day of the contract.</p>
+      </article>
+      <article class="step">
+        <span class="step__num">5</span>
+        <h3 class="step__title">Withdraw earnings</h3>
+        <p class="step__desc">Principal returns at completion. Withdraw anytime, or reinvest to compound your returns.</p>
+      </article>
+      <article class="step">
+        <span class="step__num">6</span>
+        <h3 class="step__title">Refer &amp; earn</h3>
+        <p class="step__desc">Share your referral link and earn a 10% commission on every miner you bring on board.</p>
+      </article>
     </div>
   </div>
 </section>
+
+<!-- =================== INVESTMENT PLANS (live tiers from DB) =================== -->
+<?php include __DIR__ . '/_partials/plans-section.php'; ?>
 
 
 <!-- =================== VISION 1 — Democratise Yield (Crestmark D.13 pull-quote) =================== -->
@@ -358,11 +242,11 @@
           </span>
           Vision
         </p>
-        <p class="testimonial__quote">We democratise yield. The products institutions use, available from £50.</p>
+        <p class="testimonial__quote">We democratise mining. Institutional-grade hashpower, available from $100.</p>
       </div>
       <div>
         <p style="font-size: var(--text-body); line-height: var(--lh-body); color: var(--color-ink-muted);">
-          For decades, the best yields, the best terms, and the cleanest reporting have been reserved for clients with seven-figure balances. We built TitanXHoldings to flatten that — the same fixed-term products, the same fractional equity, the same infrastructure deals, available from £50 upwards, under the same FCA framework that governs the high street.
+          For decades, the most profitable mining operations were reserved for those with the capital to run their own rigs. We built Solace Mining to flatten that — the same industrial mining returns, packaged into fixed daily-profit contracts, available from $100 upwards.
         </p>
       </div>
     </div>
@@ -384,7 +268,7 @@
       </div>
       <div>
         <p style="font-size: var(--text-body); line-height: var(--lh-body); color: var(--color-ink-muted);">
-          Idle cash is a slow tax. Inflation, bank-account drift, and the opportunity cost of "I'll figure it out later" cost UK households thousands every year. TitanXHoldings turns payday surplus, an unspent bonus, or an emergency-fund overflow into a yield-generating position the moment it lands in your wallet — with the option to withdraw or rebalance on your schedule, not the bank's.
+          Idle capital is a slow tax. Solace Mining turns a deposit — payday surplus, an unspent bonus, an emergency-fund overflow — into a yield-generating mining contract the moment it lands in your wallet, with the option to withdraw or reinvest on your schedule.
         </p>
       </div>
     </div>
@@ -403,7 +287,7 @@
       </p>
       <h2 class="section-header__title">Built for real capital. Measured in trust.</h2>
       <p class="section-header__body">
-        TitanXHoldings was built for real people deploying real capital. These figures reflect what our members have built on the platform — and the trust that's let us keep building.
+        Solace Mining was built for real people deploying real capital. These figures reflect what our members have built on the platform — and the trust that's let us keep building.
       </p>
     </div>
 
@@ -414,7 +298,7 @@
             <circle cx="9" cy="8" r="4"/><path d="M2 22a7 7 0 0 1 14 0M17 11a3 3 0 1 0 0-6M22 22a5 5 0 0 0-7-5"/>
           </svg>
         </span>
-        <p class="card-stat__desc">Investors actively allocating</p>
+        <p class="card-stat__desc">Miners actively earning</p>
         <p class="card-stat__value"><span data-count="12000">0</span>+</p>
       </article>
 
@@ -424,7 +308,7 @@
             <path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>
           </svg>
         </span>
-        <p class="card-stat__desc">ROI payouts settled on time</p>
+        <p class="card-stat__desc">Daily payouts settled on time</p>
         <p class="card-stat__value"><span data-count="6800">0</span>+</p>
       </article>
 
@@ -441,7 +325,7 @@
   </div>
 </section>
 
-<!-- =================== WHY TXH (Crestmark C.8 6-feature grid) =================== -->
+<!-- =================== WHY SLM (Crestmark C.8 6-feature grid) =================== -->
 <section class="section section--white">
   <div class="container">
     <div class="section-header" style="margin-bottom: var(--space-10);">
@@ -449,7 +333,7 @@
         <span class="eyebrow__icon">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="6"/></svg>
         </span>
-        Why TitanXHoldings
+        Why Solace Mining
       </p>
       <h2 class="section-header__title">No reinvention. Just less friction.</h2>
       <p class="section-header__body">
@@ -468,7 +352,7 @@
           </svg>
         </span>
         <h3 class="card-feature__title">One wallet</h3>
-        <p class="card-feature__desc">Six regulated products, one balance, one statement. No bouncing between apps to manage savings, shares, and infrastructure.</p>
+        <p class="card-feature__desc">Every tier, every contract, one balance and one statement. No juggling rigs, pools, or dashboards.</p>
       </article>
 
       <article class="card-feature">
@@ -498,7 +382,7 @@
           </svg>
         </span>
         <h3 class="card-feature__title">Accessible minimums</h3>
-        <p class="card-feature__desc">Start from £50 on X-Weekly, scale up over time. The minimums that lock out retail investors elsewhere don't exist here.</p>
+        <p class="card-feature__desc">Start from $100 on the Bronze tier and scale up to VIP. The minimums that lock retail miners out elsewhere don't exist here.</p>
       </article>
 
       <article class="card-feature">
@@ -507,8 +391,8 @@
             <path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/>
           </svg>
         </span>
-        <h3 class="card-feature__title">FCA + FSCS</h3>
-        <p class="card-feature__desc">Authorised by the Financial Conduct Authority. Eligible deposits FSCS-protected up to £85,000. Client money held in segregated accounts at a UK-regulated banking partner.</p>
+        <h3 class="card-feature__title">Secure &amp; transparent</h3>
+        <p class="card-feature__desc">Segregated cold-storage wallets, multi-factor authentication, and an audit-grade ledger reviewed regularly. Every payout is traceable end to end.</p>
       </article>
 
       <article class="card-feature">
@@ -518,7 +402,7 @@
           </svg>
         </span>
         <h3 class="card-feature__title">Compounding by default</h3>
-        <p class="card-feature__desc">ROI is reinvested into your chosen strategy unless you tell us otherwise. The earlier you start, the more your future self thanks you.</p>
+        <p class="card-feature__desc">Completed contracts can roll straight into a new tier to compound your daily profit. The earlier you start, the more it adds up.</p>
       </article>
     </div>
   </div>
@@ -529,7 +413,7 @@
   <div class="container">
     <div class="testimonial">
       <h2 class="testimonial__quote">
-        I'd been parking my salary surplus in a 0.5% saver for years. Setting up X-Weekly took me ten minutes — and now £200 a week routes straight into a strategy that's actually compounding, with a maturity date I can see on the dashboard.
+        I'd left my crypto sitting in a wallet doing nothing for years. Setting up a Gold contract took ten minutes — and now a fixed profit lands in my balance every single day, with my principal returned at the end.
       </h2>
       <div>
         <p class="eyebrow" style="margin-bottom: var(--space-4);">
@@ -542,7 +426,7 @@
           <img src="../../assets/images/avatar/default.png" width="2000" height="2000" alt="" class="testimonial__portrait" loading="lazy">
           <div>
             <p class="testimonial__name">Sarah Johnson</p>
-            <p class="testimonial__role">X-Weekly member, TitanXHoldings</p>
+            <p class="testimonial__role">Gold tier miner, Solace Mining</p>
           </div>
         </div>
       </div>
@@ -570,21 +454,21 @@
     <div class="accordion">
       <details class="accordion__item">
         <summary class="accordion__trigger">
-          What is TitanXHoldings?
+          What is Solace Mining?
           <span class="accordion__icon" aria-hidden="true"></span>
         </summary>
         <div class="accordion__body">
-          TitanXHoldings is an FCA-authorised investment platform that brings six regulated products — X-Lock fixed-term savings, X-Weekly automated investing, X-Shares fractional equity, X-Yield investment plans, X-Grid infrastructure co-investments, and X-Rewards loyalty redemption — into a single wallet with one statement and one set of FSCS-backed protections.
+          Solace Mining is a crypto mining investment platform. You choose a tier — Bronze, Silver, Gold, Platinum, or VIP — fund your wallet, and earn a fixed daily profit for a five-day contract. Your principal is returned when the contract completes, and you earn a 10% commission on every miner you refer.
         </div>
       </details>
 
       <details class="accordion__item">
         <summary class="accordion__trigger">
-          Is my money safe with TitanXHoldings?
+          Is my money safe with Solace Mining?
           <span class="accordion__icon" aria-hidden="true"></span>
         </summary>
         <div class="accordion__body">
-          Client money is held in segregated accounts at a UK-regulated banking partner — never co-mingled with company funds. Eligible deposits are covered by the Financial Services Compensation Scheme (FSCS) up to £85,000 per client. Capital is at risk on non-FSCS-protected products, and we disclose the worst-case scenario before every allocation.
+          Funds are held in segregated cold-storage wallets and never co-mingled with operating capital. We use multi-factor authentication and an audit-grade ledger, and every transaction carries a traceable reference. As with any investment, returns are never guaranteed and capital is at risk.
         </div>
       </details>
 
@@ -594,7 +478,7 @@
           <span class="accordion__icon" aria-hidden="true"></span>
         </summary>
         <div class="accordion__body">
-          Yes. We use end-to-end AES-256 encryption, multi-factor authentication, and CREST-tested security controls reviewed quarterly. The platform is UK GDPR-compliant, with a named Data Protection Officer and a transparent Privacy Notice.
+          Yes. We use end-to-end AES-256 encryption, multi-factor authentication, and security controls reviewed regularly. Your personal data is handled under a transparent Privacy Notice and is never sold.
         </div>
       </details>
 
@@ -604,7 +488,7 @@
           <span class="accordion__icon" aria-hidden="true"></span>
         </summary>
         <div class="accordion__body">
-          Minimums vary by product. X-Weekly starts at £50 per week. X-Lock and X-Shares positions begin from £100. X-Grid co-investments have higher minimums reflective of the underlying deal — typically from £500 — and are presented per-opportunity.
+          The Bronze tier starts at $100. Silver runs from $500, Gold from $2,500, Platinum from $5,000, and VIP from $10,000 upwards. Each tier sets its own deposit range and fixed daily profit rate.
         </div>
       </details>
 
@@ -614,7 +498,7 @@
           <span class="accordion__icon" aria-hidden="true"></span>
         </summary>
         <div class="accordion__body">
-          Your wallet balance is available on demand. Funds inside fixed-term products (X-Lock, X-Yield, X-Grid) are released at maturity. X-Weekly programs can be paused or cancelled instantly; the funds already invested continue to earn until their own term ends.
+          Your available wallet balance can be withdrawn on demand. Funds committed to an active contract are released — with your daily profit and returned principal — when the five-day term completes. You can then withdraw or reinvest into a new tier.
         </div>
       </details>
     </div>
@@ -626,47 +510,46 @@
 <footer class="footer">
   <div class="container">
     <div class="footer__top">
-      <a href="/" aria-label="TitanXHoldings home">
-        <img src="../../assets/images/logo/titanx-black.png" width="1714" height="308" alt="TitanXHoldings" loading="lazy" style="height: 30px;">
+      <a href="/" aria-label="Solace Mining home">
+        <span class="footer__wordmark">Solace<em>Mining</em></span>
       </a>
-      <h2 style="margin: var(--space-2) 0;">Your wealth, simplified in one place.</h2>
+      <h2 style="margin: var(--space-2) 0;">Your mining, simplified in one place.</h2>
       <p style="color: var(--color-ink-muted); max-width: 560px;">
-        Open an account in minutes. Fund the wallet. Deploy across six regulated products — and let TitanXHoldings handle the compounding, the reporting, and the protections.
+        Open an account in minutes. Fund your wallet. Choose a mining tier — and let Solace Mining handle the daily payouts, the reporting, and the security.
       </p>
-      <a href="/register" class="btn btn--primary">Start a conversation</a>
+      <a href="/register" class="btn btn--primary">Open an account</a>
     </div>
 
     <nav class="footer__nav" aria-label="Footer">
-      <a href="/whytx">Why TXH</a><span class="footer__sep">·</span>
-      <a href="/platform">Platform</a><span class="footer__sep">·</span>
-      <a href="/solutions">Solutions</a><span class="footer__sep">·</span>
       <a href="/about">About</a><span class="footer__sep">·</span>
+      <a href="/#plans">Investment Plans</a><span class="footer__sep">·</span>
+      <a href="/#how-it-works">How It Works</a><span class="footer__sep">·</span>
       <a href="/contact">Contact</a><span class="footer__sep">·</span>
-      <a href="/login">Sign in</a>
+      <a href="/login">Login</a>
+    </nav>
+
+    <nav class="footer__legal" aria-label="Legal">
+      <a href="/privacy">Privacy Policy</a><span class="footer__sep">·</span>
+      <a href="/terms">Terms of Service</a><span class="footer__sep">·</span>
+      <a href="/risk-disclosure">Risk Disclosure</a><span class="footer__sep">·</span>
+      <a href="/aml-policy">AML Policy</a><span class="footer__sep">·</span>
+      <a href="/cookies">Cookie Policy</a>
     </nav>
 
     <div class="footer__credits">
-      <span>© <?= date('Y') ?> TitanXHoldings Ltd. All rights reserved.</span>
-      <span class="footer__socials" aria-label="Social links">
-        <a href="https://www.linkedin.com/company/titanxholdings" aria-label="LinkedIn" target="_blank" rel="noopener">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 0H5C2.2 0 0 2.2 0 5v14c0 2.8 2.2 5 5 5h14c2.8 0 5-2.2 5-5V5c0-2.8-2.2-5-5-5zM8 19H5V8h3v11zM6.5 6.7a1.8 1.8 0 1 1 0-3.6 1.8 1.8 0 0 1 0 3.6zM20 19h-3v-5.6c0-3.4-4-3.1-4 0V19h-3V8h3v1.8c1.4-2.6 7-2.8 7 2.5V19z"/></svg>
-        </a>
-        <a href="https://twitter.com/titanxholdings" aria-label="X (Twitter)" target="_blank" rel="noopener">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2H21l-6.46 7.387L22 22h-6.828l-4.77-6.246L4.804 22H2l6.91-7.892L1.5 2h6.957l4.31 5.713L18.244 2zM17.222 20.146h1.84L7.027 3.748H5.05L17.222 20.146z"/></svg>
-        </a>
-        <a href="https://www.facebook.com/titanxholdings" aria-label="Facebook" target="_blank" rel="noopener">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.99 3.66 9.13 8.44 9.88V14.9H7.9V12h2.54V9.8c0-2.51 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.77l-.44 2.9h-2.33v6.98C18.34 21.13 22 16.99 22 12z"/></svg>
-        </a>
-      </span>
+      <span>© <?= date('Y') ?> Solace Mining Ltd. All rights reserved.</span>
     </div>
   </div>
 </footer>
+
+<?php $support_widget_paired = true; // homepage also shows Smartsupp — place them side by side
+include __DIR__ . '/_partials/support-widget.php'; ?>
 
 
   <!-- Scripts -->
   <script src="<?= txh_asset('../../assets/js/main.js') ?>" defer></script>
   <script>
-    // TXH Redesign: toggle .is-scrolled on navbar once past hero
+    // SLM Redesign: toggle .is-scrolled on navbar once past hero
     (function () {
       const nav = document.querySelector('.txh-redesign .navbar');
       if (!nav) return;
@@ -680,14 +563,16 @@
 {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "TitanXHoldings",
-  "url": "https://titanxholdings.com",
-  "logo": "https://titanxholdings.com/assets/images/logo/titanx-black.png",
-  "sameAs": [
-    "https://www.linkedin.com/company/titanxholdings",
-    "https://twitter.com/titanxholdings",
-    "https://instagram.com/titanxholdings"
-  ]
+  "name": "Solace Mining",
+  "url": "https://solacemining.org",
+  "logo": "https://solacemining.org/assets/favicon/favicon-32x32.png",
+  "telephone": "+1 317 366 1701",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Dallas",
+    "addressRegion": "TX",
+    "addressCountry": "US"
+  }
 }
 </script>
 

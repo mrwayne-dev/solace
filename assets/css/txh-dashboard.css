@@ -1,5 +1,5 @@
 /* =================================================================
- * TitanXHoldings Dashboard Re-skin (token bridge)
+ * Solace Mining Dashboard Re-skin (token bridge)
  * Adapts the Crestmark design system onto the existing dashboard
  * component framework WITHOUT changing any DOM the JS depends on.
  *
@@ -14,8 +14,7 @@
  *   3. General Sans font + no-shadow + 8px radii per spec.
  * ================================================================= */
 
-@import url('https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url('../fonts/vendor/webfonts.css');
 
 
 /* =================================================================
@@ -23,27 +22,39 @@
  * ================================================================= */
 body.txh-dash {
   --White:        #ffffff;
-  --Primary:      #1A1A1A;   /* brand ink — buttons, sidebar active, text-Primary */
-  --Primary-Hover:#2A2A2A;
-  --Accent:       #F8F7F5;   /* warm cream (was blue-grey) */
-  --Bg:           #F8F7F5;   /* warm cream (was beige) */
-  --Surface:      #ffffff;
-  --Surface-Alt:  #F8F7F5;
-  --Black:        #1A1A1A;
-  --GrayDark:     #636363;   /* muted text */
-  --Gray:         #8a8a8a;
-  --Gainsboro:    #F8F7F5;
-  --LightGray:    rgba(26, 26, 26, 0.08);
-  --Green:        #386641;   /* KEEP — status-success only (active badges) */
+  --Primary:      #0A48B8;   /* darker Tech Blue — buttons, links, active */
+  --Primary-Hover:#073A99;   /* deeper blue hover */
+  --Accent:       #D8ECF9;   /* Ice Blue */
+  --Bg:           #EEF2F8;   /* soft cool-gray page background */
+  --Surface:      #ffffff;   /* cards */
+  --Surface-Alt:  #F2F7FD;
+  --Black:        #0F1729;   /* deep ink (slightly blue-black) */
+  --GrayDark:     #5A6677;   /* muted text — readable on light */
+  --Gray:         #7A8699;   /* secondary text/icons */
+  --Gainsboro:    #E2E8F1;   /* visible light borders */
+  --LightGray:    rgba(15, 23, 41, 0.08);
+  --Green:        #16A34A;   /* success — modern emerald (replaces HRC green) */
+  --Green-soft:   #E7F6EC;   /* success tint */
+  --Danger:       #DC2626;   /* destructive (reject / delete) */
+  --Danger-soft:  #FBE9E9;   /* destructive tint */
+  --Accent-soft:  #EAF1FC;   /* ice-blue hover/selected surface */
+
+  /* Sidebar — deep sapphire with light ink */
+  --Sidebar-bg:        #0C1330;   /* deep sapphire */
+  --Sidebar-bg-2:      #0A1029;
+  --Sidebar-ink:       #AAB6D4;   /* inactive icon/text — light, readable */
+  --Sidebar-ink-soft:  #7E8AB0;   /* section headings */
+  --Sidebar-active-bg: rgba(255, 255, 255, 0.08);
+  --Sidebar-accent:    #2C6BFF;   /* bright accent bar on dark */
 
   /* Design-system aliases so dashboard markup can opt into them */
-  --txh-accent-red: #CC0000;
+  --txh-accent-red: #0A48B8;
   --txh-radius-card: 8px;
   --txh-radius-pill: 30px;
 
   /* Font */
   font-family: 'General Sans', 'Host Grotesk', system-ui, -apple-system, sans-serif;
-  background: #F8F7F5;
+  background: var(--Bg);
 }
 
 body.txh-dash h1,
@@ -66,9 +77,7 @@ body.txh-dash .impact-card,
 body.txh-dash .plan-card,
 body.txh-dash .card-details,
 body.txh-dash .tf-button,
-body.txh-dash .box-icon,
-body.txh-dash .modal-content,
-body.txh-dash .dropdown-menu {
+body.txh-dash .box-icon {
   box-shadow: none !important;
 }
 
@@ -161,9 +170,10 @@ body.txh-dash .tf-button.bg-Green:hover {
 
 /* Destructive keeps red */
 body.txh-dash .tf-button.bg-Red {
-  background: var(--txh-accent-red) !important;
+  background: var(--Danger) !important;
   color: var(--White) !important;
 }
+body.txh-dash .tf-button.bg-Red:hover { background: #B91C1C !important; }
 
 /* Subtle / accent action buttons → light pill */
 body.txh-dash .tf-button.bg-Accent,
@@ -195,39 +205,94 @@ body.txh-dash .box-status.bg-Gray   { background-color: var(--Gray) !important; 
 
 
 /* =================================================================
- * 6. SIDEBAR — white surface, ink active state, red accent
+ * 6. SIDEBAR — deep sapphire, light ink, bright active accent
  * ================================================================= */
-body.txh-dash .section-menu-left {
-  background: var(--White);
-  border-right: 1px solid var(--LightGray);
+/* The base theme paints the sidebar via ::before and the logo box with
+   --Primary. Repaint both to deep sapphire for contrast + a darker blue. */
+body.txh-dash .section-menu-left { background: var(--Sidebar-bg); border-right: none; }
+body.txh-dash .section-menu-left::before {
+  background: linear-gradient(180deg, var(--Sidebar-bg) 0%, var(--Sidebar-bg-2) 100%);
+}
+body.txh-dash .section-menu-left > .box-logo {
+  background: var(--Sidebar-bg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-body.txh-dash .section-menu-left .box-logo {
-  border-bottom: 1px solid var(--LightGray);
+/* Placeholder brand wordmark (replaces the logo image) */
+body.txh-dash .section-menu-left .dash-brand {
+  display: inline-flex; align-items: center; gap: 10px;
 }
+body.txh-dash .section-menu-left .dash-brand__mark {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 8px;
+  background: linear-gradient(135deg, #2C6BFF, #0A48B8);
+}
+body.txh-dash .section-menu-left .dash-brand__mark .ph { color: #fff; font-size: 18px; }
+body.txh-dash .section-menu-left .dash-brand__mark img { width: 22px; height: 22px; object-fit: contain; display: block; }
+body.txh-dash .section-menu-left .dash-brand__word {
+  font-family: 'General Sans', system-ui, sans-serif;
+  font-weight: 600; font-size: 19px; letter-spacing: -0.3px; color: #fff;
+}
+body.txh-dash .section-menu-left .dash-brand__word em { font-style: normal; font-weight: 400; color: #AEC6FF; }
 
-/* Active top-level item — ink text + red accent bar */
+/* Section heading ("Navigation") */
+body.txh-dash .section-menu-left .menu-heading,
+body.txh-dash .section-menu-left .center-heading { color: var(--Sidebar-ink-soft); }
+
+/* Sidebar icons — WHITE phosphor glyphs at a consistent size */
+body.txh-dash .section-menu-left .menu-item .icon .ph,
+body.txh-dash .section-menu-left .button-show-hide .ph {
+  color: #ffffff;
+  font-size: 20px;
+  line-height: 1;
+}
+/* Inactive label text — light, readable */
+body.txh-dash .section-menu-left .menu-item a .text { color: var(--Sidebar-ink); }
+
+/* Rounded item buttons with breathing room + hover surface */
+body.txh-dash .section-menu-left .menu-item .menu-item-button {
+  border-radius: 10px;
+  margin: 0 12px;
+  padding-left: 16px; padding-right: 16px;
+  transition: background-color .2s ease, color .2s ease;
+}
+body.txh-dash .section-menu-left .menu-item a:hover { background: var(--Sidebar-active-bg); }
+body.txh-dash .section-menu-left .menu-item a:hover .text { color: #fff !important; }
+body.txh-dash .section-menu-left .menu-item a:hover .icon .ph { color: #fff !important; }
+
+/* Active item — white ink + subtle pill + bright accent bar */
+body.txh-dash .section-menu-left .menu-item.active > a,
+body.txh-dash .section-menu-left .menu-item .menu-item-button.active {
+  background: var(--Sidebar-active-bg);
+}
 body.txh-dash .section-menu-left .menu-item.active > a .text,
 body.txh-dash .section-menu-left .menu-item.active .menu-item-button .text,
-body.txh-dash .section-menu-left .menu-item .menu-item-button.active .text {
-  color: var(--Primary);
-  font-weight: 600;
-}
+body.txh-dash .section-menu-left .menu-item .menu-item-button.active .text,
+body.txh-dash .section-menu-left .sub-menu-item.active a .text { color: #fff; font-weight: 600; }
 
-body.txh-dash .section-menu-left .menu-item.active > a .iconify,
-body.txh-dash .section-menu-left .menu-item .menu-item-button.active .iconify {
-  color: var(--txh-accent-red);
-}
+body.txh-dash .section-menu-left .menu-item.active > a .icon .ph,
+body.txh-dash .section-menu-left .menu-item .menu-item-button.active .icon .ph { color: #fff; }
 
-body.txh-dash .section-menu-left .sub-menu-item.active a .text {
-  color: var(--Primary);
-  font-weight: 600;
-}
-
-/* Active accent bar (::before / ::after vary by build — paint red) */
+/* Active accent bar — bright blue, visible on sapphire */
 body.txh-dash .section-menu-left .menu-item .menu-item-button.active::before,
 body.txh-dash .section-menu-left .menu-item.has-children.active::after {
-  background: var(--txh-accent-red) !important;
+  background: var(--Sidebar-accent) !important;
+}
+
+/* =================================================================
+ * 6b. CONTENT SURFACE — soft tinted page bg so white cards pop
+ * ================================================================= */
+body.txh-dash .layout-wrap .section-content-right .main-content { background: var(--Bg) !important; }
+body.txh-dash #page,
+body.txh-dash #wrapper { background: var(--Bg); }
+
+/* Card definition on the tinted background */
+body.txh-dash .wg-box,
+body.txh-dash .wallet-card,
+body.txh-dash .plan-card,
+body.txh-dash .card-details {
+  border: 1px solid var(--Gainsboro);
+  box-shadow: 0 1px 2px rgba(15, 23, 41, 0.04);
 }
 
 
@@ -306,100 +371,237 @@ body.txh-dash .readonly-input {
 
 
 /* =================================================================
- * 10. MODALS — 8px radius, clean header
+ * 10. MODALS — premium card, sapphire scrim, blue focus
  * ================================================================= */
-/* Overlay — deeper dim + blur for a focused, premium modal */
+/* Overlay — sapphire-tinted dim + blur for a focused, premium modal */
 body.txh-dash .modal-overlay {
-  background: rgba(13, 13, 13, 0.55);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  background: rgba(10, 16, 41, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
-/* Card — clean, rounded, softly elevated (re-adds the shadow killed in §2) */
+/* Card — clean, rounded, layered elevation, subtle entrance */
 body.txh-dash .modal-content {
-  border-radius: 14px;
-  border: 1px solid var(--LightGray);
-  box-shadow: 0 24px 60px -20px rgba(26, 26, 26, 0.35) !important;
-  padding: 24px 26px;
+  width: min(560px, 95%);
+  border-radius: 18px;
+  border: 1px solid var(--Gainsboro);
+  background: var(--Surface);
+  box-shadow: 0 1px 0 rgba(255,255,255,.6) inset,
+              0 30px 70px -28px rgba(10, 16, 41, 0.45) !important;
+  padding: 24px 26px 26px;
 }
+body.txh-dash .modal.is-open .modal-content { animation: txhModalIn .26s cubic-bezier(0.16,1,0.3,1) both; }
+@keyframes txhModalIn { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
 
 /* Header — title + divider + ghost close button */
 body.txh-dash .modal-header {
   align-items: flex-start;
   padding-bottom: 16px;
   margin-bottom: 20px;
-  border-bottom: 1px solid var(--LightGray);
+  border-bottom: 1px solid var(--Gainsboro);
 }
 body.txh-dash .modal-header h2 {
   font-family: 'General Sans', 'Host Grotesk', system-ui, sans-serif;
   font-size: 20px;
   font-weight: 600;
   letter-spacing: -0.3px;
-  color: var(--Primary);
+  color: var(--Black);
 }
 
-/* The × close icon in the header — circular ghost, ink hover (not HRC green).
-   Scoped to the header so footer "Cancel" buttons (.button-close-modal.tf-button)
-   keep their own styling. */
+/* The × close icon — circular ghost, blue hover + blue focus ring.
+   Scoped to the header so footer "Cancel" buttons keep their own styling. */
 body.txh-dash .modal-header .modal-close,
 body.txh-dash .modal-header .button-close-modal {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   padding: 0;
   border-radius: 50%;
   font-size: 22px;
   line-height: 1;
-  color: var(--Gray);
+  color: var(--GrayDark);
   background: transparent;
+  border: none;
   transition: background 0.2s ease, color 0.2s ease;
 }
 body.txh-dash .modal-header .modal-close:hover,
 body.txh-dash .modal-header .button-close-modal:hover {
-  background: var(--LightGray);
+  background: var(--Accent-soft);
   color: var(--Primary);
 }
-body.txh-dash .modal-header .modal-close:focus {
-  outline: 2px solid rgba(204, 0, 0, 0.35);
+body.txh-dash .modal-header .modal-close:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(10, 72, 184, 0.30);
 }
 
-/* Inputs — warm-cream field + red focus ring (matches the dashboard form skin) */
+/* Body labels + fields — crisp white fields with a blue focus ring */
 body.txh-dash .modal-body label {
   font-size: 13px;
   font-weight: 600;
-  color: var(--Primary);
+  color: var(--Black);
 }
 body.txh-dash .modal-body input,
 body.txh-dash .modal-body select,
 body.txh-dash .modal-body textarea {
   border-radius: 10px;
-  background: var(--Surface-Alt);
-  border: 1px solid var(--LightGray);
-  color: var(--Primary);
+  background: var(--White);
+  border: 1px solid var(--Gainsboro);
+  color: var(--Black);
   font-family: inherit;
   font-size: 14px;
+  padding: 0.78rem 0.9rem;
+  transition: border-color .18s ease, box-shadow .18s ease;
 }
+body.txh-dash .modal-body input::placeholder,
+body.txh-dash .modal-body textarea::placeholder { color: #9AA6B8; }
 body.txh-dash .modal-body input:focus,
 body.txh-dash .modal-body select:focus,
 body.txh-dash .modal-body textarea:focus {
-  border-color: var(--txh-accent-red);
-  box-shadow: 0 0 0 3px rgba(204, 0, 0, 0.12);
+  outline: none;
+  border-color: var(--Primary);
+  box-shadow: 0 0 0 3px rgba(10, 72, 184, 0.15);
+}
+body.txh-dash .modal-body input[readonly] { background: var(--Surface-Alt); color: var(--GrayDark); }
+body.txh-dash .modal-body select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%237A8699' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.6' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
 }
 
-/* Primary action — pill, ink → red on hover (site CTA pattern) */
+/* Footer button row — right-aligned, comfortable gap */
+body.txh-dash .modal-body .d-flex.justify-content-end { margin-top: 22px; gap: 10px; }
+
+/* Primary action — solid blue pill */
 body.txh-dash .modal-confirm-btn {
   border-radius: var(--txh-radius-pill);
   background: var(--Primary);
   color: var(--White);
   font-size: 14px;
   font-weight: 600;
-  padding: 12px 16px;
-  transition: background 0.2s ease;
+  padding: 11px 22px;
+  border: none;
+  transition: background 0.2s ease, transform .1s ease;
 }
-body.txh-dash .modal-confirm-btn:hover {
-  background: var(--txh-accent-red);
+body.txh-dash .modal-confirm-btn:hover { background: var(--Primary-Hover); }
+body.txh-dash .modal-confirm-btn:active { transform: translateY(1px); }
+body.txh-dash .modal-confirm-btn.bg-Red { background: var(--Danger); }
+body.txh-dash .modal-confirm-btn.bg-Red:hover { background: #B91C1C; }
+/* Standalone confirm (direct child of body, no footer row) → full-width block */
+body.txh-dash .modal-body > .modal-confirm-btn { width: 100%; margin-top: 20px; }
+
+/* Footer "Cancel" — quiet neutral pill */
+body.txh-dash .modal-body .button-close-modal.tf-button {
+  border-radius: var(--txh-radius-pill);
+  background: var(--Surface-Alt) !important;
+  color: var(--Black) !important;
+  border: 1px solid var(--Gainsboro);
+  font-weight: 500;
+  padding: 11px 20px;
+}
+body.txh-dash .modal-body .button-close-modal.tf-button:hover {
+  background: var(--Accent-soft) !important;
+}
+
+
+/* =================================================================
+ * 10b. ACTION / FILTER DROPDOWNS (.dropdown.style-fill)
+ *   Scoped to table action + filter menus; topbar menus untouched.
+ * ================================================================= */
+/* Toggle button — clean white "chip" with border + caret */
+body.txh-dash .dropdown.style-fill > .dropdown-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--White);
+  color: var(--Black);
+  border: 1px solid var(--Gainsboro);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  box-shadow: none;
+  transition: border-color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+body.txh-dash .dropdown.style-fill > .dropdown-toggle:hover {
+  border-color: var(--Primary);
+  background: var(--Accent-soft);
+}
+body.txh-dash .dropdown.style-fill.show > .dropdown-toggle {
+  border-color: var(--Primary);
+  box-shadow: 0 0 0 3px rgba(10, 72, 184, 0.12);
+}
+body.txh-dash .dropdown.style-fill > .dropdown-toggle::after {
+  margin-left: 2px;
+  border-top-color: var(--GrayDark);
+}
+body.txh-dash .dropdown.style-fill > .dropdown-toggle .iconify { color: var(--Primary); }
+
+/* The "Actions" toggle reads as a primary chip */
+body.txh-dash .actions-dropdown > .dropdown-toggle {
+  background: var(--Primary);
+  color: var(--White);
+  border-color: var(--Primary);
+}
+body.txh-dash .actions-dropdown > .dropdown-toggle:hover {
+  background: var(--Primary-Hover);
+  border-color: var(--Primary-Hover);
+}
+body.txh-dash .actions-dropdown > .dropdown-toggle::after { border-top-color: rgba(255,255,255,.85); }
+
+/* Menu panel — floating white card */
+body.txh-dash .dropdown.style-fill .dropdown-menu {
+  --bs-dropdown-min-width: 11rem;
+  min-width: 11rem;
+  padding: 6px;
+  margin-top: 6px;
+  background: var(--White);
+  border: 1px solid var(--Gainsboro);
+  border-radius: 12px;
+  box-shadow: 0 18px 44px -16px rgba(10, 16, 41, 0.30);
+}
+
+/* Items — links (filter) and buttons (actions) share styling */
+body.txh-dash .dropdown.style-fill .dropdown-menu li > a,
+body.txh-dash .dropdown.style-fill .dropdown-menu .dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 9px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  color: var(--Black);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+body.txh-dash .dropdown.style-fill .dropdown-menu li > a:hover,
+body.txh-dash .dropdown.style-fill .dropdown-menu .dropdown-item:hover,
+body.txh-dash .dropdown.style-fill .dropdown-menu li > a:focus,
+body.txh-dash .dropdown.style-fill .dropdown-menu .dropdown-item:focus {
+  background: var(--Accent-soft);
+  color: var(--Primary);
+}
+body.txh-dash .dropdown.style-fill .dropdown-menu li > a.active,
+body.txh-dash .dropdown.style-fill .dropdown-menu li > a[aria-current="true"] {
+  background: var(--Accent-soft);
+  color: var(--Primary);
+  font-weight: 600;
+}
+
+/* Destructive items — red */
+body.txh-dash .dropdown.style-fill .dropdown-menu .dropdown-item.action-delete,
+body.txh-dash .dropdown.style-fill .dropdown-menu .dropdown-item.action-delete-announcement {
+  color: var(--Danger);
+}
+body.txh-dash .dropdown.style-fill .dropdown-menu .dropdown-item.action-delete:hover,
+body.txh-dash .dropdown.style-fill .dropdown-menu .dropdown-item.action-delete-announcement:hover {
+  background: var(--Danger-soft);
+  color: var(--Danger);
 }
 
 
@@ -453,7 +655,7 @@ body.txh-dash .wallet-hero-change {
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 10px;
-  color: #9FD3A6;            /* light green reads on dark ink */
+  color: #6EE7A8;            /* light emerald reads on dark ink */
 }
 body.txh-dash .wallet-hero-substats {
   display: flex;
@@ -745,14 +947,14 @@ body.txh-dash .reward-promo {
   background: var(--Primary);          /* ink base */
   color: #fff;
 }
-body.txh-dash .reward-promo::before {   /* soft red brand glow */
+body.txh-dash .reward-promo::before {   /* soft blue brand glow */
   content: "";
   position: absolute;
   right: -90px;
   top: -110px;
   width: 320px;
   height: 320px;
-  background: radial-gradient(circle, rgba(204,0,0,0.55) 0%, rgba(204,0,0,0) 70%);
+  background: radial-gradient(circle, rgba(44,107,255,0.55) 0%, rgba(44,107,255,0) 70%);
   pointer-events: none;
 }
 body.txh-dash .reward-promo__main {

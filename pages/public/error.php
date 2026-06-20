@@ -1,6 +1,6 @@
 <?php
 http_response_code(404);
-$page_title = 'Not Found | TitanXHoldings';
+$page_title = 'Not Found | Solace Mining';
 $page_description = 'The page you requested could not be found.';
 $page_path = '/404';
 include __DIR__ . '/_partials/head.php';
@@ -33,5 +33,6 @@ include __DIR__ . '/_partials/head.php';
 </section>
 
 <?php include __DIR__ . '/_partials/footer.php'; ?>
+<script src="<?= txh_asset('/assets/js/main.js') ?>" defer></script>
 </body>
 </html>

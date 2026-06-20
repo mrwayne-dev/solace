@@ -1,5 +1,5 @@
 <?php
-// D:\mrwayne\web_dev\healthruncare\api\admin\transactions.php
+// D:\mrwayne\web_dev\solacemining\api\admin\transactions.php
 // ============================================================
 // PURPOSE: Fetch all platform transactions (Admin View) with
 // pagination, search, filtering, and metric calculation.

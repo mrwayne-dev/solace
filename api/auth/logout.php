@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// USER LOGOUT — TitanXHoldings
+// USER LOGOUT — Solace Mining
 // ========================================
 
 ini_set('display_errors', 0);
@@ -37,7 +37,7 @@ try {
     }
 
     $user_id = $_SESSION['user_id'];
-    $email = $_SESSION['email'] ?? 'no-reply@titanxholdings.com';
+    $email = $_SESSION['email'] ?? 'no-reply@solacemining.org';
     $full_name = $_SESSION['full_name'] ?? 'User';
 
     // --- Log logout event ---

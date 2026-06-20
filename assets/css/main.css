@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url('../fonts/vendor/webfonts.css');
 
 /* ==============================
    Fonts - Host Grotesk
@@ -34,18 +34,18 @@
 
 :root {
   /* Colors */
-  --color-primary: #386641;
-  --color-primary-hover: #2f5336;
-  --color-accent: #CADEDE;
-  --color-bg: #FEFAE0;
+  --color-primary: #004DC0;        /* Tech Blue */
+  --color-primary-hover: #0E1334;  /* Sapphire */
+  --color-accent: #D8ECF9;         /* Ice Blue */
+  --color-bg: #FFFFFF;             /* White */
   --color-surface: #ffffff;
-  --color-surface-alt: #9FB8B8;
-  --color-text: #1C2628;
-  --color-text-muted: #6B7C7D;
-  --color-border: rgba(28, 38, 40, 0.1);
+  --color-surface-alt: #D8ECF9;    /* Ice Blue */
+  --color-text: #0A0A0A;           /* Rich Black */
+  --color-text-muted: #636363;
+  --color-border: rgba(10, 10, 10, 0.1);
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #6666ff, #b8baff);
-  --gradient-accent: linear-gradient(135deg, #b9f0d7, #c9e8ff);
+  --gradient-primary: linear-gradient(135deg, #004DC0, #0E1334);
+  --gradient-accent: linear-gradient(135deg, #D8ECF9, #FFFFFF);
   /* Typography */
   --font-family-base: 'Host Grotesk', sans-serif;
   /* Spacing Scale */
@@ -925,7 +925,7 @@ table { border-collapse: collapse; width: 100%; }
 }
 
 /* ==============================
-   Why HRC Section
+   Why Us Section
    ============================== */
 .why-hrc {
   padding: var(--section-padding) 0;
@@ -2306,7 +2306,7 @@ table { border-collapse: collapse; width: 100%; }
   box-shadow: var(--shadow-md);
 }
 /* ==============================
-   Workflow Maturity Section - Aligned with HRC Styles
+   Workflow Maturity Section - Aligned with brand Styles
    ============================== */
 .workflow-maturity {
   background-color: var(--color-bg);
@@ -3082,7 +3082,7 @@ table { border-collapse: collapse; width: 100%; }
   transform: scale(1.02);
 }
 
-/* About HRC Section */
+/* About Section */
 .about-hrc {
   background-color: var(--color-bg);
   padding: var(--section-padding) 0;

@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * TitanXHoldings Admin Users.js
+ * Solace Mining Admin Users.js
  * Purpose: Frontend logic for the Admin Users management page.
  * Handles: Data fetching, table rendering, pagination, search/filter, and user actions (Edit/Delete/Email).
  * ============================================================

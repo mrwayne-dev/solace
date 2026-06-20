@@ -1,6 +1,6 @@
 /**
  * ============================================================
- *  TitanXHoldings — Transaction.js
+ *  Solace Mining — Transaction.js
  *  Handles loading, searching, filtering, pagination & export
  * ============================================================
  */

@@ -1,6 +1,6 @@
 <?php
-$page_title = 'X-Yield | Fixed-duration investment plans | TitanXHoldings';
-$page_description = 'TitanXHoldings X-Yield — fixed-duration investment plans with a known ROI and a known maturity date. Pick a tier, fund it, watch it compound.';
+$page_title = 'mining contracts | Fixed-duration investment plans | Solace Mining';
+$page_description = 'Solace Mining mining contracts — fixed-duration investment plans with a known ROI and a known maturity date. Pick a tier, fund it, watch it compound.';
 $page_path = '/investment';
 include __DIR__ . '/_partials/head.php';
 ?>
@@ -18,7 +18,7 @@ include __DIR__ . '/_partials/head.php';
   </div>
   <div class="container hero__inner">
     <div class="hero__content">
-      <p class="eyebrow"><span class="eyebrow__icon"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg></span>X-Yield</p>
+      <p class="eyebrow"><span class="eyebrow__icon"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg></span>mining contracts</p>
       <h1 class="hero__title">Known ROI. Known maturity. Compound.</h1>
       <p class="hero__subtitle">Fixed-duration investment plans. Set the rate at enrolment, fund the plan, and watch it compound to maturity.</p>
       <div class="hero__cta-row">
@@ -34,7 +34,7 @@ include __DIR__ . '/_partials/head.php';
     <div class="section-header" style="margin-bottom: var(--space-10);">
       <p class="eyebrow"><span class="eyebrow__icon"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg></span>How it works</p>
       <h2 class="section-header__title">Fixed-duration, fixed-rate, fixed-maturity.</h2>
-      <p class="section-header__body">No surprises. Every X-Yield plan locks the rate at enrolment, sets a maturity date, and pays out on schedule.</p>
+      <p class="section-header__body">No surprises. Every mining contracts plan locks the rate at enrolment, sets a maturity date, and pays out on schedule.</p>
     </div>
     <div class="grid-2">
       <article class="card-feature">
@@ -54,8 +54,8 @@ include __DIR__ . '/_partials/head.php';
       </article>
       <article class="card-feature">
         <span class="card-feature__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg></span>
-        <h3 class="card-feature__title">Same FCA protections</h3>
-        <p class="card-feature__desc">Client money in segregated UK accounts. Eligible balances FSCS-protected up to £85,000.</p>
+        <h3 class="card-feature__title">Same strong protections</h3>
+        <p class="card-feature__desc">Funds held in segregated cold-storage wallets. Balances secured with multi-factor authentication and an audit-grade ledger.</p>
       </article>
     </div>
   </div>

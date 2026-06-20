@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// CARD USAGE API — TitanXHoldings
+// CARD USAGE API — Solace Mining
 // Returns user-level distribution of activities
 // ========================================
 
@@ -19,24 +19,21 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 try {
-    $pdo = getPDO(); // ✅ your actual function name
+    $pdo = getPDO();
 
-    // Queries for each TitanXHoldings product — keys must match the dashboard chart consumer
-    $queries = [
-        'investment' => "SELECT COALESCE(SUM(amount),0)         FROM investments WHERE user_id = ?",
-        'xlock'      => "SELECT COALESCE(SUM(amount),0)         FROM holdlock WHERE user_id = ?",
-        'xweekly'    => "SELECT COALESCE(SUM(total_invested),0) FROM xweekly_programs WHERE user_id = ?",
-        'xshares'    => "SELECT COALESCE(SUM(amount),0)         FROM xshares_holdings WHERE user_id = ?",
-        'xgrid'      => "SELECT COALESCE(SUM(amount),0)         FROM infrastructure_contributions WHERE user_id = ?",
-        'xrewards'   => "SELECT COALESCE(SUM(total_price),0)    FROM xrewards_orders WHERE user_id = ? AND status <> 'cancelled'",
-    ];
+    // Distribution buckets — keys must match the dashboard chart consumer
+    // (available balance vs. active mining contracts vs. referral earnings)
+    $totals = ['balance' => 0.0, 'invested' => 0.0, 'referral' => 0.0];
 
-    $totals = [];
-    foreach ($queries as $key => $sql) {
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$user_id]);
-        $totals[$key] = (float) $stmt->fetchColumn();
-    }
+    $stmt = $pdo->prepare("SELECT balance, referral_earnings FROM wallets WHERE user_id = ?");
+    $stmt->execute([$user_id]);
+    $w = $stmt->fetch(PDO::FETCH_ASSOC) ?: ['balance' => 0, 'referral_earnings' => 0];
+    $totals['balance']  = (float)$w['balance'];
+    $totals['referral'] = (float)$w['referral_earnings'];
+
+    $stmt = $pdo->prepare("SELECT COALESCE(SUM(amount),0) FROM investments WHERE user_id = ? AND status = 'active'");
+    $stmt->execute([$user_id]);
+    $totals['invested'] = (float)$stmt->fetchColumn();
 
     // Calculate percentage share
     $grandTotal = array_sum($totals);

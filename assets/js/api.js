@@ -1,5 +1,5 @@
 /* =======================================================
-    TitanXHoldings - API.js
+    Solace Mining - API.js
     Purpose: Unified frontend API logic for Auth & Backend
     ======================================================= */
 
@@ -277,7 +277,12 @@ if (registerForm) {
         showToast('Please complete all fields.', 'error');
         return displayMessage('Please complete all fields.', true);
       }
+      // Capture referral code from a hidden field or ?ref= in the URL
+      const refField = document.getElementById('ref')?.value.trim();
+      const refUrl = new URLSearchParams(window.location.search).get('ref');
+      const ref = (refField || refUrl || '').trim();
       data = { first_name: firstName, last_name: lastName, email, password };
+      if (ref) data.ref = ref;
     }
 
     const res = await fetchApi(getAuthEndpoint('register'), data);

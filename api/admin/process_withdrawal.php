@@ -1,7 +1,7 @@
 <?php
 /**
  * ============================================================
- * TitanXHoldings — PROCESS WITHDRAWAL ACTION (ADMIN)
+ * Solace Mining — PROCESS WITHDRAWAL ACTION (ADMIN)
  * ============================================================
  * POST: id, action (complete|cancel), [reason]
  * Actions:

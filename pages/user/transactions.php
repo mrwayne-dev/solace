@@ -22,7 +22,7 @@ $user_role = $_SESSION['role'] ?? 'user';
 $transactions = [];
 ?>
 <?php
-  $page_title = "Transactions | TitanXHoldings";
+  $page_title = "Transactions | Solace Mining";
   include __DIR__ . "/_partials/head.php";
 ?>
 
@@ -108,6 +108,5 @@ $transactions = [];
 <script src="<?= txh_asset('../../assets/js/bootstrap.min.js') ?>"></script>
 <script src="<?= txh_asset('../../assets/js/dashboard.js') ?>" defer></script>
 <script src="<?= txh_asset('../../assets/js/transaction.js') ?>" defer></script>
-<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 </body>
 </html>

@@ -18,7 +18,7 @@ $user_id   = $_SESSION['user_id'] ?? null;
 $avatar    = htmlspecialchars($_SESSION['profile_picture'] ?? '/assets/images/avatar/default.png');
 ?>
 <?php
-  $page_title = "Profile | TitanXHoldings";
+  $page_title = "Profile | Solace Mining";
   include __DIR__ . "/_partials/head.php";
 ?>
 
@@ -56,7 +56,7 @@ $avatar    = htmlspecialchars($_SESSION['profile_picture'] ?? '/assets/images/av
                                                     <input type="file" id="avatar-input" name="avatar" accept="image/png,image/jpeg,image/webp" hidden>
                                                     <div class="profile-avatar-actions">
                                                         <button type="button" id="avatar-choose" class="tf-button bg-Accent f14-bold w-full">
-                                                            <span class="iconify" data-icon="mdi:image-edit-outline"></span> Choose photo
+                                                            <i class="iconify ph ph-image"></i> Choose photo
                                                         </button>
                                                         <button type="submit" id="avatar-upload" class="tf-button bg-Primary text-White f14-bold w-full" disabled>
                                                             Upload photo
@@ -157,6 +157,5 @@ $avatar    = htmlspecialchars($_SESSION['profile_picture'] ?? '/assets/images/av
     <script src="<?= txh_asset('../../assets/js/api.js') ?>" defer></script>
     <script src="<?= txh_asset('../../assets/js/dashboard.js') ?>" defer></script>
     <script src="<?= txh_asset('../../assets/js/profile.js') ?>" defer></script>
-    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// DATABASE CONNECTION HANDLER — TitanXHoldings
+// DATABASE CONNECTION HANDLER — Solace Mining
 // ========================================
 
 function getPDO() {

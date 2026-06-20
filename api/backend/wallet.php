@@ -3,7 +3,7 @@ ini_set('display_errors', 0);
 error_reporting(0);
     // ===============================================
     // FILE: /api/backend/wallet.php
-    // PURPOSE: Central wallet controller for TitanXHoldings
+    // PURPOSE: Central wallet controller for Solace Mining
     // DESCRIPTION:
     // Handles all wallet actions — deposits, withdrawals,
     // confirmations, and pending data retrieval.
@@ -123,7 +123,7 @@ error_reporting(0);
                     jsonResponse('error', 'Invalid deposit details provided.');
                 }
 
-                $reference = generateReference('TXH-DEP');
+                $reference = generateReference('SLM-DEP');
                 $timestamp = date('Y-m-d H:i:s');
                 $details = json_encode(['initiated_at' => $timestamp, 'method' => $method]);
 
@@ -237,7 +237,7 @@ error_reporting(0);
                 $wallet = getUserWallet($pdo, $user_id);
                 if (!$wallet || $wallet['balance'] < $amount) jsonResponse('error', 'Insufficient wallet balance.');
 
-                $reference = generateReference('TXH-WD');
+                $reference = generateReference('SLM-WD');
                 $detailsJson = json_encode([
                     'method' => $method,
                     'withdraw_details' => $details,
@@ -282,7 +282,7 @@ error_reporting(0);
                     $detailsHtml .= "<p {$baseStyle}><strong>Wallet Address:</strong> " . htmlspecialchars($details['address'] ?? 'N/A') . "</p>";
                 } elseif ($method === 'cash_mailing') {
                     $detailsHtml .= "<p {$baseStyle}><strong>-- Mailing Details --</strong></p>";
-                    $detailsHtml .= "<div style='padding-left:15px; border-left: 2px solid #386641; margin-left: 5px;'>";
+                    $detailsHtml .= "<div style='padding-left:15px; border-left: 2px solid #004DC0; margin-left: 5px;'>";
                     // Use nl2br for textarea content to preserve line breaks
                     $detailsHtml .= nl2br(htmlspecialchars($details['mail'] ?? 'N/A'));
                     $detailsHtml .= "</div>";
@@ -340,48 +340,17 @@ error_reporting(0);
                 $wallet = getUserWallet($pdo, $user_id);
                 if (!$wallet) jsonResponse('error', 'Wallet not found.');
 
-                // --- Step 1: Aggregate all ROI earnings across active product tables ---
-                // Each entry: [table, earnings_column]
-                $earningsSources = [
-                    ['investments',                  'roi_earned'],
-                    ['holdlock',                     'roi_earned'],
-                    ['infrastructure_contributions', 'roi_earned'],
-                    ['xweekly_programs',             'total_earned'],
-                    ['xshares_holdings',             'roi_earned'],
-                ];
+                // --- Step 1: Aggregate ROI earnings from mining contracts ---
+                $stmt = $pdo->prepare("SELECT COALESCE(SUM(roi_earned), 0) FROM investments WHERE user_id = ?");
+                $stmt->execute([$user_id]);
+                $totalEarnings = (float)$stmt->fetchColumn();
 
-                $totalEarnings = 0;
-                foreach ($earningsSources as [$table, $column]) {
-                    $stmt = $pdo->prepare("SELECT COALESCE(SUM({$column}), 0) FROM {$table} WHERE user_id = ?");
-                    $stmt->execute([$user_id]);
-                    $totalEarnings += (float)$stmt->fetchColumn();
-                }
+                // --- Step 2: Aggregate currently-active invested principal ---
+                $st = $pdo->prepare("SELECT COALESCE(SUM(amount), 0) FROM investments WHERE user_id = ? AND status = 'active'");
+                $st->execute([$user_id]);
+                $totalInvested = (float)$st->fetchColumn();
 
-                // --- Step 2: Aggregate invested principal LIVE from each product table ---
-                // The static wallet.* columns were not always kept in sync by the
-                // create-flows, so we recompute the currently-held principal per
-                // product directly from the source tables (current holdings only —
-                // completed/unlocked positions have returned principal to balance).
-                $investedSources = [
-                    'total_investments' => "SELECT COALESCE(SUM(amount), 0) FROM investments WHERE user_id = ? AND status = 'active'",
-                    'holdlock_savings'  => "SELECT COALESCE(SUM(amount), 0) FROM holdlock WHERE user_id = ? AND status IN ('locked','unlock_pending','matured')",
-                    'xweekly_invested'  => "SELECT COALESCE(SUM(total_invested), 0) FROM xweekly_programs WHERE user_id = ? AND status IN ('active','paused')",
-                    'xshares_invested'  => "SELECT COALESCE(SUM(amount), 0) FROM xshares_holdings WHERE user_id = ? AND status IN ('active','matured')",
-                    'xgrid_invested'    => "SELECT COALESCE(SUM(amount), 0) FROM infrastructure_contributions WHERE user_id = ? AND status IN ('active','matured')",
-                ];
-                $invested = [];
-                foreach ($investedSources as $key => $sql) {
-                    $st = $pdo->prepare($sql);
-                    $st->execute([$user_id]);
-                    $invested[$key] = (float)$st->fetchColumn();
-                }
-                $totalInvested = array_sum($invested);
-
-                // --- Step 3: Persist recomputed total earnings (single authoritative value).
-                // NOTE: the invested principal is returned live below but NOT written back —
-                // wallets.total_investments is maintained elsewhere as a cross-product GRAND
-                // total (every create-flow + crons increment it), so overwriting it here with
-                // a per-product figure would break dashboard.php / funds.php / cron accounting.
+                // --- Step 3: Persist recomputed total earnings (single authoritative value) ---
                 $upd = $pdo->prepare("UPDATE wallets SET total_earnings = ? WHERE user_id = ?");
                 $upd->execute([$totalEarnings, $user_id]);
 
@@ -395,12 +364,9 @@ error_reporting(0);
                     'balance'              => (float)$wallet['balance'],
                     'total_deposited'      => (float)$wallet['total_deposited'],
                     'total_withdrawn'      => (float)$wallet['total_withdrawn'],
-                    'total_investments'    => $invested['total_investments'],
-                    'holdlock_savings'     => $invested['holdlock_savings'],
-                    'xweekly_invested'     => $invested['xweekly_invested'],
-                    'xshares_invested'     => $invested['xshares_invested'],
-                    'xgrid_invested'       => $invested['xgrid_invested'],
+                    'total_investments'    => $totalInvested,
                     'total_invested'       => $totalInvested,
+                    'referral_earnings'    => (float)$wallet['referral_earnings'],
                     'pending_withdrawals'  => (float)$wallet['pending_withdrawals'],
                     'total_earnings'       => $totalEarnings,
                 ];

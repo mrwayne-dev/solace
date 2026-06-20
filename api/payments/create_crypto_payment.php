@@ -2,7 +2,7 @@
 // =============================================================
 // FILE: /api/payments/create_crypto_payment.php
 // PURPOSE: Create NOWPayments invoice (2025 API–compliant)
-// AUTHOR: Lymora/TitanXHoldings Framework
+// AUTHOR: Lymora/Solace Mining Framework
 // =============================================================
 
 function createCryptoPayment($user_id, $user_email, $amount, $reference)
@@ -54,7 +54,7 @@ function createCryptoPayment($user_id, $user_email, $amount, $reference)
         'price_currency'    => 'usd',
         'ipn_callback_url'  => rtrim(APP_URL, '/') . '/api/payments/now_webhook.php',
         'order_id'          => $reference,
-        'order_description' => "TitanXHoldings deposit: {$reference}",
+        'order_description' => "Solace Mining deposit: {$reference}",
         'success_url'       => rtrim(APP_URL, '/') . '/pages/user/wallet.php?deposit=success&ref=' . urlencode($reference),
         'cancel_url'        => rtrim(APP_URL, '/') . '/pages/user/wallet.php?deposit=cancel&ref=' . urlencode($reference),
         // ❌ NOTE: buyer_email removed — deprecated by NOWPayments

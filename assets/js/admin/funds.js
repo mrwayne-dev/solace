@@ -1,7 +1,7 @@
 /**
  * FILE: /assets/js/admin/funds.js
  * ============================================================
- * TitanXHoldings Admin Funds.js
+ * Solace Mining Admin Funds.js
  * Purpose: Frontend logic for the Admin Fund Management (XYields) page.
  * Handles: Metrics, XYield Plan CRUD, Active XYield list/pagination/edit.
  * Assumes global utility functions (fetchApi, formatCurrency, showToast, showModal, closeModal) are available.
@@ -102,14 +102,15 @@
         }
 
         plans.forEach(plan => {
+            const maxTxt = plan.max_amount != null ? '$' + window.formatCurrency(plan.max_amount) : 'Unlimited';
             const row = `
                 <tr data-plan-id="${plan.id}" class="tf-table-item">
-                    <td class="f14-regular" data-label="Plan Name">
-                        <span class="f14-bold text-Primary">${plan.title}</span>
+                    <td class="f14-regular" data-label="Plan">
+                        <span class="f14-bold text-Primary">${plan.name}</span>
                     </td>
-                    <td class="f14-regular" data-label="Term">${plan.term_display}</td>
-                    <td class="f14-regular" data-label="ROI Range"><span class="text-Green">${plan.roi_display_range}</span></td>
-                    <td class="f14-regular" data-label="Risk Level">${plan.risk}</td>
+                    <td class="f14-regular" data-label="Daily Profit"><span class="text-Green">${plan.daily_profit_percent}%</span></td>
+                    <td class="f14-regular" data-label="Duration">${plan.duration_days} days</td>
+                    <td class="f14-regular" data-label="Deposit Range">$${window.formatCurrency(plan.min_amount)} – ${maxTxt}</td>
                     <td class="f14-regular" data-label="Status">${renderStatusBadge(plan.status)}</td>
                     <td class="f14-regular" data-label="Actions">
                         <div class="dropdown default style-fill actions-dropdown">
@@ -158,7 +159,7 @@
                     </td>
                     <td class="f14-regular" data-label="Plan">${inv.plan_name}</td>
                     <td class="f14-bold" data-label="Amount">$${window.formatCurrency(inv.amount)}</td>
-                    <td class="f14-regular" data-label="ROI">${inv.roi_percent}%</td>
+                    <td class="f14-regular" data-label="Daily Profit">${inv.daily_profit_percent}%</td>
                     <td class="f14-regular" data-label="Status">${renderStatusBadge(inv.status)}</td>
                     <td class="f14-regular text-Gray" data-label="Start Date">${inv.date_started}</td>
                     <td class="f14-regular text-Gray" data-label="End Date">${inv.maturity_date}</td>
@@ -217,15 +218,14 @@
             if (res.status === 'success') {
                 const plan = res.data;
                 
-                $('#plan-modal-title').text(`Edit Plan: ${plan.title}`);
+                $('#plan-modal-title').text(`Edit Plan: ${plan.name}`);
                 $('#plan-id').val(plan.id);
-                $('#plan-name').val(plan.title);
+                $('#plan-name').val(plan.name);
                 $('#plan-min').val(plan.min_amount);
                 $('#plan-max').val(plan.max_amount);
-                $('#plan-roi-min').val(plan.roi_min);
-                $('#plan-roi-max').val(plan.roi_max);
+                $('#plan-daily').val(plan.daily_profit_percent);
+                $('#plan-referral').val(plan.referral_commission_percent);
                 $('#plan-duration').val(plan.duration_days);
-                $('#plan-risk').val(plan.risk.toLowerCase());
                 $('#plan-status').val(plan.status.toLowerCase());
                 
                 $('.modal-confirm-btn').text('Update Plan').removeClass('bg-Primary text-White').addClass('bg-Accent text-Black');
@@ -256,7 +256,7 @@
                 $('#inv-user').val(inv.user_display);
                 $('#inv-plan').val(inv.plan_name);
                 $('#inv-amount').val(inv.amount);
-                $('#inv-roi').val(inv.roi_percent);
+                $('#inv-roi').val(inv.daily_profit_percent);
                 $('#inv-status').val(inv.status.toLowerCase());
 
                 // Enable/disable fields based on status
@@ -265,7 +265,7 @@
                 $('#inv-roi').prop('disabled', isFinal);
                 
                 window.showModal('#edit-investment-modal');
-                window.showToast('X-Yield details loaded.', 'success');
+                window.showToast('Contract details loaded.', 'success');
             } else {
                 window.showToast(res.message || 'Failed to load investment details for editing.', 'error');
             }
@@ -310,22 +310,30 @@
 
              if (!confirm(`Are you sure you want to change the status of plan "${title}" to "${newStatus.toUpperCase()}"?`)) return;
 
-             // Minimal payload required to pass backend validation
+             window.showToast(`Updating plan status...`, 'info', 5000);
+
+             // Fetch current plan values so we preserve them while changing status
+             const cur = await fetchApi('/api/admin/funds.php', { fetch: 'plan_details', id: id }, "GET");
+             if (cur.status !== 'success') {
+                 window.showToast(cur.message || 'Could not load plan to update.', 'error');
+                 return;
+             }
+             const p = cur.data;
              const payload = {
                  action: 'edit_plan',
                  id: id,
-                 title: title, 
-                 min_amount: 1, 
-                 max_amount: 9999999,
-                 roi_min: 1,
-                 roi_max: 50,
-                 duration: 365,
-                 risk: 'low',
+                 name: p.name,
+                 min_amount: p.min_amount,
+                 max_amount: p.max_amount,
+                 daily_profit_percent: p.daily_profit_percent,
+                 duration_days: p.duration_days,
+                 referral_commission_percent: p.referral_commission_percent,
+                 summary: p.summary,
+                 icon: p.icon,
+                 color: p.color,
                  status: newStatus
              };
 
-             window.showToast(`Updating plan status...`, 'info', 5000);
-             
              const res = await fetchApi('/api/admin/funds.php', payload, "POST");
 
              if (res.status === 'success') {
@@ -348,13 +356,12 @@
             const payload = {
                 action: action,
                 id: id,
-                title: $('#plan-name').val(),
+                name: $('#plan-name').val(),
                 min_amount: parseFloat($('#plan-min').val()),
-                max_amount: parseFloat($('#plan-max').val()),
-                roi_min: parseFloat($('#plan-roi-min').val()),
-                roi_max: parseFloat($('#plan-roi-max').val()),
-                duration: parseInt($('#plan-duration').val()),
-                risk: $('#plan-risk').val(),
+                max_amount: $('#plan-max').val() === '' ? '' : parseFloat($('#plan-max').val()),
+                daily_profit_percent: parseFloat($('#plan-daily').val()),
+                duration_days: parseInt($('#plan-duration').val()),
+                referral_commission_percent: parseFloat($('#plan-referral').val()),
                 status: $('#plan-status').val()
             };
 
@@ -386,7 +393,7 @@
                 action: 'edit_investment',
                 id: id,
                 amount: parseFloat($('#inv-amount').val()),
-                roi_percent: parseFloat($('#inv-roi').val()),
+                daily_profit_percent: parseFloat($('#inv-roi').val()),
                 status: newStatus
             };
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * FILE: C:\mrwayne\web_dev\healthruncare\api\admin\process_deposit.php
+ * FILE: C:\mrwayne\web_dev\solacemining\api\admin\process_deposit.php
  * PURPOSE: Handles the admin action to either complete or cancel a pending deposit,
  * including database updates and sending the relevant email notification.
  */

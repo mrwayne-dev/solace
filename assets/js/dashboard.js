@@ -1,6 +1,6 @@
 /**
  * ============================================================
- *  TitanXHoldings Dashboard.js (updated: fixes pending modal, toast, data loading, bank suggestions, polish items, icons)
+ *  Solace Mining Dashboard.js (updated: fixes pending modal, toast, data loading, bank suggestions, polish items, icons)
  * ============================================================
  */
 ;(function ($) {
@@ -340,7 +340,7 @@ var loadDashboardData = async function () {
         const xshares = Number(w.xshares_invested ?? 0);
         $('#xweekly-invested').text(formatCurrency(xweekly));
         $('#xshares-invested').text(formatCurrency(xshares));
-        // Prefer the backend-computed total (includes X-Grid); fall back to the
+        // Prefer the backend-computed total (active contracts); fall back to the
         // visible allocation rows if the field is ever missing.
         const totalInvested = (w.total_invested != null)
           ? Number(w.total_invested)
@@ -378,12 +378,13 @@ var loadDashboardData = async function () {
       // dashboard.php returns pending_withdrawals as a COUNT, not a $ amount.
       // (onWalletPage computed once at the top of this function.)
       if (!onWalletPage) {
+        const c = res.data.contracts || {};
         $('#total-balance').text(formatCurrency(parseNum(w.balance ?? 0)));
         $('#pending-withdrawals').text(Math.round(parseNum(w.pending_withdrawals ?? 0)));
         $('#total-deposited').text(formatCurrency(parseNum(w.total_deposited ?? 0)));
         $('#total-withdrawn').text(formatCurrency(parseNum(w.total_withdrawn ?? 0)));
-        $('#total-investments').text(formatCurrency(parseNum(w.total_investments ?? w.investments ?? 0)));
-        $('#total-holdlock').text(formatCurrency(parseNum(w.holdlock_savings ?? 0)));
+        $('#total-investments').text(formatCurrency(parseNum(c.active_value ?? w.total_investments ?? w.investments ?? 0)));
+        $('#referral-earnings').text(formatCurrency(parseNum(w.referral_earnings ?? 0)));
         $('#total-earnings').text(formatCurrency(parseNum(w.total_earnings ?? 0)));
       }
 

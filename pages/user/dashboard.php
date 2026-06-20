@@ -18,7 +18,7 @@ $user_email = $_SESSION['email'] ?? null;
 $user_role = $_SESSION['role'] ?? 'user';
 ?>
 <?php
-  $page_title = "Dashboard | TitanXHoldings";
+  $page_title = "Dashboard | Solace Mining";
   include __DIR__ . "/_partials/head.php";
 ?>
 <body class="counter-scroll txh-dash">
@@ -59,7 +59,7 @@ $user_role = $_SESSION['role'] ?? 'user';
     <div class="section-header flex justify-between items-center mb-16">
       <h6 class="label-01">Wallet Overview</h6>
       <a href="#" class="f14-regular flex items-center gap8 text-Primary" onclick="refreshDashboard()">
-        <span class="iconify" data-icon="mdi:refresh"></span> Refresh Balances
+        <i class="iconify ph ph-arrows-clockwise"></i> Refresh Balances
       </a>
     </div>
 
@@ -70,7 +70,7 @@ $user_role = $_SESSION['role'] ?? 'user';
         <div class="wallet-card-header">Main Wallet</div>
         <div class="wallet-card-balance">$<span id="total-balance">0.00</span></div>
         <div class="wallet-card-footer">
-          TXH-MAIN-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>
+          SLM-MAIN-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>
         </div>
       </div>
 
@@ -79,25 +79,25 @@ $user_role = $_SESSION['role'] ?? 'user';
         <div class="wallet-card-header">Total Earnings</div>
         <div class="wallet-card-balance">$<span id="total-earnings">0.00</span></div>
         <div class="wallet-card-footer">
-          TXH-ERN-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>
+          SLM-ERN-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>
         </div>
       </div>
 
-      <!-- X-Yields -->
+      <!-- Active Contracts -->
       <div class="wallet-card wallet-investments">
-        <div class="wallet-card-header">X-Yield</div>
+        <div class="wallet-card-header">Active Contracts</div>
         <div class="wallet-card-balance">$<span id="total-investments">0.00</span></div>
         <div class="wallet-card-footer">
-          TXH-INV-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>
+          SLM-INV-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>
         </div>
       </div>
 
-      <!-- X-Lock Savings -->
+      <!-- Referral Earnings -->
       <div class="wallet-card wallet-holdlock">
-        <div class="wallet-card-header">X-Lock Savings</div>
-        <div class="wallet-card-balance">$<span id="total-holdlock">0.00</span></div>
+        <div class="wallet-card-header">Referral Earnings</div>
+        <div class="wallet-card-balance">$<span id="referral-earnings">0.00</span></div>
         <div class="wallet-card-footer">
-          TXH-HLD-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>
+          SLM-REF-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>
         </div>
       </div>
 
@@ -131,8 +131,8 @@ $user_role = $_SESSION['role'] ?? 'user';
             <strong id="card-valid">08/26</strong>
           </li>
           <li>
-            <span>TXH ID</span>
-            <strong id="card-id">TXH-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>-9011-3298</strong>
+            <span>SLM ID</span>
+            <strong id="card-id">SLM-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>-9011-3298</strong>
             </li>
           <li>
             <span>Card Holder</span>
@@ -140,7 +140,7 @@ $user_role = $_SESSION['role'] ?? 'user';
           </li>
           <li>
             <span>Bank Name</span>
-            <strong id="card-bank">TitanXHoldings Bank</strong>
+            <strong id="card-bank">Solace Mining Bank</strong>
           </li>
         </ul>
       </div>
@@ -150,16 +150,13 @@ $user_role = $_SESSION['role'] ?? 'user';
         <canvas id="cardUsageChart" width="200" height="200"></canvas>
         <ul class="chart-legend flex justify-center gap16 mt-12 flex-wrap">
           <li class="flex items-center gap6">
-            <div class="dot bg-Primary"></div> <span>X-Lock</span> <strong>40%</strong>
+            <div class="dot bg-Primary"></div> <span>Balance</span> <strong>0%</strong>
           </li>
           <li class="flex items-center gap6">
-            <div class="dot bg-Accent"></div> <span>X-Yield</span> <strong>25%</strong>
+            <div class="dot bg-Accent"></div> <span>Contracts</span> <strong>0%</strong>
           </li>
           <li class="flex items-center gap6">
-            <div class="dot bg-Purple"></div> <span>X-Shares</span> <strong>20%</strong>
-          </li>
-          <li class="flex items-center gap6">
-            <div class="dot bg-Gainsboro"></div> <span>X-Grid</span> <strong>15%</strong>
+            <div class="dot bg-Gainsboro"></div> <span>Referral</span> <strong>0%</strong>
           </li>
         </ul>
       </div>
@@ -183,15 +180,15 @@ $user_role = $_SESSION['role'] ?? 'user';
                                                         <div class="updates-list text-White">
                                                             <div class="update-item flex gap16 items-start mb-20">
                                                                 <div class="update-content">
-                                                                    <div class="f14-bold">New X-Shares assets listed</div>
-                                                                    <div class="f12-regular text-Gainsboro">Tesla (TSLA) and Meta (META) fractional positions are now available in X-Shares.</div>
+                                                                    <div class="f14-bold">New mining capacity online</div>
+                                                                    <div class="f12-regular text-Gainsboro">Additional hashpower has been added to our rigs — higher tiers now have priority allocation.</div>
                                                                     <div class="f12-regular text-LightGray mt-4">3 days ago</div>
                                                                 </div>
                                                             </div>
                                                             <div class="update-item flex gap16 items-start mb-0">
                                                                 <div class="update-content">
-                                                                    <div class="f14-bold">X-Grid pool now open</div>
-                                                                    <div class="f12-regular text-Gainsboro">A new infrastructure co-investment pool is accepting allocations, with quarterly distributions.</div>
+                                                                    <div class="f14-bold">Refer &amp; earn 10%</div>
+                                                                    <div class="f12-regular text-Gainsboro">Earn a 10% commission every time someone you refer starts a mining contract.</div>
                                                                     <div class="f12-regular text-LightGray mt-4">5 days ago</div>
                                                                 </div>
                                                             </div>
@@ -258,10 +255,9 @@ $user_role = $_SESSION['role'] ?? 'user';
 <script src="<?= txh_asset('../../assets/js/dashboard.js') ?>" defer></script>
 
 <!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/assets/vendor/chartjs/chart.umd.min.js"></script>
 
 <!-- Iconify CDN -->
-<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 
 <script>
 async function renderCardUsageChart() {
@@ -274,18 +270,15 @@ async function renderCardUsageChart() {
 
     if (!result.success) throw new Error(result.message);
 
-    // 🟢 Use the correct structure from your PHP output
-    const data = result.percentages; // not result.data
+    const data = result.percentages;
 
-    const labels = ["X-Lock", "X-Yield", "X-Weekly", "X-Shares", "X-Grid", "X-Rewards"];
+    const labels = ["Balance", "Contracts", "Referral"];
     const datasetValues = [
-      data.xlock || 0,
-      data.investment || 0,
-      data.xweekly || 0,
-      data.xshares || 0,
-      data.xgrid || 0,
-      data.xrewards || 0
+      data.balance || 0,
+      data.invested || 0,
+      data.referral || 0
     ];
+    const palette = ["#004DC0", "#D8ECF9", "#0E1334"];
 
     new Chart(ctx, {
       type: "doughnut",
@@ -293,14 +286,7 @@ async function renderCardUsageChart() {
         labels,
         datasets: [{
           data: datasetValues,
-          backgroundColor: [
-            getComputedStyle(document.documentElement).getPropertyValue("--Primary").trim(),
-            "#CADEDE",
-            "#9FB8B8",
-            "#8EA8A8",
-            "#A9C1C1",
-            "#FEFAE0"
-          ],
+          backgroundColor: palette,
           borderWidth: 0,
           cutout: "70%"
         }]
@@ -317,10 +303,7 @@ async function renderCardUsageChart() {
     if (legend) {
       legend.innerHTML = labels.map((label, i) => `
         <li class="flex items-center gap6">
-          <div class="dot" style="background-color:${[
-            getComputedStyle(document.documentElement).getPropertyValue("--Primary").trim(),
-            "#CADEDE", "#9FB8B8", "#8EA8A8", "#A9C1C1", "#FEFAE0"
-          ][i]}"></div>
+          <div class="dot" style="background-color:${palette[i]}"></div>
           <span>${label}</span> <strong>${datasetValues[i]}%</strong>
         </li>
       `).join("");

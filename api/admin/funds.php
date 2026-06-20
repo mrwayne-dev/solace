@@ -1,14 +1,14 @@
 <?php
 // FILE: /api/admin/funds.php
 // ============================================================
-// PURPOSE: Manage Investment Plans and Active Investments (Admin View)
-// Handles: Metrics, Plan CRUD, Plan List, Active Investment List (Paginated)
+// PURPOSE: Manage Mining Contract Plans (tiers) and Active
+//          Investments (Admin View).
+// Handles: Metrics, Plan CRUD, Plan List, Active Investment List
 // ============================================================
 
 session_start();
 header('Content-Type: application/json');
 
-// Ensure only authenticated admins can access this script
 if (!isset($_SESSION['admin_id'])) {
     http_response_code(401);
     echo json_encode(['status' => 'error', 'message' => 'Unauthorized access.']);
@@ -25,9 +25,6 @@ try {
     exit;
 }
 
-/**
- * Helper function to execute a prepared statement and return result set.
- */
 function executeQuery($pdo, $sql, $params = []) {
     try {
         $stmt = $pdo->prepare($sql);
@@ -50,29 +47,24 @@ function fetchInvestmentMetrics($pdo) {
     ];
 
     try {
-        // Investment Summary Metrics
         $stmt = executeQuery($pdo, "
-            SELECT 
+            SELECT
                 COALESCE(SUM(CASE WHEN status = 'active' THEN amount ELSE 0 END), 0) AS total_active,
-                COALESCE(SUM(CASE WHEN status = 'completed' THEN roi_earned ELSE 0 END), 0) AS total_roi_paid,
+                COALESCE(SUM(roi_earned), 0) AS total_roi_paid,
                 COUNT(DISTINCT user_id) AS ongoing_users,
-                MIN(CASE WHEN status = 'active' AND maturity_date >= CURDATE() THEN maturity_date ELSE NULL END) AS next_maturity 
+                MIN(CASE WHEN status = 'active' AND maturity_date >= CURDATE() THEN maturity_date ELSE NULL END) AS next_maturity
             FROM investments
         ");
         $row = $stmt ? $stmt->fetch(PDO::FETCH_ASSOC) : null;
 
         if ($row) {
             $metrics['total_active_invest'] = (float)$row['total_active'];
-            // Total ROI Paid includes all roi_earned on completed investments
             $metrics['total_roi_paid'] = (float)$row['total_roi_paid'];
-            // Ongoing Plans is counted as unique users with active investments
-            $metrics['ongoing_plans_count'] = (int)$row['ongoing_users']; 
+            $metrics['ongoing_plans_count'] = (int)$row['ongoing_users'];
             $metrics['next_maturity'] = $row['next_maturity'] ? date('M d, Y', strtotime($row['next_maturity'])) : '—';
         }
 
-        // Total Plans Count
         $metrics['total_plans'] = $pdo->query("SELECT COUNT(id) FROM investment_plans")->fetchColumn() ?? 0;
-
     } catch (PDOException $e) {
         error_log("Investment Metric Fetch Error: " . $e->getMessage());
     }
@@ -80,93 +72,66 @@ function fetchInvestmentMetrics($pdo) {
     return $metrics;
 }
 
-// --- Investment Plans Fetcher ---
+// --- Plans (tiers) Fetcher ---
 function fetchPlans($pdo) {
-    // FIX: Removed 'status' from SELECT list as it is missing from the provided DDL schema.
-    $sql = "SELECT 
-                id, title, roi_percent, duration_days, min_amount, max_amount, risk, created_at 
-            FROM investment_plans 
-            ORDER BY id ASC";
+    $sql = "SELECT id, name, daily_profit_percent, duration_days, min_amount, max_amount,
+                   referral_commission_percent, icon, color, status, created_at
+            FROM investment_plans
+            ORDER BY min_amount ASC";
 
     $stmt = executeQuery($pdo, $sql);
     $plans = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
-    
-    return array_map(function($p) {
-        $base_roi = (float)$p['roi_percent'];
-        // Use a 10% tolerance for the display range min/max
-        $roi_min = number_format($base_roi * 0.9, 2);
-        $roi_max = number_format($base_roi * 1.1, 2);
-        
+
+    return array_map(function ($p) {
+        $daily = (float)$p['daily_profit_percent'];
         $days = (int)$p['duration_days'];
-        if ($days >= 365 && $days % 365 === 0) {
-            $term_display = ($days / 365) . ' Year(s)';
-        } elseif ($days >= 30 && $days % 30 === 0) {
-             $term_display = ($days / 30) . ' Month(s)';
-        } else {
-             $term_display = $days . ' Days';
-        }
-        
         return [
             'id' => (int)$p['id'],
-            'title' => htmlspecialchars($p['title']),
-            'roi_base_percent' => $base_roi,
-            'roi_display_range' => "{$roi_min}% - {$roi_max}%", 
+            'name' => htmlspecialchars($p['name']),
+            'daily_profit_percent' => $daily,
             'duration_days' => $days,
-            'term_display' => $term_display,
+            'total_return_percent' => round($daily * $days, 2),
             'min_amount' => (float)$p['min_amount'],
-            'max_amount' => (float)$p['max_amount'],
-            'risk' => ucfirst(htmlspecialchars($p['risk'])),
-            // TEMPORARY FIX: Hardcoded status as 'active' for frontend rendering, 
-            // since the column is missing in the database.
-            'status' => 'active', 
-            'created_at' => date('Y-m-d', strtotime($p['created_at']))
+            'max_amount' => $p['max_amount'] !== null ? (float)$p['max_amount'] : null,
+            'referral_commission_percent' => (float)$p['referral_commission_percent'],
+            'icon' => htmlspecialchars($p['icon']),
+            'color' => htmlspecialchars($p['color']),
+            'status' => htmlspecialchars($p['status']),
+            'created_at' => date('Y-m-d', strtotime($p['created_at'])),
         ];
     }, $plans);
 }
 
 // --- Active Investments Fetcher (Paginated) ---
 function fetchActiveInvestments($pdo, $page = 1, $perPage = 10, $search = '') {
-    
     $sql = "FROM investments i
             JOIN users u ON i.user_id = u.id
             WHERE i.status = 'active'";
     $params = [];
-    
-    // Apply search
+
     if (!empty($search)) {
-        $searchWild = "%$search%";
-        // Search by user name, user email, or plan name
         $sql .= " AND (u.full_name LIKE :s OR u.email LIKE :s OR i.plan_name LIKE :s)";
-        $params[':s'] = $searchWild;
+        $params[':s'] = "%$search%";
     }
 
-    // 1. Count Total Records
     $countStmt = executeQuery($pdo, "SELECT COUNT(i.id) " . $sql, $params);
     $total = $countStmt ? (int)$countStmt->fetchColumn() : 0;
 
     $totalPages = max(1, ceil($total / $perPage));
     $offset = ($page - 1) * $perPage;
-    $limitSql = " LIMIT " . $perPage . " OFFSET " . $offset;
+    $limitSql = " LIMIT " . (int)$perPage . " OFFSET " . (int)$offset;
 
-    // 2. Fetch Active Investments (Paginated)
-    $dataSql = "SELECT 
-                    i.id,
-                    i.plan_name,
-                    i.amount,
-                    i.roi_percent,
-                    i.duration_days,
-                    i.status,
-                    i.maturity_date,
-                    i.created_at,
+    $dataSql = "SELECT
+                    i.id, i.plan_name, i.amount, i.daily_profit_percent, i.duration_days,
+                    i.days_paid, i.status, i.maturity_date, i.created_at,
                     COALESCE(u.full_name, u.name) AS user_name,
-                    u.email AS user_email,
-                    u.id AS user_id
-                " . $sql . " 
+                    u.email AS user_email, u.id AS user_id
+                " . $sql . "
                 ORDER BY i.created_at DESC" . $limitSql;
 
     $stmt = executeQuery($pdo, $dataSql, $params);
     $rows = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
-    
+
     $formatted = array_map(fn($r) => [
         'id' => (int)$r['id'],
         'user_id' => (int)$r['user_id'],
@@ -174,18 +139,15 @@ function fetchActiveInvestments($pdo, $page = 1, $perPage = 10, $search = '') {
         'user_email' => htmlspecialchars($r['user_email']),
         'plan_name' => htmlspecialchars($r['plan_name']),
         'amount' => (float)number_format((float)$r['amount'], 2, '.', ''),
-        'roi_percent' => (float)$r['roi_percent'],
+        'daily_profit_percent' => (float)$r['daily_profit_percent'],
         'duration_days' => (int)$r['duration_days'],
+        'days_paid' => (int)$r['days_paid'],
         'status' => htmlspecialchars($r['status']),
         'date_started' => date('Y-m-d', strtotime($r['created_at'])),
-        'maturity_date' => $r['maturity_date'] ? date('Y-m-d', strtotime($r['maturity_date'])) : 'N/A'
+        'maturity_date' => $r['maturity_date'] ? date('Y-m-d', strtotime($r['maturity_date'])) : 'N/A',
     ], $rows);
-    
-    return [
-        'investments' => $formatted,
-        'current_page' => $page,
-        'total_pages' => $totalPages
-    ];
+
+    return ['investments' => $formatted, 'current_page' => $page, 'total_pages' => $totalPages];
 }
 
 // --- POST / Management Handler ---
@@ -194,97 +156,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = strtolower(trim($input['action'] ?? ''));
 
     if ($action === 'add_plan' || $action === 'edit_plan') {
-        $title = trim($input['title'] ?? '');
+        $name = trim($input['name'] ?? '');
         $min_amount = (float)($input['min_amount'] ?? 0);
-        $max_amount = (float)($input['max_amount'] ?? 0);
-        $roi_min = (float)($input['roi_min'] ?? 0); 
-        $roi_max = (float)($input['roi_max'] ?? 0); 
-        $duration = (int)($input['duration'] ?? 0);
-        $risk = trim($input['risk'] ?? 'low');
-        // $status = trim($input['status'] ?? 'active'); // Removed due to missing DDL column
-        $id = (int)($input['id'] ?? 0); 
-        
-        // --- Required fields validation ---
-        if (empty($title) || $duration <= 0 || $min_amount <= 0 || $roi_min <= 0 || $roi_max <= 0 || $roi_min > $roi_max || $min_amount > $max_amount) {
-            echo json_encode(['status' => 'error', 'message' => 'Invalid or missing required data (Title, Duration, valid min/max amounts/ROI).']);
+        $max_amount = ($input['max_amount'] ?? '') === '' ? null : (float)$input['max_amount'];
+        $daily_profit = (float)($input['daily_profit_percent'] ?? 0);
+        $duration = (int)($input['duration_days'] ?? 5);
+        $ref_commission = (float)($input['referral_commission_percent'] ?? 10);
+        $summary = $input['summary'] ?? '';
+        $icon = $input['icon'] ?? 'mdi:pickaxe';
+        $color = $input['color'] ?? 'Blue';
+        $status = in_array(($input['status'] ?? 'active'), ['active', 'hidden'], true) ? $input['status'] : 'active';
+        $id = (int)($input['id'] ?? 0);
+
+        if ($name === '' || $duration <= 0 || $min_amount <= 0 || $daily_profit <= 0 || ($max_amount !== null && $min_amount > $max_amount)) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid or missing required data (Name, Duration, Daily Profit, valid min/max amounts).']);
             exit;
         }
 
-        // Calculate the center/base ROI for the investments table
-        $base_roi = round(($roi_min + $roi_max) / 2, 2);
-
-        // Required placeholders/defaults for NOT NULL fields not in the modal
-        $description = $input['description'] ?? 'Investment plan description.';
-        $details = $input['details'] ?? 'Detailed plan features.';
-        $income = $input['income'] ?? 'General investment returns.';
-        $summary = $input['summary'] ?? 'Summary of the plan.';
-        $icon = $input['icon'] ?? 'mdi:chart-line';
-        $color = $input['color'] ?? 'Blue';
-        $payout_option = $input['payout_option'] ?? 'maturity';
-        
         try {
             if ($action === 'add_plan') {
-                // FIX: Removed 'status' from INSERT query and params since it is missing in the DDL.
-                $sql = "INSERT INTO investment_plans 
-                        (title, roi_percent, duration_days, min_amount, max_amount, risk, description, details, income, summary, icon, color, payout_option) 
-                        VALUES (:title, :roi_percent, :duration, :min_amount, :max_amount, :risk, :description, :details, :income, :summary, :icon, :color, :payout_option)";
+                $sql = "INSERT INTO investment_plans
+                        (name, min_amount, max_amount, daily_profit_percent, duration_days, referral_commission_percent, summary, icon, color, status)
+                        VALUES (:name, :min_amount, :max_amount, :daily, :duration, :ref, :summary, :icon, :color, :status)";
                 $params = [
-                    ':title' => $title, 
-                    ':roi_percent' => $base_roi, 
-                    ':duration' => $duration, 
-                    ':min_amount' => $min_amount, 
-                    ':max_amount' => $max_amount, 
-                    ':risk' => strtolower($risk), 
-                    // ':status' => strtolower($status), // Removed
-                    ':description' => $description,
-                    ':details' => $details,
-                    ':income' => $income,
-                    ':summary' => $summary,
-                    ':icon' => $icon,
-                    ':color' => $color,
-                    ':payout_option' => $payout_option
+                    ':name' => $name, ':min_amount' => $min_amount, ':max_amount' => $max_amount,
+                    ':daily' => $daily_profit, ':duration' => $duration, ':ref' => $ref_commission,
+                    ':summary' => $summary, ':icon' => $icon, ':color' => $color, ':status' => $status,
                 ];
                 $stmt = executeQuery($pdo, $sql, $params);
-
-                if ($stmt) {
-                    echo json_encode(['status' => 'success', 'message' => 'New investment plan created successfully.']);
-                } else {
-                    echo json_encode(['status' => 'error', 'message' => 'Failed to create plan.']);
-                }
-            } elseif ($action === 'edit_plan') {
+                echo json_encode($stmt
+                    ? ['status' => 'success', 'message' => 'New mining contract tier created successfully.']
+                    : ['status' => 'error', 'message' => 'Failed to create plan.']);
+            } else {
                 if ($id <= 0) {
                     echo json_encode(['status' => 'error', 'message' => 'Invalid plan ID for edit.']);
                     exit;
                 }
-
-                // FIX: Removed 'status' from UPDATE query and params since it is missing in the DDL.
-                $sql = "UPDATE investment_plans SET 
-                            title = :title, 
-                            roi_percent = :roi_percent, 
-                            duration_days = :duration, 
-                            min_amount = :min_amount, 
-                            max_amount = :max_amount, 
-                            risk = :risk 
-                            -- status = :status (Removed)
+                $sql = "UPDATE investment_plans SET
+                            name = :name, min_amount = :min_amount, max_amount = :max_amount,
+                            daily_profit_percent = :daily, duration_days = :duration,
+                            referral_commission_percent = :ref, summary = :summary,
+                            icon = :icon, color = :color, status = :status
                         WHERE id = :id";
                 $params = [
-                    ':title' => $title, 
-                    ':roi_percent' => $base_roi, 
-                    ':duration' => $duration, 
-                    ':min_amount' => $min_amount, 
-                    ':max_amount' => $max_amount, 
-                    ':risk' => strtolower($risk), 
-                    // ':status' => strtolower($status), // Removed
-                    ':id' => $id
+                    ':name' => $name, ':min_amount' => $min_amount, ':max_amount' => $max_amount,
+                    ':daily' => $daily_profit, ':duration' => $duration, ':ref' => $ref_commission,
+                    ':summary' => $summary, ':icon' => $icon, ':color' => $color, ':status' => $status,
+                    ':id' => $id,
                 ];
-
                 $stmt = executeQuery($pdo, $sql, $params);
-
-                if ($stmt) {
-                    echo json_encode(['status' => 'success', 'message' => 'Investment plan updated successfully.']);
-                } else {
-                    echo json_encode(['status' => 'error', 'message' => 'Failed to update plan.']);
-                }
+                echo json_encode($stmt
+                    ? ['status' => 'success', 'message' => 'Mining contract tier updated successfully.']
+                    : ['status' => 'error', 'message' => 'Failed to update plan.']);
             }
         } catch (Exception $e) {
             error_log("Plan Action Error: " . $e->getMessage());
@@ -294,9 +217,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($action === 'edit_investment') {
         $inv_id = (int)($input['id'] ?? 0);
         $amount = (float)($input['amount'] ?? 0);
-        $roi_percent = (float)($input['roi_percent'] ?? 0);
+        $daily_profit = (float)($input['daily_profit_percent'] ?? 0);
         $status = trim($input['status'] ?? '');
-        
+
         if ($inv_id <= 0 || empty($status)) {
             echo json_encode(['status' => 'error', 'message' => 'Invalid investment ID or missing status.']);
             exit;
@@ -305,7 +228,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $pdo->beginTransaction();
 
-            // 1. Fetch current investment details, especially user_id and old status
             $stmt = executeQuery($pdo, "SELECT user_id, amount, status, roi_earned FROM investments WHERE id = :id FOR UPDATE", [':id' => $inv_id]);
             $inv = $stmt ? $stmt->fetch(PDO::FETCH_ASSOC) : null;
 
@@ -314,61 +236,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo json_encode(['status' => 'error', 'message' => 'Investment not found.']);
                 exit;
             }
-            
+
             $user_id = (int)$inv['user_id'];
             $old_status = $inv['status'];
             $old_amount = (float)$inv['amount'];
 
-            // 2. Update investment record
-            $update_sql = "UPDATE investments SET amount = :amount, roi_percent = :roi_percent, status = :status WHERE id = :id";
-            $update_params = [
-                ':amount' => number_format($amount, 2, '.', ''), 
-                ':roi_percent' => number_format($roi_percent, 2, '.', ''), 
-                ':status' => $status, 
-                ':id' => $inv_id
-            ];
-            executeQuery($pdo, $update_sql, $update_params);
+            executeQuery($pdo, "UPDATE investments SET amount = :amount, daily_profit_percent = :daily, status = :status WHERE id = :id", [
+                ':amount' => number_format($amount, 2, '.', ''),
+                ':daily' => number_format($daily_profit, 2, '.', ''),
+                ':status' => $status,
+                ':id' => $inv_id,
+            ]);
 
-            // 3. Handle status change and wallet update (if needed)
-
-            // Case A: Investment manually marked as 'completed'
+            // Case A: manually completed → return principal + accrued ROI
             if ($status === 'completed' && $old_status !== 'completed') {
-                // Calculate final ROI (either the existing roi_earned or the max potential)
-                $final_roi_earned = (float)$inv['roi_earned'] ?: round($amount * $roi_percent / 100, 2);
+                $final_roi_earned = (float)$inv['roi_earned'];
                 $total_payout = round($amount + $final_roi_earned, 2);
 
-                // Update investments with final calculated ROI
-                executeQuery($pdo, "UPDATE investments SET roi_earned = :roi WHERE id = :id", [':roi' => $final_roi_earned, ':id' => $inv_id]);
+                executeQuery($pdo, "UPDATE wallets SET balance = balance + :payout, total_investments = GREATEST(total_investments - :amt, 0) WHERE user_id = :user_id",
+                    [':payout' => $amount, ':amt' => $old_amount, ':user_id' => $user_id]);
 
-                // Credit user wallet (principal + ROI) and update total earnings
-                executeQuery($pdo, "UPDATE wallets SET balance = balance + :payout, total_earnings = total_earnings + :roi WHERE user_id = :user_id", 
-                             [':payout' => $total_payout, ':roi' => $final_roi_earned, ':user_id' => $user_id]);
-
-                // Create transaction record
-                $reference = 'ADMIN-PAYOUT-' . uniqid();
-                $details = json_encode(['investment_id' => $inv_id, 'admin_action' => 'manual_completion', 'payout' => $total_payout, 'roi' => $final_roi_earned]);
+                $reference = 'SLM-MATURE-' . strtoupper(uniqid());
+                $details = json_encode(['investment_id' => $inv_id, 'admin_action' => 'manual_completion', 'principal_returned' => $amount]);
                 executeQuery($pdo, "INSERT INTO transactions (user_id, type, amount, reference, status, details, method, created_at)
-                                    VALUES (?, 'investment_payout', ?, ?, 'completed', ?, 'system', NOW())",
-                                    [$user_id, $total_payout, $reference, $details]);
-                
-            } 
-            // Case B: Investment manually marked as 'cancelled' (only applies if it was previously 'active')
+                                    VALUES (?, 'investment', ?, ?, 'completed', ?, 'system', NOW())",
+                    [$user_id, $amount, $reference, $details]);
+            }
+            // Case B: manually cancelled → refund principal
             elseif ($status === 'cancelled' && $old_status === 'active') {
-                // Refund principal amount to user wallet
-                executeQuery($pdo, "UPDATE wallets SET balance = balance + :amount, total_investments = total_investments - :amount WHERE user_id = :user_id", 
-                             [':amount' => $old_amount, ':user_id' => $user_id]);
+                executeQuery($pdo, "UPDATE wallets SET balance = balance + :amount, total_investments = GREATEST(total_investments - :amount, 0) WHERE user_id = :user_id",
+                    [':amount' => $old_amount, ':user_id' => $user_id]);
 
-                // Create transaction record for the refund
-                $reference = 'ADMIN-REFUND-' . uniqid();
+                $reference = 'SLM-REFUND-' . strtoupper(uniqid());
                 $details = json_encode(['investment_id' => $inv_id, 'admin_action' => 'manual_cancellation', 'refund_amount' => $old_amount]);
                 executeQuery($pdo, "INSERT INTO transactions (user_id, type, amount, reference, status, details, method, created_at)
                                     VALUES (?, 'investment_refund', ?, ?, 'completed', ?, 'system', NOW())",
-                                    [$user_id, $old_amount, $reference, $details]);
+                    [$user_id, $old_amount, $reference, $details]);
             }
-            
-            $pdo->commit();
-            echo json_encode(['status' => 'success', 'message' => "Investment ID {$inv_id} updated successfully. Wallet adjusted for status change from {$old_status} to {$status}."]);
 
+            $pdo->commit();
+            echo json_encode(['status' => 'success', 'message' => "Investment ID {$inv_id} updated (status {$old_status} → {$status})."]);
         } catch (Exception $e) {
             if ($pdo->inTransaction()) $pdo->rollBack();
             error_log("Edit Investment Action Error: " . $e->getMessage());
@@ -383,39 +290,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 
-// --- GET Requests (Initial Load, Search, Filter, Single Data Fetch) ---
+// --- GET Requests ---
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $input = array_merge($_GET, $_POST); 
+    $input = array_merge($_GET, $_POST);
     $search = trim($input['search'] ?? '');
     $active_page = max(1, (int)($input['active_page'] ?? 1));
-    $per_page = 10; 
+    $per_page = 10;
 
-    // Case 1: Fetch a single plan's details for editing
+    // Case 1: single plan details for editing
     if (isset($input['fetch']) && $input['fetch'] === 'plan_details') {
         $plan_id = (int)($input['id'] ?? 0);
-        // FIX: Removed 'status' from SELECT as it's missing from DDL
-        $stmt = executeQuery($pdo, "SELECT id, title, roi_percent, duration_days, min_amount, max_amount, risk FROM investment_plans WHERE id = :id", [':id' => $plan_id]);
+        $stmt = executeQuery($pdo, "SELECT id, name, daily_profit_percent, duration_days, min_amount, max_amount, referral_commission_percent, summary, icon, color, status FROM investment_plans WHERE id = :id", [':id' => $plan_id]);
         $plan = $stmt ? $stmt->fetch(PDO::FETCH_ASSOC) : null;
 
         if ($plan) {
-            $base_roi = (float)$plan['roi_percent'];
-            // Re-calculate the display min/max based on the base ROI stored in the DB (for consistency)
-            $roi_min = number_format($base_roi * 0.9, 2);
-            $roi_max = number_format($base_roi * 1.1, 2);
-            
             echo json_encode([
                 'status' => 'success',
                 'data' => [
                     'id' => (int)$plan['id'],
-                    'title' => htmlspecialchars($plan['title']),
-                    'min_amount' => (string)number_format((float)$plan['min_amount'], 2, '.', ''),
-                    'max_amount' => (string)number_format((float)$plan['max_amount'], 2, '.', ''),
-                    'roi_min' => $roi_min,
-                    'roi_max' => $roi_max,
+                    'name' => htmlspecialchars($plan['name']),
+                    'min_amount' => number_format((float)$plan['min_amount'], 2, '.', ''),
+                    'max_amount' => $plan['max_amount'] !== null ? number_format((float)$plan['max_amount'], 2, '.', '') : '',
+                    'daily_profit_percent' => number_format((float)$plan['daily_profit_percent'], 2, '.', ''),
                     'duration_days' => (int)$plan['duration_days'],
-                    'risk' => htmlspecialchars($plan['risk']),
-                    // Hardcoded status for the modal form field value
-                    'status' => 'active', 
+                    'referral_commission_percent' => number_format((float)$plan['referral_commission_percent'], 2, '.', ''),
+                    'summary' => htmlspecialchars($plan['summary'] ?? ''),
+                    'icon' => htmlspecialchars($plan['icon']),
+                    'color' => htmlspecialchars($plan['color']),
+                    'status' => htmlspecialchars($plan['status']),
                 ]
             ]);
         } else {
@@ -423,11 +325,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         }
         exit;
     }
-    
-    // Case 2: Fetch a single active investment's details for editing
+
+    // Case 2: single active investment details for editing
     if (isset($input['fetch']) && $input['fetch'] === 'investment_details') {
         $inv_id = (int)($input['id'] ?? 0);
-        $stmt = executeQuery($pdo, "SELECT i.id, i.plan_name, i.amount, i.roi_percent, i.status, COALESCE(u.full_name, u.name) AS user_name, u.email AS user_email FROM investments i JOIN users u ON i.user_id = u.id WHERE i.id = :id", [':id' => $inv_id]);
+        $stmt = executeQuery($pdo, "SELECT i.id, i.plan_name, i.amount, i.daily_profit_percent, i.status, COALESCE(u.full_name, u.name) AS user_name, u.email AS user_email FROM investments i JOIN users u ON i.user_id = u.id WHERE i.id = :id", [':id' => $inv_id]);
         $inv = $stmt ? $stmt->fetch(PDO::FETCH_ASSOC) : null;
 
         if ($inv) {
@@ -437,8 +339,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     'id' => (int)$inv['id'],
                     'user_display' => htmlspecialchars($inv['user_name']) . ' (' . htmlspecialchars($inv['user_email']) . ')',
                     'plan_name' => htmlspecialchars($inv['plan_name']),
-                    'amount' => (string)number_format((float)$inv['amount'], 2, '.', ''),
-                    'roi_percent' => (string)number_format((float)$inv['roi_percent'], 2, '.', ''),
+                    'amount' => number_format((float)$inv['amount'], 2, '.', ''),
+                    'daily_profit_percent' => number_format((float)$inv['daily_profit_percent'], 2, '.', ''),
                     'status' => htmlspecialchars($inv['status']),
                 ]
             ]);
@@ -448,11 +350,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         exit;
     }
 
-    // Case 3: Main Dashboard Data Fetch (load_dashboard)
+    // Case 3: Main dashboard data
     $metrics = fetchInvestmentMetrics($pdo);
     $plans = fetchPlans($pdo);
     $active_investments = fetchActiveInvestments($pdo, $active_page, $per_page, $search);
-    
+
     echo json_encode([
         'status' => 'success',
         'data' => [
@@ -460,14 +362,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             'plans' => $plans,
             'active_investments' => $active_investments['investments'],
             'active_page' => $active_investments['current_page'],
-            'active_total_pages' => $active_investments['total_pages']
+            'active_total_pages' => $active_investments['total_pages'],
         ]
     ]);
     exit;
 }
 
-// Default response if no action matched
 http_response_code(405);
 echo json_encode(['status' => 'error', 'message' => 'Method not allowed.']);
 exit;
-?>

@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// ADMIN REGISTRATION — TitanXHoldings
+// ADMIN REGISTRATION — Solace Mining
 // ========================================
 
 ini_set('display_errors', 0);

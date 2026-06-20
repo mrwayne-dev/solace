@@ -379,3 +379,41 @@
 [2025-11-24 06:43:59] SENT → aleruchi0987@gmail.com | Template: deposit_initiated | Subject: Deposit Request Received!
 [2025-11-24 06:44:04] SENT → support@healthruncare.com | Template: admin_deposit_notification | Subject: New Deposit Request!
 [2025-11-24 06:51:54] SENT → support@healthruncare.com | Template: admin_payment_confirmed | Subject: User Confirmed Payment for Deposit!
+[2026-06-14 21:45:29] ERROR → buyer@test.com | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-14 18:11:13] ERROR → e2e@test.com | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-14 18:11:18] ERROR → support@solacemining.com | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-14 18:12:04] ERROR → refd@test.com | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-14 18:12:08] ERROR → support@solacemining.com | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-14 18:12:16] ERROR → refd@test.com | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-14 18:12:20] ERROR → support@solacemining.com | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 18:46:21] ERROR → test_1781563570@example.com | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 18:46:52] ERROR → test_1781563608@example.com | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 18:46:57] ERROR → test_1781563608@example.com | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 18:47:06] ERROR → test_1781563608@example.com | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 18:47:11] ERROR → support@solacemining.org | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 18:47:20] ERROR → test_1781563608@example.com | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 18:47:25] ERROR → test_1781563608@example.com | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 18:47:29] ERROR → test_1781563608@example.com | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 18:47:33] ERROR → support@solacemining.org | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 18:50:26] ERROR → dev_1781563815@example.com | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 18:50:30] ERROR → support@solacemining.org | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 18:50:34] ERROR → dev_1781563815@example.com | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 18:57:10] ERROR → demo@solacemining.org | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 18:57:14] ERROR → support@solacemining.org | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 19:12:39] ERROR → demo@solacemining.org | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 19:12:48] ERROR → support@solacemining.org | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 19:43:00] ERROR → demo@solacemining.org | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 19:43:04] ERROR → support@solacemining.org | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 19:43:08] ERROR → admin@solacemining.org | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 20:08:40] ERROR → demo@solacemining.org | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 20:08:44] ERROR → support@solacemining.org | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-15 20:08:49] ERROR → admin@solacemining.org | SMTP Error: Could not authenticate. | Mailer: SMTP Error: Could not authenticate.
+[2026-06-20 10:32:53] SENT → support@solacemining.org | Template: welcome_user | Subject: [TEST] Solace Mining mail-server check 10:32:47
+[2026-06-20 11:54:32] SENT → demo@solacemining.org | Template: deposit_confirmed | Subject: Success! Your Deposit Has Been Approved and Credited!
+[2026-06-20 11:54:37] SENT → support@solacemining.org | Template: admin_payment_confirmed | Subject: User Confirmed Payment for Deposit!
+[2026-06-20 12:22:58] SENT → support@solacemining.org | Template: contact_message | Subject: New contact message: Contact form test
+[2026-06-20 12:23:03] SENT → demo@solacemining.org | Template: contact_received | Subject: We received your message — Solace Mining
+[2026-06-20 12:23:26] SENT → support@solacemining.org | Template: contact_message | Subject: New contact message: plain
+[2026-06-20 12:23:30] SENT → demo@solacemining.org | Template: contact_received | Subject: We received your message — Solace Mining
+[2026-06-20 12:23:56] SENT → support@solacemining.org | Template: contact_message | Subject: New contact message: With attachment
+[2026-06-20 12:24:00] SENT → demo@solacemining.org | Template: contact_received | Subject: We received your message — Solace Mining

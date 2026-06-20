@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// FORGOT PASSWORD HANDLER — TitanXHoldings
+// FORGOT PASSWORD HANDLER — Solace Mining
 // ========================================
 
 ini_set('display_errors', 0);
@@ -88,10 +88,20 @@ try {
         ],
     ]);
 
+    // DEV WORKAROUND (local only): no mail server yet — surface the code so
+    // the reset flow is testable from the UI. Production never exposes it.
+    $isLocal  = defined('APP_ENV') && APP_ENV === 'local';
+    $data     = ['user_id' => $user['id']];
+    $message  = 'OTP sent to your email.';
+    if ($isLocal) {
+        $data['dev_otp'] = (string) $otp;
+        $message .= " (dev code: {$otp})";
+    }
+
     echo json_encode([
-        'status' => 'success',
-        'message' => 'OTP sent to your email.',
-        'data' => ['user_id' => $user['id']]
+        'status'  => 'success',
+        'message' => $message,
+        'data'    => $data
     ]);
 
 } catch (Exception $e) {

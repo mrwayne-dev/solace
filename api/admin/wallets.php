@@ -1,5 +1,5 @@
 <?php
-// D:\mrwayne\web_dev\healthruncare\api\admin\wallets.php
+// D:\mrwayne\web_dev\solacemining\api\admin\wallets.php
 // ============================================================
 // PURPOSE: Manage user wallets (Admin View): fetch data, metrics, and update balances.
 // ============================================================

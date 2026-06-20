@@ -4,7 +4,7 @@ error_reporting(0);
 // ===============================================
 // FILE: /api/backend/dashboard.php
 // PURPOSE: Provides user dashboard data — wallet stats,
-// impacts summary, and recent transactions.
+// active contracts summary, and recent transactions.
 // Supports SPA dashboard requests (via fetch or AJAX).
 // ===============================================
 session_start([
@@ -71,7 +71,7 @@ if ($action === 'get_wallet') {
         if (!$wallet) {
             // Auto-create wallet if not found
             $pdo->prepare("
-                INSERT INTO wallets (user_id, balance, total_deposited, total_withdrawn, total_investments, holdlock_savings, total_earnings, pending_withdrawals)
+                INSERT INTO wallets (user_id, balance, total_deposited, total_withdrawn, total_investments, total_earnings, referral_earnings, pending_withdrawals)
                 VALUES (?, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00)
             ")->execute([$user_id]);
             $wallet = ['balance' => 0.00];
@@ -110,54 +110,22 @@ $wallet = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$wallet) {
     // Create a default wallet if none exists
     $pdo->prepare("
-        INSERT INTO wallets (user_id, balance, total_deposited, total_withdrawn, total_investments, holdlock_savings, total_earnings, pending_withdrawals)
+        INSERT INTO wallets (user_id, balance, total_deposited, total_withdrawn, total_investments, total_earnings, referral_earnings, pending_withdrawals)
         VALUES (?, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00)
     ")->execute([$user_id]);
     $stmt->execute([$user_id]);
     $wallet = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 // ===========================================================
-// DYNAMIC HOLDLOCK SAVINGS CHECK (syncs dashboard with real lock plans)
+// ACTIVE MINING CONTRACTS SUMMARY
 // ===========================================================
-$lockStmt = $pdo->prepare("
-    SELECT COALESCE(SUM(amount), 0) AS total_locked
-    FROM holdlock
-    WHERE user_id = ? AND status IN ('locked','unlock_pending')
+$invStmt = $pdo->prepare("
+    SELECT COALESCE(SUM(CASE WHEN status='active' THEN amount ELSE 0 END),0) AS active_value,
+           COUNT(CASE WHEN status='active' THEN 1 END) AS active_count
+    FROM investments WHERE user_id = ?
 ");
-$lockStmt->execute([$user_id]);
-$totalLocked = (float)$lockStmt->fetchColumn();
-
-// Update wallet holdlock_savings if not up-to-date
-if (abs($totalLocked - (float)$wallet['holdlock_savings']) > 0.01) {
-    $pdo->prepare("UPDATE wallets SET holdlock_savings = ? WHERE user_id = ?")
-        ->execute([$totalLocked, $user_id]);
-    $wallet['holdlock_savings'] = $totalLocked;
-}
-// ===========================================================
-// FETCH USER IMPACT DATA
-// ===========================================================
-$stmt = $pdo->prepare("SELECT * FROM user_impacts WHERE user_id = ?");
-$stmt->execute([$user_id]);
-$impact = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$impact) {
-    $pdo->prepare("
-        INSERT INTO user_impacts (user_id, total_contributions, people_helped, impact_score, communities_helped, packages_funded)
-        VALUES (?, 0.00, 0, 0.00, 0, 0)
-    ")->execute([$user_id]);
-    $stmt->execute([$user_id]);
-    $impact = $stmt->fetch(PDO::FETCH_ASSOC);
-}
-
-// ===========================================================
-// UPDATE IMPACT (if wallet contributions changed)
-// ===========================================================
-$total_contributions = (float)$wallet['total_investments'] + (float)$wallet['holdlock_savings'];
-if (abs((float)$impact['total_contributions'] - $total_contributions) > 0.01) {
-    $pdo->prepare("UPDATE user_impacts SET total_contributions = ? WHERE user_id = ?")
-        ->execute([$total_contributions, $user_id]);
-    $impact['total_contributions'] = $total_contributions;
-}
+$invStmt->execute([$user_id]);
+$inv = $invStmt->fetch(PDO::FETCH_ASSOC) ?: ['active_value' => 0, 'active_count' => 0];
 
 // ===========================================================
 // COUNT PENDING WITHDRAWALS
@@ -201,16 +169,13 @@ echo json_encode([
             'total_deposited' => (float)$wallet['total_deposited'],
             'total_withdrawn' => (float)$wallet['total_withdrawn'],
             'investments' => (float)$wallet['total_investments'],
-            'holdlock_savings' => (float)$wallet['holdlock_savings'],
             'total_earnings' => (float)$wallet['total_earnings'],
+            'referral_earnings' => (float)$wallet['referral_earnings'],
             'pending_withdrawals' => $pendingWithdrawalCount, // now counts requests
         ],
-        'impacts' => [
-            'total_contributions' => (float)$impact['total_contributions'],
-            'people_helped' => (int)$impact['people_helped'],
-            'impact_score' => (float)$impact['impact_score'],
-            'communities_helped' => (int)$impact['communities_helped'],
-            'packages_funded' => (int)$impact['packages_funded'],
+        'contracts' => [
+            'active_value' => (float)$inv['active_value'],
+            'active_count' => (int)$inv['active_count'],
         ],
         'recent_activity' => $recent_activity,
     ],

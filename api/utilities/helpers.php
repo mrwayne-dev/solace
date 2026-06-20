@@ -1,7 +1,27 @@
 <?php
 // ========================================
-// HELPER FUNCTIONS — TitanXHoldings
+// HELPER FUNCTIONS — Solace Mining
 // ========================================
+
+/**
+ * Return the user's referral code, generating & persisting a unique
+ * one on first use. Codes are short, uppercase, URL-safe.
+ */
+function ensureReferralCode($pdo, $user_id) {
+    $stmt = $pdo->prepare("SELECT referral_code FROM users WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $code = $stmt->fetchColumn();
+    if ($code) return $code;
+
+    do {
+        $candidate = 'SLM' . strtoupper(substr(bin2hex(random_bytes(4)), 0, 6));
+        $check = $pdo->prepare("SELECT COUNT(*) FROM users WHERE referral_code = ?");
+        $check->execute([$candidate]);
+    } while ((int)$check->fetchColumn() > 0);
+
+    $pdo->prepare("UPDATE users SET referral_code = ? WHERE id = ?")->execute([$candidate, $user_id]);
+    return $candidate;
+}
 
 /**
  * Logs an admin action (for audit trails)

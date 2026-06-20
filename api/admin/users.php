@@ -1,5 +1,5 @@
 <?php
-// D:\mrwayne\web_dev\healthruncare\api\admin\users.php
+// D:\mrwayne\web_dev\solacemining\api\admin\users.php
 
 // Ensure only authenticated admins can access this script
 session_start();

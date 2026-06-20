@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * TitanXHoldings Admin Transactions.js
+ * Solace Mining Admin Transactions.js
  * Purpose: Frontend logic for the Admin Transactions management page.
  * Handles: Data fetching, metric rendering, table rendering, pagination, search/filter, and export.
  * ============================================================

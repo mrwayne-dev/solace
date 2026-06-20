@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// USER LOGIN — TitanXHoldings
+// USER LOGIN — Solace Mining
 // ========================================
 
 ini_set('display_errors', 0);

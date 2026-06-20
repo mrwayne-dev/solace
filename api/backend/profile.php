@@ -1,7 +1,7 @@
 <?php
 // ===============================================
 // FILE: /api/backend/profile.php
-// PURPOSE: User profile controller for TitanXHoldings
+// PURPOSE: User profile controller for Solace Mining
 // Actions: get_profile | update_profile | change_password
 // ===============================================
 

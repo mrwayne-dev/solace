@@ -12,7 +12,7 @@ if (!isset($_SESSION['admin_id'])) {
 $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
 ?>
 <?php
-  $page_title = "X-Yield | TitanXHoldings Admin";
+  $page_title = "Mining Plans | Solace Mining Admin";
   include __DIR__ . "/_partials/head.php";
 ?>
 <body class="counter-scroll txh-dash">
@@ -25,13 +25,13 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
             </div>
 
             <!-- Sidebar -->
-            <?php $active = "funds"; $active_fund = "yield"; include __DIR__ . "/_partials/sidebar.php"; ?>
+            <?php $active = "funds"; include __DIR__ . "/_partials/sidebar.php"; ?>
             <!-- /Sidebar -->
 
             <!-- Main Content -->
             <div class="section-content-right">
                 <!-- Header -->
-                <?php $page_heading = "X-Yield Funds"; include __DIR__ . "/_partials/topbar.php"; ?>
+                <?php $page_heading = "Mining Plans"; include __DIR__ . "/_partials/topbar.php"; ?>
                 <!-- /Header -->
 
                 <!-- Main Content -->
@@ -44,29 +44,29 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                 <div class="row mb-32">
                                     <div class="col-12">
                                         <div class="wallet-cards grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap20">
-                                            <!-- Total Active X-Yields -->
+                                            <!-- Total Active Contracts -->
                                             <div class="wallet-card wallet-main">
-                                                <div class="wallet-card-header">Total Active X-Yields</div>
+                                                <div class="wallet-card-header">Total Active Contracts</div>
                                                 <div class="wallet-card-balance">$<span id="total-active-invest">0.00</span></div>
-                                                <div class="wallet-card-footer"><span class="iconify" data-icon="mdi:trending-up"></span> Locked</div>
+                                                <div class="wallet-card-footer"><i class="iconify ph ph-trend-up"></i> Locked</div>
                                             </div>
                                             <!-- Total ROI Paid Out -->
                                             <div class="wallet-card wallet-green">
                                                 <div class="wallet-card-header">Total ROI Paid</div>
                                                 <div class="wallet-card-balance">$<span id="total-roi-paid">0.00</span></div>
-                                                <div class="wallet-card-footer"><span class="iconify" data-icon="mdi:cash-check"></span> Distributed</div>
+                                                <div class="wallet-card-footer"><i class="iconify ph ph-check-circle"></i> Distributed</div>
                                             </div>
                                             <!-- Ongoing Plans -->
                                             <div class="wallet-card wallet-accent">
                                                 <div class="wallet-card-header">Ongoing Plans</div>
                                                 <div class="wallet-card-balance"><span id="ongoing-plans">0</span></div>
-                                                <div class="wallet-card-footer"><span class="iconify" data-icon="mdi:account-clock"></span> Users</div>
+                                                <div class="wallet-card-footer"><i class="iconify ph ph-user"></i> Users</div>
                                             </div>
                                             <!-- Next Maturity -->
                                             <div class="wallet-card wallet-purple">
                                                 <div class="wallet-card-header">Next Maturity</div>
                                                 <div class="wallet-card-balance"><span id="next-maturity">—</span></div>
-                                                <div class="wallet-card-footer"><span class="iconify" data-icon="mdi:calendar-alert"></span> Upcoming</div>
+                                                <div class="wallet-card-footer"><i class="iconify ph ph-calendar-x"></i> Upcoming</div>
                                             </div>
                                         </div>
                                     </div>
@@ -75,18 +75,18 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                 <!-- 2. INVESTMENT PLANS MANAGER -->
                                 <div class="mb-32">
                                     <div class="d-flex justify-between items-center mb-16">
-                                        <h5 class="label-01">X-Yield Plans</h5>
+                                        <h5 class="label-01">Mining Contract Tiers</h5>
                                         <button id="add-plan-btn" class="tf-button bg-Primary text-White f12-bold">
-                                            <span class="iconify" data-icon="mdi:plus"></span> Add New Plan
+                                            <i class="iconify ph ph-plus"></i> Add New Plan
                                         </button>
                                     </div>
 
                                     <div class="table-list-transaction">
                                         <div class="list-transaction-head title-sort bg-Primary">
                                             <div class="f12-bold text-White">Plan Name</div>
-                                            <div class="f12-bold text-White">Term</div>
-                                            <div class="f12-bold text-White">ROI Range</div>
-                                            <div class="f12-bold text-White">Risk Level</div>
+                                            <div class="f12-bold text-White">Daily Profit</div>
+                                            <div class="f12-bold text-White">Duration</div>
+                                            <div class="f12-bold text-White">Deposit Range</div>
                                             <div class="f12-bold text-White">Status</div>
                                             <div class="f12-bold text-White">Actions</div>
                                         </div>
@@ -100,13 +100,13 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
 
                                 <!-- 4. ACTIVE INVESTMENTS TABLE -->
                                 <div class="mb-32">
-                                    <h5 class="label-01 mb-16">All Active X-Yields</h5>
+                                    <h5 class="label-01 mb-16">All Active Contracts</h5>
                                     <div class="table-list-transaction">
                                         <div class="list-transaction-head title-sort bg-Primary">
                                             <div class="f12-bold text-White">User</div>
                                             <div class="f12-bold text-White">Plan</div>
                                             <div class="f12-bold text-White">Amount</div>
-                                            <div class="f12-bold text-White">ROI</div>
+                                            <div class="f12-bold text-White">Daily Profit</div>
                                             <div class="f12-bold text-White">Status</div>
                                             <div class="f12-bold text-White">Start Date</div>
                                             <div class="f12-bold text-White">End Date</div>
@@ -160,28 +160,20 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
-                                            <label>Min ROI (%)</label>
-                                            <input type="number" step="0.01" class="form-control" id="plan-roi-min" required>
+                                            <label>Daily Profit (%) <span class="text-Red">*</span></label>
+                                            <input type="number" step="0.01" class="form-control" id="plan-daily" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
-                                            <label>Max ROI (%)</label>
-                                            <input type="number" step="0.01" class="form-control" id="plan-roi-max" required>
+                                            <label>Referral Commission (%)</label>
+                                            <input type="number" step="0.01" class="form-control" id="plan-referral" value="10">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group mb-3">
-                                    <label>Term Duration (days)</label>
-                                    <input type="number" class="form-control" id="plan-duration" required>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <label>Risk Level</label>
-                                    <select class="form-control" id="plan-risk">
-                                        <option value="low">Low</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="high">High</option>
-                                    </select>
+                                    <label>Duration (days) <span class="text-Red">*</span></label>
+                                    <input type="number" class="form-control" id="plan-duration" value="5" required>
                                 </div>
                                 <div class="form-group mb-3">
                                     <label>Status</label>
@@ -199,12 +191,12 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                     </div>
                 </div>
 
-                <!-- Edit User X-Yield Modal -->
+                <!-- Edit Contract Modal -->
                 <div class="modal" id="edit-investment-modal">
                     <div class="modal-overlay"></div>
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h2>Edit X-Yield</h2>
+                            <h2>Edit Contract</h2>
                             <button class="button-close-modal">&times;</button>
                         </div>
                         <div class="modal-body">
@@ -227,7 +219,7 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
-                                            <label>ROI (%)</label>
+                                            <label>Daily Profit (%)</label>
                                             <input type="number" step="0.01" class="form-control" id="inv-roi">
                                         </div>
                                     </div>
@@ -268,7 +260,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
 <script src="<?= txh_asset('../../assets/js/bootstrap-select.min.js') ?>" defer></script>
 <script src="<?= txh_asset('../../assets/js/admin/admin.js') ?>" defer></script>
 <script src="<?= txh_asset('../../assets/js/admin/funds.js') ?>" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<script src="/assets/vendor/chartjs/chart.umd.min.js"></script>
 </body>
 </html>

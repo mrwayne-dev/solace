@@ -12,7 +12,7 @@ if (!isset($_SESSION['admin_id'])) {
 $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
 ?>
 <?php
-  $page_title = "Wallets | TitanXHoldings Admin";
+  $page_title = "Wallets | Solace Mining Admin";
   include __DIR__ . "/_partials/head.php";
 ?>
 <body class="counter-scroll txh-dash">
@@ -48,25 +48,25 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                             <div class="wallet-card wallet-main">
                                                 <div class="wallet-card-header">Total Wallets</div>
                                                 <div class="wallet-card-balance"><span id="total-wallets">0</span></div>
-                                                <div class="wallet-card-footer"> <span class="iconify" data-icon="mdi:wallet-outline"></span> Active</div>
+                                                <div class="wallet-card-footer"> <i class="iconify ph ph-wallet"></i> Active</div>
                                             </div>
                                             <!-- Total Balance -->
                                             <div class="wallet-card wallet-green">
                                                 <div class="wallet-card-header">Total Balance</div>
                                                 <div class="wallet-card-balance">$<span id="total-balance">0.00</span></div>
-                                                <div class="wallet-card-footer"><span class="iconify" data-icon="mdi:bank"></span> All Users</div>
+                                                <div class="wallet-card-footer"><i class="iconify ph ph-bank"></i> All Users</div>
                                             </div>
                                             <!-- Pending Deposits -->
                                             <div class="wallet-card wallet-accent">
                                                 <div class="wallet-card-header">Pending Deposits</div>
                                                 <div class="wallet-card-balance"><span id="pending-deposits">0</span></div>
-                                                <div class="wallet-card-footer"> <span class="iconify" data-icon="mdi:cash-plus"></span>  Requests</div>
+                                                <div class="wallet-card-footer"> <i class="iconify ph ph-plus-circle"></i>  Requests</div>
                                             </div>
                                             <!-- Pending Withdrawals -->
                                             <div class="wallet-card wallet-purple">
                                                 <div class="wallet-card-header">Pending Withdrawals</div>
                                                 <div class="wallet-card-balance"><span id="pending-withdrawals">0</span></div>
-                                                <div class="wallet-card-footer"><span class="iconify" data-icon="mdi:cash-minus"></span> Requests</div>
+                                                <div class="wallet-card-footer"><i class="iconify ph ph-minus-circle"></i> Requests</div>
                                             </div>
                                         </div>
                                     </div>
@@ -85,7 +85,7 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                     <div class="right">
                                         <div class="dropdown default style-fill">
                                             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                                <span class="iconify" data-icon="mdi:filter"></span> Filter
+                                                <i class="iconify ph ph-funnel"></i> Filter
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end">
                                                 <li><a href="#" data-filter="all">All Wallets</a></li>
@@ -170,7 +170,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
 <script src="<?= txh_asset('../../assets/js/bootstrap-select.min.js') ?>" defer></script>
 <script src="<?= txh_asset('../../assets/js/admin/admin.js') ?>" defer></script>
 <script src="<?= txh_asset('../../assets/js/admin/wallet.js') ?>" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<script src="/assets/vendor/chartjs/chart.umd.min.js"></script>
 </body>
 </html>

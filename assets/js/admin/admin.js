@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * TitanXHoldings Admin.js (Consolidated and Updated for Deposit and Withdrawal Actions)
+ * Solace Mining Admin.js (Consolidated and Updated for Deposit and Withdrawal Actions)
  * Purpose: Provides Admin Dashboard data loading, UI binding, and quick action logic.
  * ============================================================
  */
@@ -342,7 +342,7 @@ $(document).on('click', '.cancel-withdrawal-btn', function () {
         adminActivityChart = new Chart(ctx, {
             type: "doughnut",
             data: {
-                labels: ["Revenue", "Donations", "X-Yields", "Users"],
+                labels: ["Revenue", "Deposits", "Contracts", "Users"],
                 datasets: [{
                     data: datasetValues,
                     backgroundColor: colors,

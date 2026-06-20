@@ -1,8 +1,11 @@
 <?php
 // ===============================================
 // FILE: /api/backend/investment.php
-// PURPOSE: Investment controller for TitanXHoldings
-// ACTIONS: get_summary, get_plans, start_investment, get_active, unlock_investment
+// PURPOSE: Mining-contract controller for Solace Mining
+// MODEL:   Tiered plans (Bronze..VIP). Each contract pays a
+//          fixed daily profit for `duration_days`; principal is
+//          returned to the wallet on completion (see cron).
+// ACTIONS: get_plans, get_summary, get_active, get_matured, start_investment
 // ===============================================
 
 session_start([
@@ -57,39 +60,33 @@ function jsonResponse($status, $message, $data = []) {
     exit;
 }
 
-function generateReference($prefix = 'TXH-INV') {
+function generateReference($prefix = 'SLM-INV') {
     return strtoupper($prefix . '-' . uniqid() . '-' . rand(1000, 9999));
 }
 
 
 // --------------------- ACTION: get_plans ---------------------
 if ($action === 'get_plans') {
-    $stmt = $pdo->query("SELECT * FROM investment_plans ORDER BY id ASC");
+    $stmt = $pdo->query("SELECT * FROM investment_plans WHERE status = 'active' ORDER BY min_amount ASC");
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $plans = [];
     foreach ($rows as $r) {
+        $daily = (float)$r['daily_profit_percent'];
+        $days  = (int)$r['duration_days'];
         $plans[] = [
-            'id' => (int)$r['id'],
-            'title' => $r['title'],
-            'description' => $r['description'],
-            'details' => $r['details'],
-            'summary' => $r['summary'],
-
-            // financials
-            'roi_percent' => (float)$r['roi_percent'],
-            'duration_days' => (int)$r['duration_days'],
-            'payout_option' => $r['payout_option'],
-
-            // ⚠️ Map DB → JS names:
-            'min' => (float)$r['min_amount'],
-            'max' => (float)$r['max_amount'],
-
-            // extras
-            'risk' => $r['risk'],
-            'income' => $r['income'],
-            'icon' => $r['icon'],
-            'color' => $r['color']
+            'id'                  => (int)$r['id'],
+            'name'                => $r['name'],
+            'title'               => $r['name'], // backwards-compatible alias
+            'summary'             => $r['summary'],
+            'daily_profit_percent'=> $daily,
+            'duration_days'       => $days,
+            'total_return_percent'=> round($daily * $days, 2),
+            'referral_commission_percent' => (float)$r['referral_commission_percent'],
+            'min'                 => (float)$r['min_amount'],
+            'max'                 => $r['max_amount'] !== null ? (float)$r['max_amount'] : null,
+            'icon'                => $r['icon'],
+            'color'               => $r['color'],
         ];
     }
 
@@ -100,7 +97,7 @@ if ($action === 'get_plans') {
 // --------------------- ACTION: get_summary ---------------------
 if ($action === 'get_summary') {
     try {
-        $stmt = $pdo->prepare("SELECT COALESCE(SUM(amount),0) AS total_active, COALESCE(SUM(roi_earned),0) AS total_roi, COUNT(CASE WHEN status='active' THEN 1 END) AS ongoing_count, MIN(CASE WHEN maturity_date >= CURDATE() THEN maturity_date ELSE NULL END) AS next_maturity FROM investments WHERE user_id = ?");
+        $stmt = $pdo->prepare("SELECT COALESCE(SUM(CASE WHEN status='active' THEN amount ELSE 0 END),0) AS total_active, COALESCE(SUM(roi_earned),0) AS total_roi, COUNT(CASE WHEN status='active' THEN 1 END) AS ongoing_count, MIN(CASE WHEN status='active' AND maturity_date >= CURDATE() THEN maturity_date ELSE NULL END) AS next_maturity FROM investments WHERE user_id = ?");
         $stmt->execute([$user_id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -109,9 +106,9 @@ if ($action === 'get_summary') {
         $ongoing = (int)($row['ongoing_count'] ?? 0);
         $next_maturity = $row['next_maturity'] ? date('M d, Y', strtotime($row['next_maturity'])) : '—';
 
-        $wstmt = $pdo->prepare("SELECT balance, total_investments, total_earnings FROM wallets WHERE user_id = ?");
+        $wstmt = $pdo->prepare("SELECT balance, total_investments, total_earnings, referral_earnings FROM wallets WHERE user_id = ?");
         $wstmt->execute([$user_id]);
-        $wallet = $wstmt->fetch(PDO::FETCH_ASSOC) ?: ['balance' => 0.00, 'total_investments' => 0.00, 'total_earnings' => 0.00];
+        $wallet = $wstmt->fetch(PDO::FETCH_ASSOC) ?: ['balance' => 0.00, 'total_investments' => 0.00, 'total_earnings' => 0.00, 'referral_earnings' => 0.00];
 
         jsonResponse('success', 'Investment summary loaded.', [
             'summary' => [
@@ -124,6 +121,7 @@ if ($action === 'get_summary') {
                 'balance' => (float)$wallet['balance'],
                 'total_investments' => (float)$wallet['total_investments'],
                 'total_earnings' => (float)$wallet['total_earnings'],
+                'referral_earnings' => (float)$wallet['referral_earnings'],
             ]
         ]);
     } catch (Exception $e) {
@@ -135,7 +133,7 @@ if ($action === 'get_summary') {
 // --------------------- ACTION: get_active ---------------------
 if ($action === 'get_active') {
     try {
-        $stmt = $pdo->prepare("SELECT id, plan_name, amount, roi_percent, duration_days, status, maturity_date, roi_earned, created_at FROM investments WHERE user_id = ? ORDER BY created_at DESC");
+        $stmt = $pdo->prepare("SELECT id, plan_name, amount, daily_profit_percent, duration_days, days_paid, status, maturity_date, roi_earned, created_at FROM investments WHERE user_id = ? ORDER BY created_at DESC");
         $stmt->execute([$user_id]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $out = [];
@@ -144,8 +142,9 @@ if ($action === 'get_active') {
                 'id' => (int)$r['id'],
                 'plan' => $r['plan_name'],
                 'amount' => (float)$r['amount'],
-                'roi_percent' => (float)$r['roi_percent'],
+                'daily_profit_percent' => (float)$r['daily_profit_percent'],
                 'duration_days' => (int)$r['duration_days'],
+                'days_paid' => (int)$r['days_paid'],
                 'status' => $r['status'],
                 'maturity_date' => $r['maturity_date'] ? date('M d, Y', strtotime($r['maturity_date'])) : null,
                 'roi_earned' => (float)$r['roi_earned'],
@@ -162,20 +161,16 @@ if ($action === 'get_active') {
 
 // --------------------- ACTION: get_matured ---------------------
 if ($action === 'get_matured') {
-    $stmt = $pdo->prepare("SELECT id, plan_name, amount, roi_percent, roi_earned, maturity_date
-        FROM investments WHERE user_id = ? AND status = 'active' AND maturity_date <= CURDATE()");
+    $stmt = $pdo->prepare("SELECT id, plan_name, amount, daily_profit_percent, duration_days, roi_earned, maturity_date
+        FROM investments WHERE user_id = ? AND status = 'completed' ORDER BY maturity_date DESC");
     $stmt->execute([$user_id]);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     foreach ($rows as &$r) {
-        if ((float)$r['roi_earned'] <= 0) {
-            $r['roi_earned'] = round($r['amount'] * $r['roi_percent'] / 100, 2);
-        }
-        $r['total_payout'] = round($r['amount'] + $r['roi_earned'], 2);
-        $r['maturity_date'] = date('M d, Y', strtotime($r['maturity_date']));
+        $r['total_payout'] = round((float)$r['amount'] + (float)$r['roi_earned'], 2);
+        $r['maturity_date'] = $r['maturity_date'] ? date('M d, Y', strtotime($r['maturity_date'])) : '—';
     }
     jsonResponse('success', 'Matured plans loaded.', ['matured' => $rows]);
 }
-
 
 
 // --------------------- ACTION: start_investment ---------------------
@@ -187,20 +182,22 @@ if ($action === 'start_investment') {
     if ($amount <= 0) jsonResponse('error', 'Enter a valid investment amount.');
 
     // Fetch the selected plan from the catalog
-    $pstmt = $pdo->prepare("SELECT title, roi_percent, duration_days, min_amount, max_amount FROM investment_plans WHERE id = ? LIMIT 1");
+    $pstmt = $pdo->prepare("SELECT name, daily_profit_percent, duration_days, referral_commission_percent, min_amount, max_amount FROM investment_plans WHERE id = ? AND status = 'active' LIMIT 1");
     $pstmt->execute([$plan_id]);
     $plan = $pstmt->fetch(PDO::FETCH_ASSOC);
     if (!$plan) jsonResponse('error', 'Invalid plan selected.');
 
-    // ✅ Range validation
+    // Range validation (max NULL = unlimited)
     $min = (float)$plan['min_amount'];
-    $max = (float)$plan['max_amount'];
-    if ($amount < $min || $amount > $max) {
-        jsonResponse('error', "Amount must be between $$min and $$max for this plan.");
+    $max = $plan['max_amount'] !== null ? (float)$plan['max_amount'] : null;
+    if ($amount < $min || ($max !== null && $amount > $max)) {
+        $maxLabel = $max !== null ? '$' . number_format($max, 2) : 'unlimited';
+        jsonResponse('error', "Amount must be between $" . number_format($min, 2) . " and {$maxLabel} for this plan.");
     }
 
-    $roi_percent = (float) $plan['roi_percent'];
+    $daily_profit = (float) $plan['daily_profit_percent'];
     $duration_days = (int) $plan['duration_days'];
+    $ref_commission = (float) $plan['referral_commission_percent'];
 
     try {
         $pdo->beginTransaction();
@@ -221,8 +218,9 @@ if ($action === 'start_investment') {
             jsonResponse('error', 'Insufficient wallet balance.');
         }
 
+        $start_date = date('Y-m-d');
         $maturity_date = date('Y-m-d', strtotime("+{$duration_days} days"));
-        $reference = generateReference('TXH-INV');
+        $reference = generateReference('SLM-INV');
         $now = date('Y-m-d H:i:s');
 
         // Deduct wallet
@@ -230,9 +228,9 @@ if ($action === 'start_investment') {
             ->execute([$amount, $amount, $user_id]);
 
         // Create investment
-        $pdo->prepare("INSERT INTO investments (user_id, plan_name, amount, roi_percent, duration_days, status, maturity_date, roi_earned, created_at)
-                       VALUES (?, ?, ?, ?, ?, 'active', ?, 0.00, ?)")
-            ->execute([$user_id, $plan['title'], $amount, $roi_percent, $duration_days, $maturity_date, $now]);
+        $pdo->prepare("INSERT INTO investments (user_id, plan_id, plan_name, amount, daily_profit_percent, duration_days, days_paid, status, start_date, maturity_date, last_payout_date, roi_earned, reference, created_at)
+                       VALUES (?, ?, ?, ?, ?, ?, 0, 'active', ?, ?, ?, 0.00, ?, ?)")
+            ->execute([$user_id, $plan_id, $plan['name'], $amount, $daily_profit, $duration_days, $start_date, $maturity_date, $start_date, $reference, $now]);
 
         $investment_id = (int)$pdo->lastInsertId();
 
@@ -240,11 +238,34 @@ if ($action === 'start_investment') {
         $details = json_encode([
             'investment_id' => $investment_id,
             'plan_id' => $plan_id,
-            'plan_name' => $plan['title']
+            'plan_name' => $plan['name']
         ]);
         $pdo->prepare("INSERT INTO transactions (user_id, type, amount, reference, status, details, created_at)
                        VALUES (?, 'investment', ?, ?, 'completed', ?, ?)")
             ->execute([$user_id, $amount, $reference, $details, $now]);
+
+        // --- Referral commission: pay the referrer (if any) on this investment ---
+        $rstmt = $pdo->prepare("SELECT referred_by FROM users WHERE id = ?");
+        $rstmt->execute([$user_id]);
+        $referrer_id = (int)($rstmt->fetchColumn() ?: 0);
+        if ($referrer_id > 0 && $ref_commission > 0) {
+            $commission = round($amount * $ref_commission / 100, 2);
+            if ($commission > 0) {
+                $refReference = generateReference('SLM-REF');
+                // ensure referrer wallet exists
+                $pdo->prepare("INSERT INTO wallets (user_id, balance) VALUES (?, 0.00)
+                               ON DUPLICATE KEY UPDATE user_id = user_id")->execute([$referrer_id]);
+                $pdo->prepare("UPDATE wallets SET balance = balance + ?, referral_earnings = referral_earnings + ? WHERE user_id = ?")
+                    ->execute([$commission, $commission, $referrer_id]);
+                $pdo->prepare("INSERT INTO referral_earnings (user_id, referred_user_id, source_investment_id, amount, commission_percent, status, reference, created_at)
+                               VALUES (?, ?, ?, ?, ?, 'credited', ?, ?)")
+                    ->execute([$referrer_id, $user_id, $investment_id, $commission, $ref_commission, $refReference, $now]);
+                $refDetails = json_encode(['from_user_id' => $user_id, 'investment_id' => $investment_id, 'commission_percent' => $ref_commission]);
+                $pdo->prepare("INSERT INTO transactions (user_id, type, method, amount, reference, status, details, created_at)
+                               VALUES (?, 'referral', 'system', ?, ?, 'completed', ?, ?)")
+                    ->execute([$referrer_id, $commission, $refReference, $refDetails, $now]);
+            }
+        }
 
         $pdo->commit();
 
@@ -255,9 +276,9 @@ if ($action === 'start_investment') {
                 'template' => 'investment_confirmed',
                 'variables' => [
                     'user_name' => $user_name,
-                    'plan_name' => $plan['title'],
+                    'plan_name' => $plan['name'],
                     'amount' => number_format($amount, 2),
-                    'roi_percent' => $roi_percent,
+                    'roi_percent' => $daily_profit . '% daily',
                     'duration_days' => $duration_days,
                     'maturity_date' => date('M d, Y', strtotime($maturity_date)),
                     'reference' => $reference,
@@ -271,7 +292,7 @@ if ($action === 'start_investment') {
                     'variables' => [
                         'user_name' => $user_name,
                         'user_email' => $user_email,
-                        'plan_name' => $plan['title'],
+                        'plan_name' => $plan['name'],
                         'amount' => number_format($amount, 2),
                         'reference' => $reference,
                     ]
@@ -279,7 +300,7 @@ if ($action === 'start_investment') {
             }
         }
 
-        jsonResponse('success', 'Investment started successfully.', [
+        jsonResponse('success', 'Mining contract started successfully.', [
             'investment_id' => $investment_id,
             'reference' => $reference,
             'maturity_date' => date('M d, Y', strtotime($maturity_date))
@@ -287,79 +308,7 @@ if ($action === 'start_investment') {
     } catch (Exception $e) {
         if ($pdo->inTransaction()) $pdo->rollBack();
         error_log('start_investment error: ' . $e->getMessage());
-        jsonResponse('error', 'Failed to start investment. Please try again.');
-    }
-}
-
-// --------------------- ACTION: unlock_investment ---------------------
-if ($action === 'unlock_investment') {
-    // (unchanged, logic already correct)
-    $inv_id = (int) ($input['investment_id'] ?? 0);
-    if ($inv_id <= 0) jsonResponse('error', 'Invalid investment id.');
-
-    try {
-        $pdo->beginTransaction();
-        $stmt = $pdo->prepare("SELECT id, user_id, amount, roi_percent, duration_days, status, maturity_date, roi_earned FROM investments WHERE id = ? FOR UPDATE");
-        $stmt->execute([$inv_id]);
-        $inv = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$inv) {
-            $pdo->rollBack();
-            jsonResponse('error', 'Investment not found.');
-        }
-        if ((int)$inv['user_id'] !== $user_id) {
-            $pdo->rollBack();
-            jsonResponse('error', 'Permission denied.');
-        }
-        if ($inv['status'] !== 'active') {
-            $pdo->rollBack();
-            jsonResponse('error', 'Investment is not active.');
-        }
-        if (strtotime($inv['maturity_date']) > strtotime(date('Y-m-d'))) {
-            $pdo->rollBack();
-            jsonResponse('error', 'Investment has not matured yet.');
-        }
-
-        $roi_earned = (float)$inv['roi_earned'] ?: round(((float)$inv['amount'] * (float)$inv['roi_percent'] / 100), 2);
-        $total_payout = round((float)$inv['amount'] + $roi_earned, 2);
-
-        $pdo->prepare("UPDATE investments SET status = 'completed', roi_earned = ? WHERE id = ?")
-            ->execute([$roi_earned, $inv_id]);
-        $pdo->prepare("UPDATE wallets SET balance = balance + ?, total_earnings = total_earnings + ? WHERE user_id = ?")
-            ->execute([$total_payout, $roi_earned, $user_id]);
-
-        $reference = generateReference('TXH-INVPAY');
-        $details = json_encode(['investment_id' => $inv_id, 'payout' => $total_payout, 'roi' => $roi_earned]);
-        $now = date('Y-m-d H:i:s');
-        $pdo->prepare("INSERT INTO transactions (user_id, type, amount, reference, status, details, created_at)
-                       VALUES (?, 'investment', ?, ?, 'completed', ?, ?)")
-            ->execute([$user_id, $total_payout, $reference, $details, $now]);
-
-        $pdo->commit();
-
-        if (function_exists('sendEmail')) {
-            sendEmail([
-                'to' => $user_email,
-                'template' => 'investment_matured',
-                'variables' => [
-                    'user_name' => $user_name,
-                    'investment_id' => $inv_id,
-                    'payout' => number_format($total_payout, 2),
-                    'roi_earned' => number_format($roi_earned, 2),
-                    'reference' => $reference
-                ]
-            ]);
-        }
-
-        jsonResponse('success', 'Investment unlocked and credited to your wallet.', [
-            'payout' => $total_payout,
-            'roi_earned' => $roi_earned,
-            'reference' => $reference
-        ]);
-    } catch (Exception $e) {
-        if ($pdo->inTransaction()) $pdo->rollBack();
-        error_log('unlock_investment error: ' . $e->getMessage());
-        jsonResponse('error', 'Failed to unlock investment. Please try again.');
+        jsonResponse('error', 'Failed to start mining contract. Please try again.');
     }
 }
 

@@ -12,7 +12,7 @@ if (!isset($_SESSION['admin_id'])) {
 $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
 ?>
 <?php
-  $page_title = "Users | TitanXHoldings Admin";
+  $page_title = "Users | Solace Mining Admin";
   include __DIR__ . "/_partials/head.php";
 ?>
 <body class="counter-scroll txh-dash">
@@ -48,7 +48,7 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                                 <div class="wallet-card wallet-main">
                                                     <div class="wallet-card-header">Total Users</div>
                                                     <div class="wallet-card-balance"><span id="total-users">0</span></div>
-                                                    <div class="wallet-card-footer"><span class="iconify" data-icon="mdi:account-group"></span>
+                                                    <div class="wallet-card-footer"><i class="iconify ph ph-users"></i>
                                                         Registered
                                                     </div>
                                                 </div>  
@@ -56,7 +56,7 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                                 <div class="wallet-card wallet-green">
                                                     <div class="wallet-card-header">Active Users</div>
                                                     <div class="wallet-card-balance"><span id="active-users">0</span></div>
-                                                    <div class="wallet-card-footer"><span class="iconify" data-icon="mdi:account-clock"></span>
+                                                    <div class="wallet-card-footer"><i class="iconify ph ph-user"></i>
                                                         Online Now
                                                     </div>
                                                 </div>
@@ -64,7 +64,7 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                                 <div class="wallet-card wallet-accent">
                                                     <div class="wallet-card-header">Admins</div>
                                                     <div class="wallet-card-balance"><span id="admin-count">0</span></div>
-                                                    <div class="wallet-card-footer"><span class="iconify" data-icon="mdi:shield-account"></span>
+                                                    <div class="wallet-card-footer"><i class="iconify ph ph-shield"></i>
                                                         Privileged
                                                     </div>
                                                 </div>
@@ -72,7 +72,7 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                                 <div class="wallet-card wallet-purple">
                                                     <div class="wallet-card-header">New Today</div>
                                                     <div class="wallet-card-balance"><span id="new-today">0</span></div>
-                                                    <div class="wallet-card-footer"><span class="iconify" data-icon="mdi:account-plus"></span>
+                                                    <div class="wallet-card-footer"><i class="iconify ph ph-user-plus"></i>
                                                         Joined Today
                                                     </div>
                                                 </div>
@@ -93,7 +93,7 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                                         <div class="right">
                                             <div class="dropdown default style-fill">
                                                 <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                                    <span class="iconify" data-icon="mdi:filter"></span> Filter
+                                                    <i class="iconify ph ph-funnel"></i> Filter
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-end">
                                                     <li><a href="#" data-filter="all">All Users</a></li>
@@ -244,7 +244,6 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
     <script src="<?= txh_asset('../../assets/js/bootstrap-select.min.js') ?>" defer></script>
     <script src="<?= txh_asset('../../assets/js/admin/admin.js') ?>" defer></script>
     <script src="<?= txh_asset('../../assets/js/admin/users.js') ?>" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+    <script src="/assets/vendor/chartjs/chart.umd.min.js"></script>
 </body>
 </html>

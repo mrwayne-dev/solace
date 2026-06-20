@@ -1,5 +1,5 @@
 // =============================
-// main.js — TitanXHoldings
+// main.js — Solace Mining
 // =============================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -21,9 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
         body.style.overflow = 'hidden';
         setTimeout(() => navbar.classList.add('appear'), 10);
         navToggler.classList.add('active');
+        navToggler.setAttribute('aria-expanded', 'true');
       } else {
         navbar.classList.remove('appear');
         navToggler.classList.remove('active');
+        navToggler.setAttribute('aria-expanded', 'false');
         setTimeout(() => {
           navbar.classList.remove('navbar-mobile-active');
           body.style.overflow = '';
@@ -40,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ) {
         navbar.classList.remove('appear');
         navToggler.classList.remove('active');
+        navToggler.setAttribute('aria-expanded', 'false');
         setTimeout(() => {
           navbar.classList.remove('navbar-mobile-active');
           body.style.overflow = '';
@@ -52,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (window.innerWidth > 992) {
         navbar.classList.remove('appear', 'navbar-mobile-active');
         navToggler.classList.remove('active');
+        navToggler.setAttribute('aria-expanded', 'false');
         body.style.overflow = '';
       }
     });
@@ -86,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
       {
         image: "url('../../assets/images/bgimage2.webp')",
         title: "Healthcare, Connected and Simplified.",
-        subtitle: "TitanXHoldings brings patients, doctors, and pharmacies together in one trusted digital platform. From diagnostics to payments, we make care clear, secure, and accessible."
+        subtitle: "Solace Mining brings patients, doctors, and pharmacies together in one trusted digital platform. From diagnostics to payments, we make care clear, secure, and accessible."
       },
       {
         image: "url('../../assets/images/bgimage.webp')",
@@ -227,7 +231,9 @@ document.addEventListener('DOMContentLoaded', () => {
     animatedElements.forEach(el => el.classList.add('appear'));
   }
 
-  const statNumbers = document.querySelectorAll('.stat-number');
+  // Target any element with a data-count (the "Our Numbers" spans use data-count
+  // without the .stat-number class, so the old selector matched nothing).
+  const statNumbers = document.querySelectorAll('[data-count]');
   function animateCountUp(el, target, duration = 2000) {
     let startTime = null;
     const step = (timestamp) => {
@@ -281,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
     automate: {
       title: "Automate",
       subtitle: "Streamline repetitive healthcare tasks with AI precision",
-      desc: "TitanXHoldings automates appointment reminders, prescription renewals, claims processing, and medical record updates — freeing providers to focus on patients, not paperwork. Each workflow adapts to your team’s needs and improves over time.",
+      desc: "Solace Mining automates appointment reminders, prescription renewals, claims processing, and medical record updates — freeing providers to focus on patients, not paperwork. Each workflow adapts to your team’s needs and improves over time.",
       image: "../../assets/images/workflow-automate.png"
     },
     enrich: {
@@ -293,7 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
     triage: {
       title: "Triage",
       subtitle: "AI-powered triage that prioritizes what matters most",
-      desc: "HRC’s triage engine analyzes urgency, symptoms, and available care capacity in real time — routing each case to the right specialist, at the right time, with zero delays.",
+      desc: "Solace Mining's smart engine analyzes urgency, symptoms, and available care capacity in real time — routing each case to the right specialist, at the right time, with zero delays.",
       image: "../../assets/images/workflow-triage.png"
     },
     report: {
@@ -305,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
     collaborate: {
       title: "Collaborate",
       subtitle: "Unite teams, partners, and patients in one secure network",
-      desc: "Doctors, pharmacists, donors, and employers collaborate seamlessly on HRC — sharing verified data, updates, and impact reports across a unified, encrypted platform.",
+      desc: "Doctors, pharmacists, donors, and employers collaborate seamlessly on Solace Mining — sharing verified data, updates, and impact reports across a unified, encrypted platform.",
       image: "../../assets/images/workflow-collaborate.png"
     }
   };
@@ -358,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
     '/solutions/patients': {
       title: "AI & Patient Tools",
       description: `
-        TitanXHoldings puts advanced healthcare directly in your hands. 
+        Solace Mining puts advanced healthcare directly in your hands. 
         Our AI-driven platform helps patients identify potential health concerns early, 
         track ongoing symptoms, and access remote consultations — all in a secure, easy-to-use space.
       `
@@ -366,15 +372,15 @@ document.addEventListener('DOMContentLoaded', () => {
     '/charity': {
       title: "Charity & Donations",
       description: `
-        Every act of care deserves to make an impact. Through TitanXHoldings’s verified donation system, 
+        Every act of care deserves to make an impact. Through Solace Mining’s verified donation system, 
         your giving directly supports patients, clinics, and emergency programs — 
         without intermediaries or hidden fees.
       `
     },
     '/investment': {
-      title: "X-Yield Pools",
+      title: "Mining Pools",
       description: `
-        TitanXHoldings transforms healthcare investment into measurable impact.  
+        Solace Mining transforms healthcare investment into measurable impact.  
         Our tokenized investment pools allow individuals and institutions to fund verified medical innovations 
         and infrastructure — while earning transparent ROI.
       `
@@ -382,12 +388,12 @@ document.addEventListener('DOMContentLoaded', () => {
     '/trust-fund': {
       title: "Trust Funds",
       description: `
-        TitanXHoldings’s Trust Funds help families, patients, and employers plan ahead for health.  
+        Solace Mining’s Trust Funds help families, patients, and employers plan ahead for health.  
         Secure, automated, and compliant — healthcare peace of mind.
       `
     },
     '/infrastructure': {
-      title: "Mount X-Grid",
+      title: "Mining Rigs",
       description: `
         Healthcare access starts with infrastructure. Co-fund clinics, labs, 
         and telehealth centers in the communities that need them most.
@@ -442,7 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.smartsupp) return;
 
     window._smartsupp = window._smartsupp || {};
-    window._smartsupp.key = 'acee1c8fc66bb651454e92b288dd5ddf2d428cc2';
+    window._smartsupp.key = '3c2dbbfc4e90eff8ecbbe0a2f4936d2be60ccec7';
 
     // Create Smartsupp script dynamically
     const s = document.createElement('script');
@@ -459,4 +465,54 @@ document.addEventListener('DOMContentLoaded', () => {
   } catch (err) {
     console.error('❌ Smartsupp failed to load:', err);
   }
+})();
+
+/**
+ * ======================
+ * 10. Contact form (AJAX submit → /contact/submit)
+ * ======================
+ */
+(function () {
+  const form = document.querySelector('form[action="/contact/submit"]');
+  if (!form) return;
+
+  const loader  = document.getElementById('loader');
+  const success = document.getElementById('successModal');
+  const submitBtn = form.querySelector('button[type="submit"]');
+
+  function showLoader(on) { if (loader) loader.classList.toggle('hidden', !on); }
+  function showSuccess(msg) {
+    if (!success) { alert(msg); return; }
+    const p = success.querySelector('p');
+    if (p && msg) p.textContent = msg;
+    success.classList.remove('hidden');
+    setTimeout(() => success.classList.add('hidden'), 6000);
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (submitBtn) { submitBtn.disabled = true; }
+    showLoader(true);
+
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+      });
+      const data = await res.json().catch(() => ({ status: 'error', message: 'Unexpected server response.' }));
+      showLoader(false);
+      if (data.status === 'success') {
+        form.reset();
+        showSuccess(data.message || 'Message sent! Please check your email.');
+      } else {
+        alert(data.message || 'Something went wrong. Please try again.');
+      }
+    } catch (err) {
+      showLoader(false);
+      alert('Network error. Please check your connection and try again.');
+    } finally {
+      if (submitBtn) { submitBtn.disabled = false; }
+    }
+  });
 })();

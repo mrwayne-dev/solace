@@ -1,5 +1,5 @@
 /* =======================================================
-   announcements.js — TitanXHoldings Admin Announcements
+   announcements.js — Solace Mining Admin Announcements
    ======================================================= */
 
 (function ($) {

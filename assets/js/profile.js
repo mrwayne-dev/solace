@@ -1,5 +1,5 @@
 /* =======================================================
-   profile.js — TitanXHoldings user profile
+   profile.js — Solace Mining user profile
    Loads + updates personal details, password, and avatar.
    ======================================================= */
 

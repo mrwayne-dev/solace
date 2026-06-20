@@ -1,17 +1,17 @@
 :root {
   --White: #ffffff;
-  --Primary: #386641;
-  --Primary-Hover: #2f5336;
-  --Accent: #CADEDE;
-  --Bg: #FEFAE0;
+  --Primary: #004DC0;
+  --Primary-Hover: #0E1334;
+  --Accent: #D8ECF9;
+  --Bg: #FFFFFF;
   --Surface: #ffffff;
-  --Surface-Alt: #9FB8B8;
-  --Black: #1C2628;
-  --GrayDark: #6B7C7D;
-  --Gray: #9FB8B8;
-  --Gainsboro: #FEFAE0;
-  --LightGray: rgba(28, 38, 40, 0.1);
-  --Green: #386641;
+  --Surface-Alt: #D8ECF9;
+  --Black: #0A0A0A;
+  --GrayDark: #636363;
+  --Gray: #D8ECF9;
+  --Gainsboro: #FFFFFF;
+  --LightGray: rgba(10, 10, 10, 0.1);
+  --Green: #386641; /* functional success */
 }
 
 
@@ -7751,7 +7751,7 @@ select {
   }
 }
 /* ============================================
-   TitanXHoldings - Login Page Styles (Unified)
+   Solace Mining - Login Page Styles (Unified)
    ============================================ */
 
 /* Base Layout */
@@ -7909,7 +7909,7 @@ html, body {
   color: #fff;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
   animation: slideIn 0.4s ease forwards, fadeOut 0.4s ease 3.6s forwards;
-  background: #1A1A1A;
+  background: #0A0A0A;
   pointer-events: auto;
   overflow: hidden;
   position: relative;
@@ -7926,10 +7926,10 @@ html, body {
 }
 
 /* Toast types — neutral dark card, colored accent bar + icon */
-.toast.success::before { background: #386641; }
+.toast.success::before { background: #004DC0; }
 .toast.success .iconify { color: #6FBF73; }
 
-.toast.error::before { background: #CC0000; }
+.toast.error::before { background: #004DC0; }
 .toast.error .iconify { color: #F26464; }
 
 .toast.info::before { background: #FFFFFF; }
@@ -8090,7 +8090,7 @@ html, body {
 .modal-header h2 {
   font-size: 1.6rem;
   font-weight: 600;
-  color: var(--Black, #1C2628);
+  color: var(--Black, #0A0A0A);
   margin: 0;
 }
 .modal-close {
@@ -8098,7 +8098,7 @@ html, body {
   background: transparent;
   font-size: 1.8rem;
   cursor: pointer;
-  color: var(--Gray, #9FB8B8);
+  color: var(--Gray, #D8ECF9);
   border-radius: 6px;
   transition: all 0.25s ease;
   line-height: 1;
@@ -8106,7 +8106,7 @@ html, body {
 }
 .modal-close:hover {
   background: rgba(56, 102, 65, 0.1);
-  color: var(--Primary, #386641);
+  color: var(--Primary, #004DC0);
 }
 .modal-close:focus {
   outline: 2px solid rgba(56, 102, 65, 0.3);
@@ -8145,7 +8145,7 @@ html, body {
   padding: 0.8rem 1rem;
   border-radius: 12px;
   border: 1px solid var(--LightGray, rgba(28, 38, 40, 0.1));
-  background: var(--Gainsboro, #FEFAE0);
+  background: var(--Gainsboro, #FFFFFF);
   font-size: 1rem;
   color: var(--Black);
   transition: all 0.25s ease;
@@ -8197,7 +8197,7 @@ html, body {
 }
 #modal-bank-dropdown div:hover,
 #modal-bank-dropdown .selected {
-  background: var(--Gainsboro, #FEFAE0);
+  background: var(--Gainsboro, #FFFFFF);
   color: var(--Primary);
 }
 
@@ -8208,7 +8208,7 @@ html, body {
 }
 .note {
   font-size: 0.8rem;
-  color: var(--Gray, #9FB8B8);
+  color: var(--Gray, #D8ECF9);
 }
 
 /* ---------- Hidden & Conditional Fields ---------- */
@@ -8221,7 +8221,7 @@ html, body {
   width: 100%;
   margin-top: 0.5rem;
   padding: 0.9rem 1rem;
-  background: var(--Primary, #386641);
+  background: var(--Primary, #004DC0);
   color: var(--White, #ffffff);
   border: none;
   border-radius: 12px;
@@ -8231,7 +8231,7 @@ html, body {
   transition: all 0.25s ease;
 }
 .modal-confirm-btn:hover {
-  background: var(--Primary-Hover, #2f5336);
+  background: var(--Primary-Hover, #0E1334);
 }
 
 /* ============================================================
@@ -8424,12 +8424,12 @@ html, body {
 }
 
 .wallet-item:hover {
-  background: #fefae0;
+  background: #FFFFFF;
   transform: translateY(-2px);
 }
 
 .wallet-item:hover::before {
-  background: var(--Primary, #386641);
+  background: var(--Primary, #004DC0);
 }
 
 .wallet-item-left,
@@ -8455,13 +8455,13 @@ html, body {
 
 .wallet-item-title {
   font-weight: 600;
-  color: var(--Black, #1C2628);
+  color: var(--Black, #0A0A0A);
   font-size: 1rem;
 }
 
 .wallet-item-date {
   font-size: 0.9rem;
-  color: var(--Gray, #9FB8B8);
+  color: var(--Gray, #D8ECF9);
 }
 
 .wallet-item-right {
@@ -8472,12 +8472,12 @@ html, body {
 .wallet-item-amount {
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--Primary, #386641);
+  color: var(--Primary, #004DC0);
 }
 
 .wallet-item-status {
   font-size: 0.85rem;
-  color: var(--Gray, #9FB8B8);
+  color: var(--Gray, #D8ECF9);
   font-style: italic;
 }
 
@@ -8545,12 +8545,12 @@ td.negative {
 }
 
 .page-btn:hover {
-  background: #386641;
+  background: #004DC0;
   color: #fff;
 }
 
 .page-btn.active {
-  background: #386641;
+  background: #004DC0;
   color: #fff;
   font-weight: 600;
 }
@@ -8589,7 +8589,7 @@ td.negative {
   transition: all 0.3s ease;
 }
 /* ==============================
-   WALLET OVERVIEW — HRC STYLE
+   WALLET OVERVIEW — BRAND STYLE
    ============================== */
 .wallet-overview {
   background: var(--White);
@@ -8648,24 +8648,24 @@ td.negative {
 
 /* 1. Main Wallet */
 .wallet-main {
-  background: var(--Primary); /* Deep HRC Green */
+  background: var(--Primary); /* Brand primary */
 }
 
 /* 2. Donations Wallet */
 .wallet-donations {
-  background: #CADEDE; /* Soft accent blue-gray */
+  background: #D8ECF9; /* Soft accent blue-gray */
   color: var(--Black);
 }
 
 /* 3. Investments */
 .wallet-investments {
-  background: #9FB8B8; /* Calm mint-gray tone */
+  background: #D8ECF9; /* Calm mint-gray tone */
   color: var(--Black);
 }
 
 /* 4. HoldLock Savings */
 .wallet-holdlock {
-  background: #FEFAE0; /* Warm pale yellow */
+  background: #FFFFFF; /* Warm pale yellow */
   color: var(--Black);
 }
 
@@ -8930,7 +8930,7 @@ td.negative {
 }
 
 .quick-action-btn.bg-Green:hover {
-    background: #2f5336;
+    background: #0E1334;
     color: var(--Gainsboro);
 }
 
@@ -8978,7 +8978,7 @@ td.negative {
 }
 
 /* New card colours */
-.wallet-green { background: #CADEDE !important; color: var(--Black); }
+.wallet-green { background: #D8ECF9 !important; color: var(--Black); }
 .wallet-accent { background: var(--Gray) !important; color: var(--Black); }
 .wallet-purple { background: var(--Gainsboro) !important; color: var(--Black);}
 /* First card → white icon */

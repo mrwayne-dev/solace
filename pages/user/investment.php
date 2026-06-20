@@ -23,7 +23,7 @@ $user_role = $_SESSION['role'] ?? 'user';
 
 ?>
 <?php
-  $page_title = "X-Yield | TitanXHoldings";
+  $page_title = "Mining Plans | Solace Mining";
   include __DIR__ . "/_partials/head.php";
 ?>
 
@@ -46,7 +46,7 @@ $user_role = $_SESSION['role'] ?? 'user';
                 <!-- section-content-right -->
                 <div class="section-content-right">
                     <!-- header-dashboard -->
-                    <?php $page_heading = "X-Yield"; include __DIR__ . "/_partials/topbar.php"; ?>
+                    <?php $page_heading = "Mining Plans"; include __DIR__ . "/_partials/topbar.php"; ?>
                     <!-- main-content -->
                     <div class="main-content">
                         <!-- main-content-wrap -->
@@ -62,17 +62,17 @@ $user_role = $_SESSION['role'] ?? 'user';
                                         <div class="wallet-card wallet-main wallet-hero">
                                           <div class="wallet-hero-top">
                                             <div class="title-box flex items-center gap-2">
-                                              <span class="iconify" data-icon="mdi:chart-timeline-variant"></span>
-                                              <span class="f12-medium text-White">Active X-Yields (USD)</span>
+                                              <i class="iconify ph ph-chart-line"></i>
+                                              <span class="f12-medium text-White">Active Contracts (USD)</span>
                                             </div>
                                             <span class="box-status bg-Green f12-medium flex items-center gap-2">
-                                              <span class="iconify" data-icon="mdi:shield-check"></span> Active
+                                              <i class="iconify ph ph-shield-check"></i> Active
                                             </span>
                                           </div>
                                           <div class="wallet-hero-balance">
                                             <h2 class="counter text-White" id="card-active-investments">$0.00</h2>
                                             <div class="wallet-hero-change f14-regular">
-                                              <span class="iconify" data-icon="mdi:trending-up"></span>
+                                              <i class="iconify ph ph-trend-up"></i>
                                               <span id="card-total-roi">$0.00</span>&nbsp;ROI earned to date
                                             </div>
                                           </div>
@@ -88,7 +88,7 @@ $user_role = $_SESSION['role'] ?? 'user';
                                           </div>
                                           <div class="wallet-hero-actions">
                                             <a href="/dashboard.transactions" class="tf-button bg-Accent f14-bold">
-                                              <span class="iconify" data-icon="mdi:history"></span> Transactions
+                                              <i class="iconify ph ph-clock-counter-clockwise"></i> Transactions
                                             </a>
                                           </div>
                                         </div>
@@ -100,7 +100,7 @@ $user_role = $_SESSION['role'] ?? 'user';
                                         <div class="col-lg-7 col-md-12">
                                                         <div class="wg-box investment-form">
                                                             <div class="title mb-16">
-                                                            <div class="label-01">Start Your X-Yield</div>
+                                                            <div class="label-01">Start a Mining Contract</div>
                                                             </div>
 
                                                             <div class="content">
@@ -113,7 +113,7 @@ $user_role = $_SESSION['role'] ?? 'user';
                                                                 </div>
 
                                                                 <div class="mb-20 position-relative">
-                                                                <label class="f14-regular text-Black mb-8">X-Yield Amount (USD)</label>
+                                                                <label class="f14-regular text-Black mb-8">Contract Amount (USD)</label>
                                                                 <div class="input-group">
                                                                     <span class="input-icon">$</span>
                                                                     <input class="wallet-input form-control" type="number" placeholder="Enter amount" min="1" id="investment-amount">
@@ -124,7 +124,7 @@ $user_role = $_SESSION['role'] ?? 'user';
                                                             <label class="f14-regular text-Black mb-8">Wallet Balance</label>
                                                             <!-- In form -->
                                                             <div class="input-group">
-                                                                <span class="input-icon"><span class="iconify" data-icon="mdi:wallet-outline"></span></span>
+                                                                <span class="input-icon"><i class="iconify ph ph-wallet"></i></span>
                                                                 <span id="wallet-balance" class="form-control readonly-input">$0.00</span>  <!-- <span> not input -->
                                                             </div>
                                                             </div>
@@ -135,7 +135,7 @@ $user_role = $_SESSION['role'] ?? 'user';
                                                                     <input class="form-control readonly-input" type="text" id="term-duration" readonly>
                                                                 </div>
                                                                 <div class="col-md-6">
-                                                                    <label class="f14-regular text-Black mb-8">Expected ROI</label>
+                                                                    <label class="f14-regular text-Black mb-8">Daily Profit</label>
                                                                     <input class="form-control readonly-input" type="text" id="expected-roi" readonly>
                                                                 </div>
                                                                 </div>
@@ -151,7 +151,7 @@ $user_role = $_SESSION['role'] ?? 'user';
                                         <div class="col-lg-5 col-md-12">
                                             <div class="wg-box plan-detail-panel">
                                                 <div class="pdp-empty" id="pdp-empty">
-                                                    <span class="iconify" data-icon="mdi:gesture-tap-button" data-width="32" data-height="32"></span>
+                                                    <i class="iconify ph ph-hand-tap" style="font-size:32px;"></i>
                                                     <div class="f14-bold text-Primary">Select a plan</div>
                                                     <div class="f12-regular text-Gray">Choose a plan from the dropdown to see its full details.</div>
                                                 </div>
@@ -161,7 +161,7 @@ $user_role = $_SESSION['role'] ?? 'user';
                                                         <span class="pdp-badge" id="pdp-risk" style="display:none;"></span>
                                                     </div>
                                                     <div class="pdp-roi" id="pdp-roi">—</div>
-                                                    <div class="pdp-roi-label" id="pdp-roi-label">Expected ROI</div>
+                                                    <div class="pdp-roi-label" id="pdp-roi-label">Daily Profit</div>
                                                     <ul class="pdp-meta" id="pdp-meta"></ul>
                                                     <p class="pdp-summary" id="pdp-summary"></p>
                                                 </div>
@@ -174,11 +174,11 @@ $user_role = $_SESSION['role'] ?? 'user';
                                         <div class="col-12">
                                             <div class="wg-box active-investments">
                                             <div class="title mb-16 flex justify-between items-center">
-                                                <div class="label-01 text-Primary">Active X-Yields</div>
+                                                <div class="label-01 text-Primary">Active Contracts</div>
                                                 <div class="view-all">
                                                 <a href="#" class="f12-regular text-Primary hover:underline flex items-center">
                                                     View All
-                                                    <span class="iconify ml-2" data-icon="mdi:chevron-right"></span>
+                                                    <i class="iconify ph ph-caret-right ml-2"></i>
                                                 </a>
                                                 </div>
                                             </div>
@@ -187,10 +187,11 @@ $user_role = $_SESSION['role'] ?? 'user';
                                                 <div class="txh-scroll-table mt-3">
                                                 <table class="txh-table">
                                                     <thead><tr>
-                                                        <th>Plan Name</th>
-                                                        <th>Amount Invested</th>
-                                                        <th>ROI (%)</th>
-                                                        <th>Term Duration</th>
+                                                        <th>Plan</th>
+                                                        <th>Amount</th>
+                                                        <th>Daily Profit</th>
+                                                        <th>Progress</th>
+                                                        <th>Earned</th>
                                                         <th>Status</th>
                                                         <th>Date Started</th>
                                                     </tr></thead>
@@ -208,11 +209,11 @@ $user_role = $_SESSION['role'] ?? 'user';
   <div class="col-12">
     <div class="wg-box unlock-plans">
       <div class="title mb-16 flex justify-between items-center">
-        <div class="label-01 text-Primary">Eligible Unlocks (Mature Plans)</div>
+        <div class="label-01 text-Primary">Completed Contracts</div>
         <div class="view-all">
           <a href="#" class="f12-regular text-Primary hover:underline flex items-center">
             View All
-            <span class="iconify ml-2" data-icon="mdi:chevron-right"></span>
+            <i class="iconify ph ph-caret-right ml-2"></i>
           </a>
         </div>
       </div>
@@ -223,10 +224,9 @@ $user_role = $_SESSION['role'] ?? 'user';
             <thead><tr>
               <th>Plan Name</th>
               <th>Original Amount</th>
-              <th>ROI Earned</th>
-              <th>Maturity Date</th>
+              <th>Profit Earned</th>
+              <th>Completed Date</th>
               <th>Total Payout</th>
-              <th>Actions</th>
             </tr></thead>
             <tbody>
               <!-- JS (loadMaturedXYields) will populate rows here -->
@@ -273,7 +273,6 @@ $user_role = $_SESSION['role'] ?? 'user';
 <script src="<?= txh_asset('../../assets/js/dashboard.js') ?>" defer></script>
 
     <!-- Iconify CDN -->
-    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
     <script>
         $(document).ready(function() {
             $('.selectpicker').selectpicker();

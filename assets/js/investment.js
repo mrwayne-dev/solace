@@ -1,6 +1,6 @@
 /* =======================================================
-   investment.js — Final Dynamic Version (DB + Cards)
-   TitanXHoldings XYields Frontend Logic
+   investment.js — Mining Contract plans (tiered, daily profit)
+   Solace Mining Frontend Logic
    ======================================================= */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -19,13 +19,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const activeTableBody = document.getElementById('active-investments-table-body');
   const maturedTableBody = document.querySelector('.unlock-plans tbody');
-  const plansGrid = document.getElementById('plans-grid'); // NEW
+  const plansGrid = document.getElementById('plans-grid');
+
+  const dailyLabel = (p) => (p.daily_profit_percent != null ? p.daily_profit_percent + '% daily' : '—');
+  const termLabel = (p) => ((p.duration_days || 0) + ' days');
 
   // === INITIAL LOAD ===
   loadSummary();
   loadPlans();
-  loadActiveXYields();
-  loadMaturedXYields();
+  loadActive();
+  loadMatured();
 
   // === PLAN DETAILS UPDATE ===
   window.updatePlanDetails = function () {
@@ -34,49 +37,46 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const amountEl = document.getElementById('investment-amount');
     if (!id) {
-      termDuration.value = '';
-      expectedRoi.value = '';
-      amountEl.placeholder = 'Enter amount';
-      amountEl.removeAttribute('min');
-      amountEl.removeAttribute('max');
-      investBtn.disabled = true;
+      if (termDuration) termDuration.value = '';
+      if (expectedRoi) expectedRoi.value = '';
+      if (amountEl) {
+        amountEl.placeholder = 'Enter amount';
+        amountEl.removeAttribute('min');
+        amountEl.removeAttribute('max');
+      }
+      if (investBtn) investBtn.disabled = true;
       window.txhRenderPlanPanel && window.txhRenderPlanPanel(null);
       return;
     }
 
-    const cached = window.__hrc_plans?.find(p => p.id === id);
+    const cached = window.__slm_plans?.find(p => p.id === id);
     if (cached) {
-      termDuration.value = cached.duration_text || cached.term || (cached.duration_days + ' days');
-      expectedRoi.value = (cached.roi_percent != null) ? (cached.roi_percent + '%') : '';
+      if (termDuration) termDuration.value = termLabel(cached);
+      if (expectedRoi) expectedRoi.value = dailyLabel(cached);
 
-      if (cached.min && cached.max) {
+      if (amountEl && cached.min) {
         amountEl.min = cached.min;
-        amountEl.max = cached.max;
-        amountEl.placeholder = `$${cached.min.toLocaleString()} - $${cached.max.toLocaleString()}`;
+        if (cached.max != null) amountEl.max = cached.max; else amountEl.removeAttribute('max');
+        const maxTxt = cached.max != null ? `$${(+cached.max).toLocaleString()}` : 'unlimited';
+        amountEl.placeholder = `$${(+cached.min).toLocaleString()} – ${maxTxt}`;
       }
-      investBtn.disabled = false;
+      if (investBtn) investBtn.disabled = false;
 
       window.txhRenderPlanPanel && window.txhRenderPlanPanel({
-        name: cached.title,
-        roi: (cached.roi_percent != null) ? (cached.roi_percent + '%') : '—',
-        roiLabel: 'Expected ROI',
-        risk: cached.risk,
+        name: cached.name,
+        roi: dailyLabel(cached),
+        roiLabel: 'Daily Profit',
+        risk: cached.name,
         meta: [
-          ['Term', termDuration.value],
-          ['Min – Max', (cached.min && cached.max) ? `$${(+cached.min).toLocaleString()} – $${(+cached.max).toLocaleString()}` : ''],
-          ['Payout', cached.payout_option],
-          ['Income source', cached.income],
+          ['Duration', termLabel(cached)],
+          ['Total Return', (cached.total_return_percent != null ? cached.total_return_percent + '%' : '—')],
+          ['Min – Max', `$${(+cached.min).toLocaleString()} – ${cached.max != null ? '$' + (+cached.max).toLocaleString() : 'unlimited'}`],
+          ['Referral', (cached.referral_commission_percent != null ? cached.referral_commission_percent + '%' : '—')],
         ],
-        summary: cached.description,
+        summary: cached.summary,
       });
       return;
     }
-
-    const dataTerm = selectedOption?.getAttribute('data-term') || '';
-    const dataRoi = selectedOption?.getAttribute('data-roi') || '';
-    termDuration.value = dataTerm;
-    expectedRoi.value = dataRoi;
-    investBtn.disabled = !!(!dataTerm || !dataRoi);
   };
 
   // === SUBMIT INVESTMENT FORM ===
@@ -91,28 +91,22 @@ document.addEventListener('DOMContentLoaded', function () {
       const amount = parseFloat(amountEl?.value || 0);
 
       if (!planId) {
-        showToast('Please select an investment plan.', 'error');
-        investBtn.disabled = false;
-        toggleLoader(false);
-        return;
+        showToast('Please select a mining plan.', 'error');
+        investBtn.disabled = false; toggleLoader(false); return;
       }
-
       if (!amount || amount <= 0) {
-        showToast('Enter a valid investment amount.', 'error');
-        investBtn.disabled = false;
-        toggleLoader(false);
-        return;
+        showToast('Enter a valid amount.', 'error');
+        investBtn.disabled = false; toggleLoader(false); return;
       }
 
-      const selectedPlan = window.__hrc_plans?.find(p => p.id === planId);
-      if (selectedPlan && selectedPlan.min && selectedPlan.max) {
+      const selectedPlan = window.__slm_plans?.find(p => p.id === planId);
+      if (selectedPlan && selectedPlan.min) {
         const min = parseFloat(selectedPlan.min);
-        const max = parseFloat(selectedPlan.max);
-        if (amount < min || amount > max) {
-          showToast(`Amount must be between $${min.toLocaleString()} and $${max.toLocaleString()}.`, 'error');
-          investBtn.disabled = false;
-          toggleLoader(false);
-          return;
+        const max = selectedPlan.max != null ? parseFloat(selectedPlan.max) : null;
+        if (amount < min || (max != null && amount > max)) {
+          const maxTxt = max != null ? `$${max.toLocaleString()}` : 'unlimited';
+          showToast(`Amount must be between $${min.toLocaleString()} and ${maxTxt}.`, 'error');
+          investBtn.disabled = false; toggleLoader(false); return;
         }
       }
 
@@ -124,15 +118,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
       toggleLoader(false);
       if (res.status === 'success') {
-        showToast('X-Yield started successfully.', 'success');
+        showToast('Mining contract started successfully.', 'success');
         loadSummary();
-        loadActiveXYields();
-        loadMaturedXYields();
+        loadActive();
+        loadMatured();
         amountEl.value = '';
         planSelect.selectedIndex = 0;
         updatePlanDetails();
       } else {
-        showToast(res.message || 'Failed to start investment.', 'error');
+        showToast(res.message || 'Failed to start contract.', 'error');
       }
       investBtn.disabled = false;
     });
@@ -161,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const res = await fetchApi('/api/backend/investment.php', { action: 'get_plans' });
     if (res.status === 'success') {
       const plans = res.data?.plans || [];
-      window.__hrc_plans = plans;
+      window.__slm_plans = plans;
 
       // Populate SELECT
       if (planSelect) {
@@ -172,67 +166,57 @@ document.addEventListener('DOMContentLoaded', function () {
         plans.forEach(p => {
           const opt = document.createElement('option');
           opt.value = p.id;
-          opt.textContent = p.title || p.plan_name || ('Plan ' + p.id);
-          const termText = (p.duration_days >= 365)
-            ? Math.round(p.duration_days / 365) + ' year(s)'
-            : Math.round((p.duration_days || 0) / 30) + ' months';
-          opt.setAttribute('data-term', termText);
-          opt.setAttribute('data-roi', (p.roi_percent != null) ? (p.roi_percent + '%') : '');
+          opt.textContent = p.name || ('Plan ' + p.id);
+          opt.setAttribute('data-term', termLabel(p));
+          opt.setAttribute('data-roi', dailyLabel(p));
           planSelect.appendChild(opt);
         });
 
         planSelect.addEventListener('change', updatePlanDetails);
       }
 
-// Render Dynamic Cards (Full Styled Version)
-if (plansGrid) {
-  plansGrid.innerHTML = '';
-  plans.forEach(p => {
-    const min = parseFloat(p.min).toLocaleString();
-    const max = parseFloat(p.max).toLocaleString();
-    const amountRange = `$${min} – $${max}`;
+      // Render Dynamic Cards
+      if (plansGrid) {
+        plansGrid.innerHTML = '';
+        plans.forEach(p => {
+          const min = parseFloat(p.min).toLocaleString();
+          const max = p.max != null ? '$' + parseFloat(p.max).toLocaleString() : 'Unlimited';
+          const amountRange = `$${min} – ${max}`;
 
-    const termText = (p.duration_days >= 365)
-      ? Math.round(p.duration_days / 365) + ' years'
-      : Math.round((p.duration_days || 0) / 30) + ' months';
+          const card = document.createElement('div');
+          card.className = 'col-lg-3 col-md-6';
+          card.innerHTML = `
+            <div class="plan-card">
+              <div class="plan-header flex justify-between items-center mb-12">
+                <div class="flex items-center gap-2">
+                  <span class="iconify" data-icon="${p.icon || 'mdi:pickaxe'}"></span>
+                  <h6 class="plan-title">${escapeHtml(p.name)}</h6>
+                </div>
+              </div>
 
-    const roi = p.roi_percent ? (p.roi_percent + '%') : '';
+              <p class="f12-regular text-Gray mb-16">${escapeHtml(p.summary || '')}</p>
 
-    const card = document.createElement('div');
-    card.className = 'col-lg-3 col-md-6';
-    card.innerHTML = `
-      <div class="plan-card">
-        <div class="plan-header flex justify-between items-center mb-12">
-          <div class="flex items-center gap-2">
-            <h6 class="plan-title">${p.title}</h6>
-          </div>
-        </div>
+              <table class="plan-features">
+                <tr><td>Deposit Range</td><td>${amountRange}</td></tr>
+                <tr><td>Daily Profit</td><td class="text-Green fw-bold">${p.daily_profit_percent}%</td></tr>
+                <tr><td>Duration</td><td>${termLabel(p)}</td></tr>
+                <tr><td>Total Return</td><td class="fw-bold">${p.total_return_percent}%</td></tr>
+                <tr><td>Referral</td><td>${p.referral_commission_percent}%</td></tr>
+              </table>
 
-        <p class="f12-regular text-Gray mb-12">${p.description}</p>
-        <p class="f12-regular text-Black mb-16">${p.details}</p>
-
-        <table class="plan-features">
-          <tr><td>X-Yield Range</td><td>${amountRange}</td></tr>
-          <tr><td>Term</td><td>${termText}</td></tr>
-          <tr><td>ROI</td><td class="text-Green fw-bold">${roi}</td></tr>
-          <tr><td>Risk Level</td><td class="text-${p.color} fw-bold">${p.risk}</td></tr>
-          <tr><td>Income Source</td><td>${p.income}</td></tr>
-          <tr><td>Payout Option</td><td>${p.payout_option}</td></tr>
-        </table>
-      </div>
-    `;
-    plansGrid.appendChild(card);
-  });
-}
-
-
+              <button class="tf-button bg-Primary text-White w-full mt-16" onclick="selectPlanFromCard(${p.id})">Select ${escapeHtml(p.name)}</button>
+            </div>
+          `;
+          plansGrid.appendChild(card);
+        });
+      }
     } else {
       console.warn('Failed to load plans', res);
     }
   }
 
-  // === LOAD ACTIVE INVESTMENTS ===
-  async function loadActiveXYields() {
+  // === LOAD ACTIVE CONTRACTS ===
+  async function loadActive() {
     toggleLoader(true);
     const res = await fetchApi('/api/backend/investment.php', { action: 'get_active' });
     toggleLoader(false);
@@ -246,10 +230,11 @@ if (plansGrid) {
         const tr = document.createElement('tr');
         tr.className = 'tf-table-item';
         tr.innerHTML = `
-          <td data-label="Plan Name"><div class="f12-medium key-sort">${escapeHtml(inv.plan)}</div></td>
-          <td data-label="Amount Invested"><div class="f12-bold key-sort">$${(inv.amount || 0).toFixed(2)}</div></td>
-          <td data-label="ROI (%)"><div class="f12-bold text-Green key-sort">${(inv.roi_percent || 0)}%</div></td>
-          <td data-label="Term Duration"><div class="f12-medium key-sort">${inv.duration_days} days</div></td>
+          <td data-label="Plan"><div class="f12-medium key-sort">${escapeHtml(inv.plan)}</div></td>
+          <td data-label="Amount"><div class="f12-bold key-sort">$${(inv.amount || 0).toFixed(2)}</div></td>
+          <td data-label="Daily Profit"><div class="f12-bold text-Green key-sort">${(inv.daily_profit_percent || 0)}%</div></td>
+          <td data-label="Progress"><div class="f12-medium key-sort">${inv.days_paid}/${inv.duration_days} days</div></td>
+          <td data-label="Earned"><div class="f12-bold text-Green key-sort">$${(inv.roi_earned || 0).toFixed(2)}</div></td>
           <td data-label="Status"><div class="box-status ${inv.status === 'active' ? 'bg-Green' : 'bg-Gray'}"><span class="font-poppins key-sort">${inv.status}</span></div></td>
           <td data-label="Date Started"><div class="f12-medium key-sort">${inv.date_started}</div></td>
         `;
@@ -258,8 +243,8 @@ if (plansGrid) {
     }
   }
 
-  // === LOAD MATURED INVESTMENTS ===
-  async function loadMaturedXYields() {
+  // === LOAD COMPLETED CONTRACTS (history) ===
+  async function loadMatured() {
     if (!maturedTableBody) return;
     const res = await fetchApi('/api/backend/investment.php', { action: 'get_matured' });
     if (res.status === 'success') {
@@ -267,7 +252,7 @@ if (plansGrid) {
       maturedTableBody.innerHTML = '';
 
       if (!matured.length) {
-        maturedTableBody.innerHTML = `<tr><td colspan="6" class="text-center text-Gray py-3">No mature plans available for unlock at this time.</td></tr>`;
+        maturedTableBody.innerHTML = `<tr><td colspan="5" class="text-center text-Gray py-3">No completed contracts yet.</td></tr>`;
         return;
       }
 
@@ -277,33 +262,15 @@ if (plansGrid) {
         tr.className = 'tf-table-item';
         tr.innerHTML = `
           <td>${escapeHtml(m.plan_name)}</td>
-          <td>$${(m.amount || 0).toFixed(2)}</td>
-          <td class="text-Green">$${(m.roi_earned || 0).toFixed(2)}</td>
+          <td>$${(parseFloat(m.amount) || 0).toFixed(2)}</td>
+          <td class="text-Green">$${(parseFloat(m.roi_earned) || 0).toFixed(2)}</td>
           <td>${m.maturity_date}</td>
-          <td>$${payout}</td>
-          <td><button class="tf-button bg-Green text-White f12-regular hover:bg-Primary" onclick="initiateUnlock(${m.id})">Unlock</button></td>
+          <td class="fw-bold">$${payout}</td>
         `;
         maturedTableBody.appendChild(tr);
       });
     }
   }
-
-  // === UNLOCK INVESTMENT ===
-  window.initiateUnlock = async function (investmentId) {
-    if (!confirm('Unlock this investment?')) return;
-    toggleLoader(true);
-    const res = await fetchApi('/api/backend/investment.php', { action: 'unlock_investment', investment_id: investmentId });
-    toggleLoader(false);
-
-    if (res.status === 'success') {
-      showToast('X-Yield unlocked successfully. Wallet credited.', 'success');
-      loadSummary();
-      loadActiveXYields();
-      loadMaturedXYields();
-    } else {
-      showToast(res.message || 'Failed to unlock investment.', 'error');
-    }
-  };
 
   // === SELECT FROM CARD ===
   window.selectPlanFromCard = function (planId) {
@@ -332,8 +299,8 @@ if (plansGrid) {
   }
 
   // Expose refresh functions globally
-  window.hrc_loadSummary = loadSummary;
-  window.hrc_loadActiveXYields = loadActiveXYields;
-  window.hrc_loadMaturedXYields = loadMaturedXYields;
-  window.hrc_loadPlans = loadPlans;
+  window.slm_loadSummary = loadSummary;
+  window.slm_loadActive = loadActive;
+  window.slm_loadMatured = loadMatured;
+  window.slm_loadPlans = loadPlans;
 });

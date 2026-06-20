@@ -5,15 +5,15 @@ require_once __DIR__ . '/../../../config/assets.php'; // asset cache-busting
 // ============================================================
 // ADMIN HEAD partial — $page_title, $page_description
 // ============================================================
-$page_title = $page_title ?? 'TitanXHoldings Admin';
-$page_description = $page_description ?? 'TitanXHoldings administration.';
+$page_title = $page_title ?? 'Solace Mining Admin';
+$page_description = $page_description ?? 'Solace Mining administration.';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="description" content="<?= htmlspecialchars($page_description) ?>">
-    <meta name="author" content="TitanXHoldings">
+    <meta name="author" content="Solace Mining">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title><?= htmlspecialchars($page_title) ?></title>
@@ -29,8 +29,10 @@ $page_description = $page_description ?? 'TitanXHoldings administration.';
     <link rel="stylesheet" href="<?= txh_asset('/assets/css/bootstrap-select.min.css') ?>">
     <link rel="stylesheet" href="<?= txh_asset('/assets/fonts/font.css') ?>">
     <link rel="stylesheet" href="<?= txh_asset('/assets/icon/style.css') ?>">
+    <!-- Phosphor icons (self-hosted — CSP-safe) -->
+    <link rel="stylesheet" href="<?= txh_asset('/assets/vendor/phosphor/style.css') ?>">
 
-    <!-- TXH design re-skin (loads last to win the cascade) -->
+    <!-- Solace Mining design re-skin (loads last to win the cascade) -->
     <link rel="stylesheet" href="<?= txh_asset('/assets/css/txh-dashboard.css') ?>">
 
     <noscript>
@@ -43,6 +45,6 @@ $page_description = $page_description ?? 'TitanXHoldings administration.';
     <link rel="icon" type="image/png" href="/assets/favicon/favicon-32x32.png" sizes="32x32">
     <link rel="shortcut icon" href="/assets/favicon/favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png">
-    <meta name="apple-mobile-web-app-title" content="TitanXHoldings">
+    <meta name="apple-mobile-web-app-title" content="Solace Mining">
     <link rel="manifest" href="/assets/favicon/site.webmanifest">
 </head>

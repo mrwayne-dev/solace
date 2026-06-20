@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// RESET PASSWORD HANDLER — TitanXHoldings
+// RESET PASSWORD HANDLER — Solace Mining
 // ========================================
 
 ini_set('display_errors', 0);

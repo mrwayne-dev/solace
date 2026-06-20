@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// EMAIL VERIFICATION — TitanXHoldings
+// EMAIL VERIFICATION — Solace Mining
 // Verifies the OTP issued at registration (or resends it),
 // then opens the logged-in session on success.
 // ========================================

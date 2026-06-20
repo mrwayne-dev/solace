@@ -1,6 +1,6 @@
 <?php
 // ========================================
-// USER REGISTRATION — TitanXHoldings
+// USER REGISTRATION — Solace Mining
 // ========================================
 
 ini_set('display_errors', 0);
@@ -9,6 +9,7 @@ ob_start();
 
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../config/constants.php';
+require_once __DIR__ . '/../utilities/helpers.php';
 require_once __DIR__ . '/../backend/email.php';
 
 session_start([
@@ -30,6 +31,7 @@ try {
     $last_name  = trim($input['last_name'] ?? '');
     $email      = strtolower(trim($input['email'] ?? ''));
     $password   = trim($input['password'] ?? '');
+    $ref_code   = strtoupper(trim($input['ref'] ?? ($input['referral_code'] ?? ($_GET['ref'] ?? ''))));
 
     // --- Validate input ---
     if (!$first_name || !$last_name || !$email || !$password) {
@@ -66,16 +68,53 @@ try {
     $hashed = password_hash($password, PASSWORD_DEFAULT);
     $full_name = "{$first_name} {$last_name}";
 
+    // --- Resolve referrer from referral code (if supplied & valid) ---
+    $referred_by = null;
+    if ($ref_code !== '') {
+        $refStmt = $pdo->prepare("SELECT id FROM users WHERE referral_code = ? LIMIT 1");
+        $refStmt->execute([$ref_code]);
+        $referred_by = $refStmt->fetchColumn() ?: null;
+    }
+
     // --- Insert new user (unverified — no session until email is confirmed) ---
     $stmt = $pdo->prepare("
-        INSERT INTO users (name, full_name, email, password, email_verified, created_at)
-        VALUES (?, ?, ?, ?, 0, NOW())
+        INSERT INTO users (name, full_name, email, password, email_verified, referred_by, created_at)
+        VALUES (?, ?, ?, ?, 0, ?, NOW())
     ");
-    $stmt->execute([$full_name, $full_name, $email, $hashed]);
+    $stmt->execute([$full_name, $full_name, $email, $hashed, $referred_by]);
     $user_id = $pdo->lastInsertId();
+
+    // --- Assign this user their own referral code ---
+    ensureReferralCode($pdo, $user_id);
+
+    // --- Record the referral relationship ---
+    if ($referred_by) {
+        $pdo->prepare("INSERT IGNORE INTO referrals (referrer_user_id, referred_user_id) VALUES (?, ?)")
+            ->execute([$referred_by, $user_id]);
+    }
 
     // --- Create wallet entry ---
     $pdo->prepare("INSERT INTO wallets (user_id, balance) VALUES (?, 0.00)")->execute([$user_id]);
+
+    // --- DEV WORKAROUND (local only): no mail server yet ------------------
+    // In local/dev, skip the email-OTP step entirely: mark the account
+    // verified and open the session so registration lands straight on the
+    // dashboard. Production (APP_ENV=production) keeps full OTP verification.
+    if (defined('APP_ENV') && APP_ENV === 'local') {
+        $pdo->prepare("UPDATE users SET email_verified = 1 WHERE id = ?")->execute([$user_id]);
+        session_regenerate_id(true);
+        $_SESSION['user_id']        = $user_id;
+        $_SESSION['email']          = $email;
+        $_SESSION['full_name']      = $full_name;
+        $_SESSION['role']           = 'user';
+        $_SESSION['profile_picture'] = '/assets/images/avatar/default.png';
+        echo json_encode([
+            'status'  => 'success',
+            'message' => 'Account created. Redirecting…',
+            'data'    => ['redirect' => '/dashboard']
+        ]);
+        exit;
+    }
 
     // --- Generate + store email verification OTP ---
     $otp = random_int(100000, 999999);

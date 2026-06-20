@@ -1,0 +1,197 @@
+INVESTMENT PLATFORM STRUCTURE
+
+==============================
+PUBLIC WEBSITE NAVIGATION
+==============================
+
+1. Home
+   - Hero Section
+   - Investment Calculator
+   - Investment Plans
+   - How It Works
+   - Why Choose Us
+   - Live Statistics
+   - Recent Deposits
+   - Recent Withdrawals
+   - Testimonials
+   - FAQ
+   - Call To Action
+
+2. About Us
+   - Company Overview
+   - Mission
+   - Vision
+   - Investment Strategy
+   - Global Reach
+
+3. Investment Plans
+   - Bronze Plan
+   - Silver Plan
+   - Gold Plan
+   - Platinum Plan
+   - VIP Plan
+   - Profit Calculator
+
+4. How It Works
+   - Create Account
+   - Fund Wallet
+   - Choose Plan
+   - Earn Profit
+   - Withdraw Earnings
+
+5. FAQ
+
+6. Contact Us
+   - Contact Form
+   - WhatsApp
+   - Telegram
+   - Email Support
+
+7. Login
+
+8. Register
+
+
+==============================
+USER DASHBOARD NAVIGATION
+==============================
+
+1. Dashboard
+   - Total Balance
+   - Active Investments
+   - Total Deposits
+   - Total Withdrawals
+   - Referral Earnings
+   - Recent Activity
+
+2. Investments
+   - Active Investments
+   - Completed Investments
+   - Reinvest Investment
+   - Profit Tracking
+
+3. Wallet
+   - Available Balance
+   - Deposit Funds
+   - Withdraw Funds
+   - Wallet History
+
+4. Transactions
+   - Deposits
+   - Withdrawals
+   - Investment Purchases
+   - Referral Commissions
+   - Transaction Filters
+
+5. Referral Center
+   - Referral Link
+   - Referral Earnings
+   - Referral History
+   - Referral Statistics
+
+6. Profile & Security
+   - Personal Information
+   - Change Password
+   - Withdrawal Wallets
+   - KYC Verification (Optional)
+   - Two-Factor Authentication (Optional)
+
+
+==============================
+ADMIN DASHBOARD NAVIGATION
+==============================
+
+1. Dashboard
+   - Total Users
+   - Total Deposits
+   - Total Withdrawals
+   - Active Investments
+   - Platform Statistics
+
+2. User Management
+   - View Users
+   - Edit Users
+   - Suspend Users
+   - User Activity
+
+3. Deposits
+   - Pending Deposits
+   - Approved Deposits
+   - Deposit Records
+
+4. Withdrawals
+   - Pending Withdrawals
+   - Approve Withdrawals
+   - Reject Withdrawals
+   - Withdrawal Records
+
+5. Investments
+   - Active Investments
+   - Completed Investments
+   - Investment Monitoring
+
+6. Referral Management
+   - Referral Commissions
+   - Referral Logs
+   - Referral Statistics
+
+7. Settings
+   - Investment Plans
+   - Wallet Addresses
+   - Email Settings
+   - Site Settings
+   - Security Settings
+
+
+==============================
+INVESTMENT PLANS
+==============================
+
+BRONZE PLAN
+- Deposit Range: $100 - $499
+- Daily Profit: 4%
+- Duration: 5 Days
+- Referral Commission: 10%
+
+SILVER PLAN
+- Deposit Range: $500 - $2,499
+- Daily Profit: 6%
+- Duration: 5 Days
+- Referral Commission: 10%
+
+GOLD PLAN
+- Deposit Range: $2,500 - $4,999
+- Daily Profit: 8%
+- Duration: 5 Days
+- Referral Commission: 10%
+
+PLATINUM PLAN
+- Deposit Range: $5,000 - $9,999
+- Daily Profit: 10%
+- Duration: 5 Days
+- Referral Commission: 10%
+
+VIP PLAN
+- Deposit Range: $10,000 - Unlimited
+- Daily Profit: 12%
+- Duration: 5 Days
+- Referral Commission: 10%
+
+
+==============================
+REFERRAL PROGRAM
+==============================
+
+Referral Commission: 10%
+
+Example:
+- User A refers User B
+- User B invests $1,000
+- User A earns $100 commission
+
+Referral Features:
+- Unique Referral Link
+- Referral Earnings Dashboard
+- Referral Transaction History
+- Referral Statistics
+- Referral Withdrawals
