@@ -152,25 +152,30 @@ $('a[href="/admin/withdrawals/pending"]').on('click', async function (e) {
 });
 
 // ACTION BUTTONS — Complete/Cancel Withdrawals
-$(document).on('click', '.complete-withdrawal-btn', function () {
+$(document).on('click', '.complete-withdrawal-btn', async function () {
     const id = $(this).data('id');
-
-    if (!confirm(`Complete Withdrawal #${id}? This releases user funds.`)) return;
-
+    const r = await uiConfirm({
+        title: 'Complete Withdrawal',
+        message: `Complete Withdrawal #${id}? This releases the user's funds.`,
+        confirmText: 'Complete'
+    });
+    if (!r.confirmed) return;
     processWithdrawalAction(id, 'complete');
 });
 
-$(document).on('click', '.cancel-withdrawal-btn', function () {
+$(document).on('click', '.cancel-withdrawal-btn', async function () {
     const id = $(this).data('id');
-    const reason = prompt(`Enter reason for cancelling Withdrawal #${id}:`);
-
-    if (reason === null) return; // cancelled input
-    if (reason.trim() === '') {
-        showToast("Cancellation reason is required.", "warning");
-        return;
-    }
-
-    processWithdrawalAction(id, 'cancel', reason.trim());
+    const r = await uiConfirm({
+        title: 'Cancel Withdrawal',
+        message: `Cancel Withdrawal #${id}? The amount will be refunded to the user's balance.`,
+        confirmText: 'Cancel Withdrawal',
+        danger: true,
+        withReason: true,
+        reasonLabel: 'Reason (shown to the user)',
+        reasonRequired: true
+    });
+    if (!r.confirmed) return;
+    processWithdrawalAction(id, 'cancel', r.reason);
 });
 
     
@@ -243,7 +248,84 @@ $(document).on('click', '.cancel-withdrawal-btn', function () {
         $('body').css('overflow', 'auto');
 
     }
-    
+
+    /**
+     * Reusable confirmation modal (replaces window.confirm / window.prompt).
+     * @returns {Promise<{confirmed:boolean, reason:string}>}
+     */
+    function uiConfirm(opts = {}) {
+        const {
+            title = 'Please confirm',
+            message = 'Are you sure?',
+            confirmText = 'Confirm',
+            cancelText = 'Cancel',
+            danger = false,
+            withReason = false,
+            reasonLabel = 'Reason',
+            reasonRequired = false,
+            reasonPlaceholder = ''
+        } = opts;
+
+        if (!$('#ui-confirm-modal').length) {
+            $('body').append(`
+                <div class="modal" id="ui-confirm-modal" role="dialog" aria-modal="true" aria-hidden="true">
+                    <div class="modal-overlay"></div>
+                    <div class="modal-content" style="max-width:460px;">
+                        <div class="modal-header">
+                            <h2 id="ui-confirm-title">Confirm</h2>
+                            <button class="button-close-modal" type="button">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="ui-confirm-message" class="f14-regular text-Black mb-16"></p>
+                            <div class="form-group mb-3" id="ui-confirm-reason-group" style="display:none;">
+                                <label class="form-label" id="ui-confirm-reason-label">Reason</label>
+                                <textarea class="form-control" id="ui-confirm-reason" rows="3"></textarea>
+                                <small class="form-error" id="ui-confirm-reason-error" style="color:var(--Danger,#CC0000);"></small>
+                            </div>
+                            <div class="d-flex justify-content-end gap-2">
+                                <button type="button" class="button-close-modal tf-button bg-GrayLight text-Black" id="ui-confirm-cancel"></button>
+                                <button type="button" class="modal-confirm-btn" id="ui-confirm-ok"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`);
+        }
+
+        const modal = $('#ui-confirm-modal');
+        $('#ui-confirm-title').text(title);
+        $('#ui-confirm-message').text(message);
+        $('#ui-confirm-cancel').text(cancelText);
+        $('#ui-confirm-ok').text(confirmText)
+            .removeClass('bg-Red bg-Green text-White')
+            .addClass(danger ? 'bg-Red text-White' : 'bg-Green text-White');
+        $('#ui-confirm-reason').val('');
+        $('#ui-confirm-reason-error').text('');
+        $('#ui-confirm-reason-group').toggle(!!withReason);
+        $('#ui-confirm-reason-label').text(reasonLabel);
+        $('#ui-confirm-reason').attr('placeholder', reasonPlaceholder);
+
+        return new Promise((resolve) => {
+            const cleanup = () => { $('#ui-confirm-ok, #ui-confirm-cancel, #ui-confirm-modal .button-close-modal, #ui-confirm-modal .modal-overlay').off('click'); };
+            const close = (result) => { cleanup(); closeModal('#ui-confirm-modal'); resolve(result); };
+
+            modal.addClass('is-open').attr('aria-hidden', 'false');
+            $('body').css('overflow', 'hidden');
+            setTimeout(() => $('#' + (withReason ? 'ui-confirm-reason' : 'ui-confirm-ok')).focus(), 10);
+
+            $('#ui-confirm-ok').on('click', () => {
+                const reason = $('#ui-confirm-reason').val().trim();
+                if (withReason && reasonRequired && !reason) {
+                    $('#ui-confirm-reason-error').text('A reason is required.');
+                    return;
+                }
+                close({ confirmed: true, reason });
+            });
+            $('#ui-confirm-cancel, #ui-confirm-modal .button-close-modal, #ui-confirm-modal .modal-overlay')
+                .on('click', () => close({ confirmed: false, reason: '' }));
+        });
+    }
+    window.uiConfirm = uiConfirm;
+
     // --- Admin Dashboard Core Functions (Data Loading) ---
     
     var loadAdminDashboardData = async function () {
@@ -581,31 +663,33 @@ $(document).on('click', '.cancel-withdrawal-btn', function () {
         });
 
         // ACTION HANDLER: Complete Deposit
-        $(document).on('click', '.complete-deposit-btn', function () {
+        $(document).on('click', '.complete-deposit-btn', async function () {
             const id = $(this).data('id');
             const amount = $(this).data('amount');
-            
-            if (!confirm(`Are you sure you want to COMPLETE Deposit #${id} for $${formatCurrency(amount)}? This will credit the user's wallet.`)) {
-                return;
-            }
-
-            // Call the shared function
+            const r = await uiConfirm({
+                title: 'Complete Deposit',
+                message: `Complete Deposit #${id} for $${formatCurrency(amount)}? This will credit the user's wallet.`,
+                confirmText: 'Complete'
+            });
+            if (!r.confirmed) return;
             processDepositAction(id, 'complete');
         });
 
-        // ACTION HANDLER: Cancel Deposit (prompts for reason)
-        $(document).on('click', '.cancel-deposit-btn', function () {
+        // ACTION HANDLER: Cancel Deposit (asks for reason)
+        $(document).on('click', '.cancel-deposit-btn', async function () {
             const id = $(this).data('id');
             const amount = $(this).data('amount');
-            
-            const reason = prompt(`Enter a brief reason for cancelling Deposit #${id} for $${formatCurrency(amount)}:`);
-            
-            if (reason === null) { // User clicked cancel on the prompt
-                return;
-            }
-            
-            // Call the shared function
-            processDepositAction(id, 'cancel', reason.trim());
+            const r = await uiConfirm({
+                title: 'Cancel Deposit',
+                message: `Cancel Deposit #${id} for $${formatCurrency(amount)}?`,
+                confirmText: 'Cancel Deposit',
+                danger: true,
+                withReason: true,
+                reasonLabel: 'Reason (shown to the user)',
+                reasonRequired: true
+            });
+            if (!r.confirmed) return;
+            processDepositAction(id, 'cancel', r.reason);
         });
 
 
@@ -685,7 +769,13 @@ $(document).on('click', '.cancel-withdrawal-btn', function () {
         });
         $(document).on('click', '.delete-addr-btn', async function () {
             const id = $(this).data('id');
-            if (!confirm('Delete this wallet address? Users will no longer see it.')) return;
+            const r = await uiConfirm({
+                title: 'Delete Wallet Address',
+                message: 'Delete this wallet address? Users will no longer see it on the deposit form.',
+                confirmText: 'Delete',
+                danger: true
+            });
+            if (!r.confirmed) return;
             const res = await fetchApi('/api/admin/deposit_addresses.php', { action: 'delete', id }, "POST");
             if (res.status === 'success') { showToast(res.message, 'success'); loadDepositAddressList(); }
             else showToast(res.message || 'Failed', 'error');

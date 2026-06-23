@@ -568,6 +568,10 @@ var loadDashboardData = async function () {
 
       const btn = form.find('button[type="submit"]');
       btn.prop('disabled', true);
+      // Raw fetch is used for the file upload, so drive the shared #loader manually
+      // to stay in sync with fetchApi-based actions.
+      const loaderEl = document.getElementById('loader');
+      loaderEl?.classList.remove('hidden', 'fade-out');
       try {
         showToast('Submitting deposit...', 'info', 2000);
         const resp = await fetch('/api/backend/wallet.php', { method: 'POST', body: fd, credentials: 'same-origin' });
@@ -586,6 +590,8 @@ var loadDashboardData = async function () {
         showToast('Failed to submit deposit', 'error');
       } finally {
         btn.prop('disabled', false);
+        loaderEl?.classList.add('fade-out');
+        setTimeout(() => loaderEl?.classList.add('hidden'), 300);
       }
     });
   }
