@@ -113,6 +113,13 @@ $(document).on('click', '.dropdown-menu .dropdown-item', function (e) {
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
+                            <button type="button" class="dropdown-item action-account"
+                                data-id="${user.id}"
+                                data-name="${user.display_name}">
+                                View Account
+                            </button>
+                        </li>
+                        <li>
                             <button type="button" class="dropdown-item action-edit"
                                 data-id="${user.id}"
                                 data-name="${user.display_name}"
@@ -399,19 +406,118 @@ $(document).on('click', '.dropdown-menu .dropdown-item', function (e) {
         });
     }
 
+    /* ===================== Account View (read + write) ===================== */
+    const esc = (s) => $('<div>').text(s == null ? '' : s).html();
+    const money = (n) => Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    let accountUserId = null;
+
+    async function openAccount(userId) {
+        accountUserId = userId;
+        try {
+            const res = await fetchApi('/api/admin/users.php', { action: 'get_user_detail', user_id: userId }, 'POST');
+            if (res.status !== 'success') { showToast(res.message || 'Could not load account', 'error'); return; }
+            const { user, wallet, investments, transactions } = res.data;
+            const w = wallet || {};
+            const locked = Number(user.withdrawals_locked) === 1;
+
+            const invRows = (investments || []).map(i => `
+                <tr><td>${esc(i.plan_name)}</td><td>$${money(i.amount)}</td>
+                    <td>${esc(i.status)}</td><td>${i.days_paid}/${i.duration_days}</td>
+                    <td>$${money(i.roi_earned)}</td></tr>`).join('') ||
+                '<tr><td colspan="5" class="text-Gray">No investments</td></tr>';
+
+            const txRows = (transactions || []).map(t => `
+                <tr><td>${esc(t.type)}</td><td>$${money(t.amount)}</td>
+                    <td>${esc(t.status)}</td><td class="text-Gray">${esc(t.created_at)}</td></tr>`).join('') ||
+                '<tr><td colspan="4" class="text-Gray">No transactions</td></tr>';
+
+            $('#account-modal-title').text('Account — ' + esc(user.full_name || user.name || user.email));
+            $('#account-modal-body').html(`
+                <div class="mb-16">
+                    <p class="f14-regular"><strong>Email:</strong> ${esc(user.email)} &nbsp;·&nbsp; <strong>Role:</strong> ${esc(user.role)} &nbsp;·&nbsp; <strong>Status:</strong> ${esc(user.status)}</p>
+                    <p class="f12-regular text-Gray">Joined ${esc(user.created_at)} · Referral code: ${esc(user.referral_code || '—')}</p>
+                </div>
+
+                <div class="wg-box mb-16" style="padding:16px;">
+                    <div class="label-01 text-Primary mb-8">Wallet</div>
+                    <div class="flex items-center gap-2 mb-8">
+                        <label class="f14-regular" style="min-width:120px;">Balance ($)</label>
+                        <input type="number" step="0.01" min="0" id="acct-balance" class="form-control" style="max-width:200px;" value="${Number(w.balance||0)}">
+                        <button class="tf-button bg-Primary text-White" id="acct-save-balance">Save</button>
+                    </div>
+                    <p class="f12-regular text-Gray">Deposited $${money(w.total_deposited)} · Withdrawn $${money(w.total_withdrawn)} · Earnings $${money(w.total_earnings)} · Pending WD $${money(w.pending_withdrawals)}</p>
+                </div>
+
+                <div class="wg-box mb-16" style="padding:16px;">
+                    <div class="label-01 text-Primary mb-8">Withdrawals</div>
+                    <p class="f14-regular mb-8">Status:
+                        <span class="box-status ${locked ? 'bg-Red' : 'bg-Green'} f12-medium">${locked ? 'LOCKED' : 'ALLOWED'}</span>
+                    </p>
+                    <div class="form-group mb-8">
+                        <label class="f14-regular">Reason shown to user (when locked)</label>
+                        <input type="text" id="acct-lock-reason" class="form-control" value="${esc(user.withdrawal_lock_reason || '')}" placeholder="e.g. Pending KYC verification">
+                    </div>
+                    <button class="tf-button ${locked ? 'bg-Green' : 'bg-Red'} text-White" id="acct-toggle-lock" data-locked="${locked ? 1 : 0}">
+                        ${locked ? 'Unlock withdrawals' : 'Lock withdrawals'}
+                    </button>
+                </div>
+
+                <div class="wg-box mb-16" style="padding:16px;">
+                    <div class="label-01 text-Primary mb-8">Investments</div>
+                    <table class="tab-sell-order"><thead><tr><th>Plan</th><th>Amount</th><th>Status</th><th>Days</th><th>ROI</th></tr></thead><tbody>${invRows}</tbody></table>
+                </div>
+
+                <div class="wg-box" style="padding:16px;">
+                    <div class="label-01 text-Primary mb-8">Recent transactions</div>
+                    <table class="tab-sell-order"><thead><tr><th>Type</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>${txRows}</tbody></table>
+                </div>
+            `);
+            showModal('#account-modal');
+        } catch (err) {
+            console.error('openAccount error', err);
+            showToast('Failed to load account', 'error');
+        }
+    }
+
+    function bindAccountView() {
+        $(document).on('click', '.action-account', function (e) {
+            e.preventDefault();
+            openAccount($(this).data('id'));
+        });
+
+        // Save balance (write)
+        $(document).on('click', '#acct-save-balance', async function () {
+            const value = $('#acct-balance').val();
+            const res = await fetchApi('/api/admin/users.php',
+                { action: 'adjust_balance', user_id: accountUserId, field: 'balance', value }, 'POST');
+            showToast(res.message || (res.status === 'success' ? 'Saved' : 'Failed'), res.status === 'success' ? 'success' : 'error');
+        });
+
+        // Toggle withdrawal lock (write)
+        $(document).on('click', '#acct-toggle-lock', async function () {
+            const currentlyLocked = Number($(this).data('locked')) === 1;
+            const reason = $('#acct-lock-reason').val();
+            const res = await fetchApi('/api/admin/users.php',
+                { action: 'toggle_withdrawal_lock', user_id: accountUserId, locked: currentlyLocked ? 0 : 1, reason }, 'POST');
+            if (res.status === 'success') { showToast(res.message, 'success'); openAccount(accountUserId); }
+            else showToast(res.message || 'Failed', 'error');
+        });
+    }
+
     // --- Initialization ---
     $(function () {
         // Ensure utility functions from admin.js (like showModal, closeModal, showToast) are available.
         // Assuming the admin.js script loads first, these functions should be available globally/via closure.
-        
+
         // Bind all interactive elements
         bindEditUser();
         bindSendEmail();
         bindDeleteUser();
+        bindAccountView();
         bindSearchAndFilter();
 
         // Initial load of the user list
-        loadUsers(1); 
+        loadUsers(1);
     });
 
 })(jQuery);

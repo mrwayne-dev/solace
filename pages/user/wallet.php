@@ -175,22 +175,38 @@ $user_role = $_SESSION['role'] ?? 'user';
                                                     </div>
                                                 </div>
                                                 <div class="content">
-                                                    <form id="deposit-form" class="form-style-1">
+                                                    <form id="deposit-form" class="form-style-1" enctype="multipart/form-data">
                                                         <div class="mb-20 position-relative">
                                                             <label class="f14-regular text-Black mb-8">Deposit Amount (USD)</label>
                                                             <div class="input-group">
                                                                 <span class="input-icon">$</span>
-                                                                <input class="wallet-input form-control" type="number" placeholder="Enter amount" min="1" id="deposit-amount">
+                                                                <input class="wallet-input form-control" type="number" placeholder="Enter amount" min="1" step="0.01" id="deposit-amount">
                                                             </div>
                                                         </div>
                                                         <div class="mb-20">
-                                                            <label class="f14-regular text-Black mb-8">Payment Method</label>
-                                                            <select class="form-select custom-select" id="deposit-method">
-                                                                <option value="secure_exchange" selected>Secure Exchange</option>
+                                                            <label class="f14-regular text-Black mb-8">Send To (select wallet)</label>
+                                                            <select class="form-select custom-select" id="deposit-address">
+                                                                <option value="" selected disabled>Loading wallets…</option>
                                                             </select>
                                                         </div>
+                                                        <!-- Selected wallet address — user copies and sends to it -->
+                                                        <div class="mb-20 hidden" id="deposit-address-box">
+                                                            <label class="f14-regular text-Black mb-8">Wallet address (<span id="deposit-address-network">—</span>)</label>
+                                                            <div style="position:relative;">
+                                                                <input class="wallet-input form-control" type="text" id="deposit-address-value" readonly style="padding-right:42px;">
+                                                                <button type="button" class="copy-btn" data-target="deposit-address-value" aria-label="Copy address"
+                                                                        style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer;">
+                                                                    <i class="iconify ph ph-copy" style="color: var(--Primary); font-size:20px;"></i>
+                                                                </button>
+                                                            </div>
+                                                            <p class="note" style="margin-top:8px;">Send the exact amount to this address, then upload your proof of payment below.</p>
+                                                        </div>
+                                                        <div class="mb-20">
+                                                            <label class="f14-regular text-Black mb-8">Proof of Payment (screenshot / PDF)</label>
+                                                            <input class="wallet-input form-control" type="file" id="deposit-proof" accept=".jpg,.jpeg,.png,.webp,.pdf" style="padding:10px; height:auto;">
+                                                        </div>
                                                         <button type="submit" class="tf-button style-default w-full f14-bold bg-Green text-White hover:bg-Primary transition-colors duration-300">
-                                                            Deposit Now
+                                                            Submit Deposit
                                                         </button>
                                                     </form>
                                                 </div>

@@ -206,6 +206,18 @@ $admin_name = htmlspecialchars($_SESSION['admin_name'] ?? 'Administrator');
                         </div>
                     </div>
 
+                    <!-- Account Detail Modal (read + write) -->
+                    <div class="modal" id="account-modal">
+                        <div class="modal-overlay"></div>
+                        <div class="modal-content" style="max-width:720px;">
+                            <div class="modal-header">
+                                <h2 id="account-modal-title">Account</h2>
+                                <button class="button-close-modal">&times;</button>
+                            </div>
+                            <div class="modal-body" id="account-modal-body"><!-- Loaded via JS --></div>
+                        </div>
+                    </div>
+
                     <!-- Delete Confirmation Modal -->
                     <div class="modal" id="delete-user-modal">
                         <div class="modal-overlay"></div>

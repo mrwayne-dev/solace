@@ -552,15 +552,19 @@ $(document).on('click', '.cancel-withdrawal-btn', function () {
                     emptyEl.hide();
 
                     res.data.forEach(dep => {
+                        const proofLink = dep.proof_url
+                            ? `<a class="tf-button bg-Black text-White" href="${dep.proof_url}" target="_blank" rel="noopener">Proof</a>`
+                            : '<span class="text-Gray f12-regular">no proof</span>';
                         listEl.append(`
                             <tr id="deposit-row-${dep.id}">
-                                <td>${dep.user}</td>
+                                <td>${dep.user}<br><small class="text-Gray">${dep.network || ''} ${dep.address ? '→ ' + dep.address : ''}</small></td>
                                 <td>$${formatCurrency(dep.amount)}</td>
                                 <td>${dep.date}</td>
                                 <td>
-                                    <button class="complete-deposit-btn tf-button bg-Green text-White" 
+                                    ${proofLink}
+                                    <button class="complete-deposit-btn tf-button bg-Green text-White"
                                         data-id="${dep.id}" data-amount="${dep.amount}">Complete</button>
-                                    <button class="cancel-deposit-btn tf-button bg-Accent text-Black" 
+                                    <button class="cancel-deposit-btn tf-button bg-Accent text-Black"
                                         data-id="${dep.id}">Cancel</button>
                                 </td>
                             </tr>
@@ -606,57 +610,85 @@ $(document).on('click', '.cancel-withdrawal-btn', function () {
 
 
 
-        // SUBMIT — Save Deposit Address
+        // Load + render the managed wallet addresses
+        async function loadDepositAddressList() {
+            const listEl = $('#deposit-address-list');
+            const emptyEl = $('#no-deposit-addresses');
+            if (!listEl.length) return;
+            try {
+                const res = await fetchApi('/api/admin/deposit_addresses.php', {}, "GET");
+                listEl.empty();
+                const rows = (res.status === 'success' && res.data) ? res.data : [];
+                if (!rows.length) { emptyEl.show(); return; }
+                emptyEl.hide();
+                rows.forEach(a => {
+                    const status = a.is_active
+                        ? '<span class="box-status bg-Green f12-medium">Active</span>'
+                        : '<span class="box-status bg-Gray f12-medium">Disabled</span>';
+                    listEl.append(`
+                        <tr id="addr-row-${a.id}">
+                            <td>${a.label}</td>
+                            <td>${a.network}</td>
+                            <td><small>${a.address}</small></td>
+                            <td>${status}</td>
+                            <td>
+                                <button class="toggle-addr-btn tf-button bg-Accent text-Black" data-id="${a.id}">${a.is_active ? 'Disable' : 'Enable'}</button>
+                                <button class="delete-addr-btn tf-button bg-Red text-White" data-id="${a.id}">Delete</button>
+                            </td>
+                        </tr>`);
+                });
+            } catch (err) {
+                showToast("Could not load wallet addresses", "error");
+            }
+        }
+
+        // SUBMIT — Add a wallet address
         $('#set-deposit-address-form').on('submit', async function(e){
             e.preventDefault();
-
-            const method = $('#deposit-method').val();
-            const value = $('#deposit-value').val().trim();
-
-            if(!method || !value){
+            const label   = $('#deposit-addr-label').val().trim();
+            const network = $('#deposit-addr-network').val().trim();
+            const address = $('#deposit-addr-address').val().trim();
+            if(!label || !network || !address){
                 showToast("Please complete all fields.", "warning");
                 return;
             }
-
             try {
-                const res = await fetchApi('/api/admin/save_deposit_address.php', {
-                    method: method,
-                    value: value
-                }, "POST");
-
+                const res = await fetchApi('/api/admin/deposit_addresses.php',
+                    { action: 'add', label, network, address }, "POST");
                 if(res.status === 'success'){
                     showToast(res.message, "success");
+                    this.reset();
                     closeModal('#set-deposit-address-modal');
+                    loadDepositAddressList();
                 } else {
-                    showToast(res.message || "Failed to save address.", "error");
+                    showToast(res.message || "Failed to add address.", "error");
                 }
-
             } catch(err){
                 console.error(err);
                 showToast("Network/server error occurred.", "error");
             }
         });
 
-        // OPEN — View Deposit Addresses Modal
-        $('#view-deposit-address-btn').on('click', async function (e) {
+        // OPEN — Manage Wallet Addresses
+        $('#view-deposit-address-btn').on('click', function (e) {
             e.preventDefault();
+            showModal('#view-deposit-address-modal');
+            loadDepositAddressList();
+        });
 
-            try {
-                const res = await fetchApi('/api/admin/get_deposit_address.php', {}, "GET");
-
-                if (res.status === 'success') {
-                    $('#view-cash-mailing').text(res.data.cash_mailing || 'Not set yet');
-                    $('#view-wallet-address').text(res.data.wallet_address || 'Not set yet');
-
-                    showModal('#view-deposit-address-modal');
-
-                } else {
-                    showToast(res.message || "Could not load addresses", "error");
-                }
-
-            } catch (err) {
-                showToast("Server error occurred", "error");
-            }
+        // Toggle active / Delete
+        $(document).on('click', '.toggle-addr-btn', async function () {
+            const id = $(this).data('id');
+            const res = await fetchApi('/api/admin/deposit_addresses.php', { action: 'toggle', id }, "POST");
+            if (res.status === 'success') { showToast(res.message, 'success'); loadDepositAddressList(); }
+            else showToast(res.message || 'Failed', 'error');
+        });
+        $(document).on('click', '.delete-addr-btn', async function () {
+            const id = $(this).data('id');
+            if (!confirm('Delete this wallet address? Users will no longer see it.')) return;
+            const res = await fetchApi('/api/admin/deposit_addresses.php', { action: 'delete', id }, "POST");
+            if (res.status === 'success') { showToast(res.message, 'success'); loadDepositAddressList(); }
+            else showToast(res.message || 'Failed', 'error');
         });
 
         // Initial data load 

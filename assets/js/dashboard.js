@@ -508,49 +508,84 @@ var loadDashboardData = async function () {
   }
   /* ===================== Wallet: Deposit Flow ===================== */
   // Deposit form handler
+  // Load the admin-managed wallet addresses into the deposit dropdown
+  async function loadDepositAddresses() {
+    const select = $('#deposit-address');
+    if (!select.length) return;
+    try {
+      const res = await fetchApi('/api/backend/wallet.php', { action: 'get_deposit_addresses' });
+      const list = (res.status === 'success' && res.data?.addresses) ? res.data.addresses : [];
+      if (!list.length) {
+        select.html('<option value="" selected disabled>No deposit wallets available — contact support</option>');
+        return;
+      }
+      let html = '<option value="" selected disabled>Select a wallet</option>';
+      list.forEach(a => {
+        html += `<option value="${a.id}" data-network="${$('<div>').text(a.network).html()}" data-address="${$('<div>').text(a.address).html()}">${$('<div>').text(a.label + ' — ' + a.network).html()}</option>`;
+      });
+      select.html(html);
+    } catch (err) {
+      console.error('loadDepositAddresses error', err);
+      select.html('<option value="" selected disabled>Could not load wallets</option>');
+    }
+  }
+
   function bindDepositForm() {
     const form = $('#deposit-form');
     if (!form.length) return;
+
+    loadDepositAddresses();
+
+    // Reveal the chosen wallet address for the user to copy/send to
+    $('#deposit-address').on('change', function () {
+      const opt = this.options[this.selectedIndex];
+      const addr = opt ? opt.getAttribute('data-address') : '';
+      const net = opt ? opt.getAttribute('data-network') : '';
+      if (addr) {
+        $('#deposit-address-value').val(addr);
+        $('#deposit-address-network').text(net || '—');
+        $('#deposit-address-box').removeClass('hidden');
+      } else {
+        $('#deposit-address-box').addClass('hidden');
+      }
+    });
+
     form.on('submit', async function (e) {
       e.preventDefault();
       const amount = Number($('#deposit-amount').val() || 0);
-      const method = $('#deposit-method').val();
-      if (!amount || amount <= 0) {
-        showToast('Enter a valid deposit amount', 'error');
-        return;
-      }
-      if (!method) {
-        showToast('Select a payment method', 'error');
-        return;
-      }
-      // Call wallet API
+      const addressId = $('#deposit-address').val();
+      const proof = $('#deposit-proof')[0]?.files?.[0] || null;
+
+      if (!amount || amount <= 0) { showToast('Enter a valid deposit amount', 'error'); return; }
+      if (!addressId) { showToast('Select a wallet to deposit to', 'error'); return; }
+      if (!proof) { showToast('Attach your proof of payment', 'error'); return; }
+
+      const fd = new FormData();
+      fd.append('action', 'initiate_deposit');
+      fd.append('amount', amount);
+      fd.append('address_id', addressId);
+      fd.append('proof', proof);
+
+      const btn = form.find('button[type="submit"]');
+      btn.prop('disabled', true);
       try {
-        // Show minimal loader via toast
-        showToast('Processing deposit...', 'info', 2000);
-        const res = await fetchApi('/api/backend/wallet.php', { action: 'initiate_deposit', amount, method });
+        showToast('Submitting deposit...', 'info', 2000);
+        const resp = await fetch('/api/backend/wallet.php', { method: 'POST', body: fd, credentials: 'same-origin' });
+        const res = await resp.json().catch(() => ({ status: 'error', message: 'Unexpected server response.' }));
         if (res.status === 'success') {
-          // If secure_exchange returned redirect_url (create_crypto_payment will return it)
-          const redirect = res.data?.redirect_url || res.data?.payment_url || res.data?.redirect || null;
-          if (redirect) {
-            showToast('Redirecting to payment provider...', 'success', 2000);
-            // Small delay to allow toast to show
-            setTimeout(() => { window.location.href = redirect; }, 600);
-            return;
-          }
-          // Manual methods (wire_transfer, cash_mailing)
-          showToast('Deposit request submitted. Support will provide details shortly.', 'success');
-          // Clear input
-          $('#deposit-amount').val('');
-          $('#deposit-method').val('');
-          // Refresh pending deposits & dashboard immediately
-          await loadPendingDeposits(); // This now populates the list but doesn't show modal
+          showToast('Deposit submitted! It is now pending admin confirmation.', 'success');
+          form[0].reset();
+          $('#deposit-address-box').addClass('hidden');
+          await loadPendingDeposits();
           await loadDashboardData();
         } else {
           showToast(res.message || 'Deposit failed', 'error');
         }
       } catch (err) {
         console.error('Deposit error', err);
-        showToast('Failed to initiate deposit', 'error');
+        showToast('Failed to submit deposit', 'error');
+      } finally {
+        btn.prop('disabled', false);
       }
     });
   }

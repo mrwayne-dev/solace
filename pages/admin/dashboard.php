@@ -207,13 +207,13 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                                                                 </button>
 
                                                                 <button id="set-deposit-address-btn" class="quick-action-btn bg-Green text-White">
-                                                                    <i class="iconify ph ph-gear"></i>
-                                                                    Set Deposit Address
+                                                                    <i class="iconify ph ph-plus"></i>
+                                                                    Add Wallet Address
                                                                 </button>
 
                                                                 <button id="view-deposit-address-btn" class="quick-action-btn bg-Black text-White">
                                                                     <i class="iconify ph ph-eye"></i>
-                                                                    View Deposit Addresses
+                                                                    Manage Wallet Addresses
                                                                 </button>
 
 
@@ -308,21 +308,25 @@ $admin_email = $_SESSION['admin_email'] ?? '';
                             </div>
 
                             <div class="modal-body">
-
-                                <div class="mb-3">
-                                    <label class="form-label"><strong>Cash Mailing Address</strong></label>
-                                    <div id="view-cash-mailing" class="p-2 bg-GrayLight rounded text-Black"></div>
+                                <p class="text-Gray f14-regular mb-16">Active wallets are shown to users on the deposit form. Toggle to enable/disable, or delete.</p>
+                                <table class="tab-sell-order" id="deposit-address-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="f14-regular text-Gray">Label</th>
+                                            <th class="f14-regular text-Gray">Network</th>
+                                            <th class="f14-regular text-Gray">Address</th>
+                                            <th class="f14-regular text-Gray">Status</th>
+                                            <th class="f14-regular text-Gray">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="deposit-address-list"><!-- Loaded via JS --></tbody>
+                                </table>
+                                <div id="no-deposit-addresses" class="text-center text-Gray mt-20" style="display:none;">
+                                    No wallet addresses yet. Use “Add Wallet Address”.
                                 </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label"><strong>Wallet Deposit Address</strong></label>
-                                    <div id="view-wallet-address" class="p-2 bg-GrayLight rounded text-Black"></div>
-                                </div>
-
-                                <div class="text-right">
+                                <div class="text-right mt-20">
                                     <button class="button-close-modal tf-button bg-Accent text-Black">Close</button>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -336,34 +340,28 @@ $admin_email = $_SESSION['admin_email'] ?? '';
 
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h2>Set Deposit Address</h2>
+                                <h2>Add Wallet Address</h2>
                                 <button class="button-close-modal">&times;</button>
                             </div>
 
                             <div class="modal-body">
                                 <form id="set-deposit-address-form">
-
-                                    <!-- Deposit Type -->
                                     <div class="form-group mb-3">
-                                        <label class="form-label">Deposit Method</label>
-                                        <select class="form-control" id="deposit-method" required>
-                                            <option value="">Select Method...</option>
-                                            <option value="cash_mailing">Cash Mailing</option>
-                                            <option value="wallet_address">Wallet Address</option>
-                                        </select>
+                                        <label class="form-label">Label</label>
+                                        <input class="form-control" id="deposit-addr-label" placeholder="e.g. Main BTC Wallet" required>
                                     </div>
-
-                                    <!-- Address input -->
                                     <div class="form-group mb-3">
-                                        <label class="form-label">Deposit Address / Instructions</label>
-                                        <textarea class="form-control" id="deposit-value" rows="4"
-                                            placeholder="Enter wallet address or mailing instructions..."
-                                            required></textarea>
+                                        <label class="form-label">Network / Coin</label>
+                                        <input class="form-control" id="deposit-addr-network" placeholder="e.g. Bitcoin (BTC), USDT (TRC-20)" required>
                                     </div>
-
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Wallet Address</label>
+                                        <textarea class="form-control" id="deposit-addr-address" rows="3"
+                                            placeholder="Paste the wallet address" required></textarea>
+                                    </div>
                                     <div class="d-flex justify-content-end gap-2">
                                         <button type="button" class="button-close-modal tf-button bg-GrayLight text-Black">Cancel</button>
-                                        <button type="submit" class="modal-confirm-btn">Save Address</button>
+                                        <button type="submit" class="modal-confirm-btn">Add Address</button>
                                     </div>
                                 </form>
                             </div>

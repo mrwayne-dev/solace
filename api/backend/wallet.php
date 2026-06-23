@@ -112,61 +112,87 @@ error_reporting(0);
         switch ($action) {
 
             // -------------------------------------------------------
-            // 1️⃣ INITIATE DEPOSIT
+            // 0️⃣ GET ACTIVE DEPOSIT ADDRESSES (for the deposit form)
+            // -------------------------------------------------------
+            case 'get_deposit_addresses':
+                $rows = $pdo->query("SELECT id, label, network, address FROM deposit_addresses WHERE is_active = 1 ORDER BY id DESC")
+                            ->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($rows as &$r) { $r['id'] = (int)$r['id']; }
+                jsonResponse('success', 'Deposit addresses retrieved.', ['addresses' => $rows]);
+                break;
+
+            // -------------------------------------------------------
+            // 1️⃣ INITIATE DEPOSIT (manual crypto: pick address, amount, proof)
             // -------------------------------------------------------
             case 'initiate_deposit':
-                $data = $parsedJsonBody ?? (json_decode(file_get_contents('php://input'), true) ?: []);
-                $amount = (float) ($data['amount'] ?? 0);
-                $method = strtolower(trim((string)($data['method'] ?? '')));
+                // Multipart form (proof upload) — read from $_POST / $_FILES
+                $amount     = (float) ($_POST['amount'] ?? 0);
+                $address_id = (int) ($_POST['address_id'] ?? 0);
 
-                if ($amount <= 0 || !$method) {
-                    jsonResponse('error', 'Invalid deposit details provided.');
+                if ($amount <= 0) {
+                    jsonResponse('error', 'Please enter a valid deposit amount.');
                 }
+
+                // Resolve the chosen (active) deposit address
+                $addrStmt = $pdo->prepare("SELECT id, label, network, address FROM deposit_addresses WHERE id = ? AND is_active = 1");
+                $addrStmt->execute([$address_id]);
+                $addr = $addrStmt->fetch();
+                if (!$addr) {
+                    jsonResponse('error', 'Please select a valid deposit wallet.');
+                }
+
+                // Proof of payment is required
+                if (empty($_FILES['proof']) || ($_FILES['proof']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+                    jsonResponse('error', 'Please attach your proof of payment (screenshot or PDF).');
+                }
+                $proof = $_FILES['proof'];
+                $allowed = ['jpg'=>'image/jpeg','jpeg'=>'image/jpeg','png'=>'image/png','webp'=>'image/webp','pdf'=>'application/pdf'];
+                $ext = strtolower(pathinfo($proof['name'], PATHINFO_EXTENSION));
+                if (!isset($allowed[$ext])) jsonResponse('error', 'Proof must be a JPG, PNG, WEBP or PDF file.');
+                if ($proof['size'] > 5 * 1024 * 1024) jsonResponse('error', 'Proof file must be 5 MB or smaller.');
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $mime = finfo_file($finfo, $proof['tmp_name']);
+                finfo_close($finfo);
+                if (!in_array($mime, array_values($allowed), true)) jsonResponse('error', 'That proof file type is not allowed.');
+
+                $dir = __DIR__ . '/../../uploads/deposits';
+                if (!is_dir($dir)) @mkdir($dir, 0775, true);
+                $proofName = 'deposit_' . $user_id . '_' . date('Ymd_His') . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+                if (!move_uploaded_file($proof['tmp_name'], $dir . '/' . $proofName)) {
+                    jsonResponse('error', 'Could not save your proof of payment. Please try again.');
+                }
+                $proofUrl = rtrim(APP_URL, '/') . '/uploads/deposits/' . $proofName;
 
                 $reference = generateReference('SLM-DEP');
                 $timestamp = date('Y-m-d H:i:s');
-                $details = json_encode(['initiated_at' => $timestamp, 'method' => $method]);
+                $details = json_encode([
+                    'initiated_at' => $timestamp,
+                    'method'       => 'crypto',
+                    'address_id'   => (int)$addr['id'],
+                    'network'      => $addr['network'],
+                    'address'      => $addr['address'],
+                    'proof_url'    => $proofUrl,
+                    'proof_file'   => $proofName,
+                ]);
 
-                $insert = $pdo->prepare("
+                $pdo->prepare("
                     INSERT INTO transactions (user_id, type, method, amount, reference, status, details, created_at)
-                    VALUES (?, 'deposit', ?, ?, ?, 'pending', ?, ?)
-                ");
-                $insert->execute([$user_id, $method, $amount, $reference, $details, $timestamp]);
+                    VALUES (?, 'deposit', 'wallet_address', ?, ?, 'pending', ?, ?)
+                ")->execute([$user_id, $amount, $reference, $details, $timestamp]);
 
-                // 🔹 Secure Exchange (NOWPayments)
-                if ($method === 'secure_exchange') {
-                    require_once __DIR__ . '/../payments/create_crypto_payment.php';
-                    $response = createCryptoPayment($user_id, $user_email, $amount, $reference);
-
-                    if (!is_array($response) || ($response['status'] ?? '') !== 'success') {
-                        $errMsg = $response['message'] ?? 'Failed to create crypto payment. Please try again later.';
-                        logDebug('NOWPayments error: ' . json_encode($response));
-                        jsonResponse('error', $errMsg, $response['data'] ?? []);
-                    }
-
-                    $paymentUrl = $response['data']['payment_url'] ?? $response['data']['invoice_url'] ?? null;
-                    if (!$paymentUrl) {
-                        jsonResponse('error', 'Payment provider did not return a redirect URL.', $response);
-                    }
-
-                    jsonResponse('success', 'Redirecting to crypto payment...', [
-                        'redirect_url' => $paymentUrl,
-                        'reference' => $reference
-                    ]);
-                }
-
-                // 🔹 Manual deposits (wire / cash)
+                // Notify the user (pending) ...
                 sendEmail([
                     'to' => $user_email,
                     'template' => 'deposit_initiated',
                     'variables' => [
                         'user_name' => $user_name,
                         'amount' => number_format($amount, 2),
-                        'method' => ucfirst(str_replace('_', ' ', $method)),
+                        'method' => $addr['network'] . ' (crypto)',
                         'reference' => $reference
                     ]
                 ]);
 
+                // ... and notify the admin to review + approve/cancel
                 sendEmail([
                     'to' => ADMIN_CONTACT_EMAIL,
                     'template' => 'admin_deposit_notification',
@@ -174,12 +200,12 @@ error_reporting(0);
                         'user_name' => $user_name,
                         'user_email' => $user_email,
                         'amount' => number_format($amount, 2),
-                        'method' => ucfirst($method),
+                        'method' => $addr['network'] . ' → ' . $addr['address'],
                         'reference' => $reference
                     ]
                 ]);
 
-                jsonResponse('success', 'Deposit request initiated successfully.', ['reference' => $reference]);
+                jsonResponse('success', 'Deposit submitted! It is now pending admin confirmation.', ['reference' => $reference]);
                 break;
 
             // -------------------------------------------------------
@@ -233,6 +259,17 @@ error_reporting(0);
                 $details = $data['details'] ?? [];
 
                 if ($amount <= 0 || !$method) jsonResponse('error', 'Invalid withdrawal details.');
+
+                // Enforce admin-set withdrawal lock
+                $lockStmt = $pdo->prepare("SELECT withdrawals_locked, withdrawal_lock_reason FROM users WHERE id = ?");
+                $lockStmt->execute([$user_id]);
+                $lock = $lockStmt->fetch();
+                if ($lock && (int)$lock['withdrawals_locked'] === 1) {
+                    $reason = trim((string)($lock['withdrawal_lock_reason'] ?? ''));
+                    jsonResponse('error', $reason !== ''
+                        ? ('Withdrawals are currently restricted on your account: ' . $reason)
+                        : 'Withdrawals are currently restricted on your account. Please contact support.');
+                }
 
                 $wallet = getUserWallet($pdo, $user_id);
                 if (!$wallet || $wallet['balance'] < $amount) jsonResponse('error', 'Insufficient wallet balance.');

@@ -14,13 +14,13 @@ if(!isset($_SESSION["admin_id"])){
 try {
     $pdo = getPDO();
 
-    // The key update is adding t.id and t.reference
     $stmt = $pdo->prepare("
-        SELECT 
-            t.id, 
+        SELECT
+            t.id,
             t.reference,
-            t.amount, 
-            t.created_at, 
+            t.amount,
+            t.details,
+            t.created_at,
             u.full_name,
             u.email
         FROM transactions t
@@ -33,13 +33,17 @@ try {
 
     $formattedDeposits = [];
     foreach($deposits as $dep) {
+        $d = json_decode($dep['details'] ?? '{}', true) ?: [];
         $formattedDeposits[] = [
-            'id' => (int)$dep['id'], // Added
-            'reference' => htmlspecialchars($dep['reference']), // Added
+            'id' => (int)$dep['id'],
+            'reference' => htmlspecialchars($dep['reference']),
             'amount' => (float)$dep['amount'],
             'date' => date('M d, Y H:i', strtotime($dep['created_at'])),
-            // Combine name and email for the display column
-            'user' => htmlspecialchars($dep['full_name']) . ' (' . htmlspecialchars($dep['email']) . ')', 
+            'user' => htmlspecialchars($dep['full_name']) . ' (' . htmlspecialchars($dep['email']) . ')',
+            // Manual-deposit review fields
+            'network' => htmlspecialchars($d['network'] ?? '—'),
+            'address' => htmlspecialchars($d['address'] ?? '—'),
+            'proof_url' => $d['proof_url'] ?? null,
         ];
     }
 

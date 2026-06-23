@@ -299,6 +299,70 @@ function handlePostRequest($pdo) {
             sendResponse(['status' => 'error', 'message' => 'Failed to send email.'], 500);
 
 
+        /* ---------------------- GET FULL ACCOUNT DETAIL ---------------------- */
+        case 'get_user_detail':
+            $uStmt = executeQuery($pdo,
+                "SELECT id, name, full_name, email, role, status, phone, country,
+                        referral_code, withdrawals_locked, withdrawal_lock_reason,
+                        DATE_FORMAT(created_at,'%Y-%m-%d %H:%i') AS created_at
+                 FROM users WHERE id = :id", [':id' => $userId]);
+            $user = $uStmt ? $uStmt->fetch(PDO::FETCH_ASSOC) : null;
+            if (!$user) sendResponse(['status' => 'error', 'message' => 'User not found.'], 404);
+            $user['withdrawals_locked'] = (int)$user['withdrawals_locked'];
+
+            $wStmt = executeQuery($pdo, "SELECT * FROM wallets WHERE user_id = :id", [':id' => $userId]);
+            $wallet = $wStmt ? $wStmt->fetch(PDO::FETCH_ASSOC) : null;
+
+            $iStmt = executeQuery($pdo,
+                "SELECT id, plan_name, amount, daily_profit_percent, duration_days, days_paid,
+                        roi_earned, status, start_date, maturity_date
+                 FROM investments WHERE user_id = :id ORDER BY id DESC LIMIT 25", [':id' => $userId]);
+            $investments = $iStmt ? $iStmt->fetchAll(PDO::FETCH_ASSOC) : [];
+
+            $tStmt = executeQuery($pdo,
+                "SELECT type, method, amount, reference, status,
+                        DATE_FORMAT(created_at,'%Y-%m-%d %H:%i') AS created_at
+                 FROM transactions WHERE user_id = :id ORDER BY id DESC LIMIT 25", [':id' => $userId]);
+            $transactions = $tStmt ? $tStmt->fetchAll(PDO::FETCH_ASSOC) : [];
+
+            sendResponse(['status' => 'success', 'data' => [
+                'user' => $user,
+                'wallet' => $wallet,
+                'investments' => $investments,
+                'transactions' => $transactions,
+            ]]);
+
+        /* ---------------------- TOGGLE WITHDRAWAL LOCK ---------------------- */
+        case 'toggle_withdrawal_lock':
+            $locked = !empty($data['locked']) ? 1 : 0;
+            $reason = trim($data['reason'] ?? '');
+            if ($locked && $reason === '') $reason = 'Withdrawals temporarily restricted. Please contact support.';
+            $ok = executeQuery($pdo,
+                "UPDATE users SET withdrawals_locked = :locked, withdrawal_lock_reason = :reason WHERE id = :id",
+                [':locked' => $locked, ':reason' => $locked ? $reason : null, ':id' => $userId]);
+            if ($ok) {
+                sendResponse(['status' => 'success', 'message' => $locked ? 'Withdrawals locked for this user.' : 'Withdrawals unlocked for this user.']);
+            }
+            sendResponse(['status' => 'error', 'message' => 'Failed to update withdrawal lock.'], 500);
+
+        /* ---------------------- ADJUST WALLET BALANCE (R/W) ---------------------- */
+        case 'adjust_balance':
+            $field = $data['field'] ?? 'balance';
+            $allowed = ['balance', 'total_deposited', 'total_withdrawn', 'referral_earnings'];
+            if (!in_array($field, $allowed, true)) {
+                sendResponse(['status' => 'error', 'message' => 'Invalid wallet field.'], 400);
+            }
+            $newValue = $data['value'] ?? null;
+            if (!is_numeric($newValue) || $newValue < 0) {
+                sendResponse(['status' => 'error', 'message' => 'Value must be a non-negative number.'], 400);
+            }
+            $ok = executeQuery($pdo, "UPDATE wallets SET $field = :v WHERE user_id = :id",
+                [':v' => (float)$newValue, ':id' => $userId]);
+            if ($ok) {
+                sendResponse(['status' => 'success', 'message' => ucfirst(str_replace('_', ' ', $field)) . ' updated.']);
+            }
+            sendResponse(['status' => 'error', 'message' => 'Failed to update wallet.'], 500);
+
         /* ---------------------- INVALID ACTION ---------------------- */
         default:
             sendResponse(['status' => 'error', 'message' => 'Invalid action.'], 400);
