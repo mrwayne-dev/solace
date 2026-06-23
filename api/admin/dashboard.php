@@ -57,9 +57,9 @@ try {
     // Metric 1: Total Revenue (all deposits into wallets)
     $totalRevenue = $pdo->query("SELECT COALESCE(SUM(total_deposited), 0) FROM wallets")->fetchColumn();
 
-    // Metric 2: Total Donations (sum of all donations made)
-    $totalDonations = $pdo->query("SELECT COALESCE(SUM(total_donations), 0) FROM wallets")->fetchColumn();
-    
+    // Metric 2: Donations — not used on this platform (no such column); kept at 0.
+    $totalDonations = 0.00;
+
     // Metric 3: Active Investments Count
     $activeInvestmentsCount = $pdo->query("SELECT COUNT(id) FROM investments WHERE status = 'active'")->fetchColumn();
 
