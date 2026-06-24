@@ -39,7 +39,7 @@
   </div>
 </footer>
 
-<?php include __DIR__ . '/support-widget.php'; ?>
+<?php include __DIR__ . '/site-widgets.php'; ?>
 
 <script>
   // Navbar scroll toggle (transparent on hero, solid on scroll)

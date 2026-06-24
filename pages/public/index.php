@@ -31,19 +31,6 @@
   <link rel="apple-touch-icon" sizes="180x180" href="../../assets/favicon/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-title" content="Solace Mining">
   <link rel="manifest" href="../../assets/favicon/site.webmanifest">
-  
-    <!-- Smartsupp Live Chat script -->
-  <script type="text/javascript">
-  var _smartsupp = _smartsupp || {};
-  _smartsupp.key = '3c2dbbfc4e90eff8ecbbe0a2f4936d2be60ccec7';
-  window.smartsupp||(function(d) {
-    var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
-    s=d.getElementsByTagName('script')[0];c=d.createElement('script');
-    c.type='text/javascript';c.charset='utf-8';c.async=true;
-    c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
-  })(document);
-  </script>
-  <noscript>Powered by <a href="https://www.smartsupp.com" target="_blank" rel="noopener noreferrer">Smartsupp</a></noscript>
 
 </head>
 <body class="txh-redesign">
@@ -542,8 +529,7 @@
   </div>
 </footer>
 
-<?php $support_widget_paired = true; // homepage also shows Smartsupp — place them side by side
-include __DIR__ . '/_partials/support-widget.php'; ?>
+<?php include __DIR__ . '/_partials/site-widgets.php'; ?>
 
 
   <!-- Scripts -->

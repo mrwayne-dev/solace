@@ -437,35 +437,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-/**
- * ======================
- * 9. Smartsupp Live Chat Integration
- * ======================
- */
-(function() {
-  try {
-    // Prevent duplicate loading
-    if (window.smartsupp) return;
-
-    window._smartsupp = window._smartsupp || {};
-    window._smartsupp.key = '3c2dbbfc4e90eff8ecbbe0a2f4936d2be60ccec7';
-
-    // Create Smartsupp script dynamically
-    const s = document.createElement('script');
-    s.type = 'text/javascript';
-    s.charset = 'utf-8';
-    s.async = true;
-    s.src = 'https://www.smartsuppchat.com/loader.js?';
-    
-    // Append to head safely
-    const firstScript = document.getElementsByTagName('script')[0];
-    firstScript.parentNode.insertBefore(s, firstScript);
-
-    console.log('✅ Smartsupp chat loaded');
-  } catch (err) {
-    console.error('❌ Smartsupp failed to load:', err);
-  }
-})();
 
 /**
  * ======================

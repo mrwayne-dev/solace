@@ -106,7 +106,7 @@ include __DIR__ . '/_partials/head.php';
 
       <section class="legal-doc__section">
         <h2><?= (count($doc['sections']) + 1) . '. Contact' ?></h2>
-        <p>Questions about this document? Email us at <a href="mailto:<?= $support ?>"><?= $support ?></a>, message us on Telegram at <a href="https://t.me/+13173661701" target="_blank" rel="noopener">+1 317 366 1701</a>, or call the same number. <?= htmlspecialchars($company) ?>, Dallas, United States of America.</p>
+        <p>Questions about this document? Email us at <a href="mailto:<?= $support ?>"><?= $support ?></a>, or call us at <a href="tel:+13173661701">+1 317 366 1701</a>. <?= htmlspecialchars($company) ?>, Dallas, United States of America.</p>
       </section>
     </div>
   </div>

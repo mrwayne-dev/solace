@@ -114,15 +114,6 @@ include __DIR__ . '/_partials/head.php';
           </li>
           <li style="display: flex; gap: var(--space-3); align-items: flex-start;">
             <span style="width: 32px; height: 32px; border-radius: var(--radius-circle); background: var(--color-surface-warm); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
-            </span>
-            <div>
-              <p style="font-weight: var(--fw-medium); color: var(--color-ink-primary);"><a href="https://t.me/+13173661701" target="_blank" rel="noopener" style="color:inherit;">Telegram — +1 317 366 1701</a></p>
-              <p style="font-size: var(--text-sm); color: var(--color-ink-muted);">Fastest way to reach support</p>
-            </div>
-          </li>
-          <li style="display: flex; gap: var(--space-3); align-items: flex-start;">
-            <span style="width: 32px; height: 32px; border-radius: var(--radius-circle); background: var(--color-surface-warm); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             </span>
             <div>
