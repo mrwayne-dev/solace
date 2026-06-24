@@ -75,7 +75,13 @@
 
         $(document).on('click', '.action-delete-announcement', async function () {
             const id = $(this).data('id');
-            if (!confirm('Delete this announcement? This cannot be undone.')) return;
+            const c = await window.uiConfirm({
+                title: 'Delete Announcement',
+                message: 'Delete this announcement? This cannot be undone.',
+                confirmText: 'Delete',
+                danger: true
+            });
+            if (!c.confirmed) return;
             const res = await fetchApi(ENDPOINT, { action: 'delete', id });
             if (res.status === 'success') {
                 showToast('Announcement deleted.', 'success');

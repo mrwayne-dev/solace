@@ -308,7 +308,12 @@
              const newStatus = $(this).data('status'); // 'active' or 'hidden'
              const title = $(this).closest('tr').find('.f14-bold').text();
 
-             if (!confirm(`Are you sure you want to change the status of plan "${title}" to "${newStatus.toUpperCase()}"?`)) return;
+             const c = await window.uiConfirm({
+                 title: 'Change Plan Status',
+                 message: `Change the status of plan "${title}" to "${newStatus.toUpperCase()}"?`,
+                 confirmText: 'Update'
+             });
+             if (!c.confirmed) return;
 
              window.showToast(`Updating plan status...`, 'info', 5000);
 
@@ -385,9 +390,12 @@
             const id = $('#inv-id').val();
             const newStatus = $('#inv-status').val();
             
-            if (!confirm(`Confirm changes for XYield ID ${id}. Status will be set to: ${newStatus.toUpperCase()}. Wallet will be adjusted if status changes to 'completed' or 'cancelled'.`)) {
-                 return;
-            }
+            const c = await window.uiConfirm({
+                title: 'Confirm Investment Changes',
+                message: `Apply changes to XYield #${id}? Status will be set to "${newStatus.toUpperCase()}". The wallet is adjusted if status becomes 'completed' or 'cancelled'.`,
+                confirmText: 'Apply Changes'
+            });
+            if (!c.confirmed) return;
 
             const payload = {
                 action: 'edit_investment',

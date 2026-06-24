@@ -481,10 +481,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const submitBtn = form.querySelector('button[type="submit"]');
 
   function showLoader(on) { if (loader) loader.classList.toggle('hidden', !on); }
-  function showSuccess(msg) {
-    if (!success) { alert(msg); return; }
+  // Reuse the on-page message banner for both success and error feedback
+  function showContactMessage(msg, isError = false) {
+    if (!success) return;
     const p = success.querySelector('p');
     if (p && msg) p.textContent = msg;
+    success.style.borderLeft = isError ? '4px solid #CC0000' : '';
     success.classList.remove('hidden');
     setTimeout(() => success.classList.add('hidden'), 6000);
   }
@@ -504,13 +506,13 @@ document.addEventListener('DOMContentLoaded', () => {
       showLoader(false);
       if (data.status === 'success') {
         form.reset();
-        showSuccess(data.message || 'Message sent! Please check your email.');
+        showContactMessage(data.message || 'Message sent! Please check your email.', false);
       } else {
-        alert(data.message || 'Something went wrong. Please try again.');
+        showContactMessage(data.message || 'Something went wrong. Please try again.', true);
       }
     } catch (err) {
       showLoader(false);
-      alert('Network error. Please check your connection and try again.');
+      showContactMessage('Network error. Please check your connection and try again.', true);
     } finally {
       if (submitBtn) { submitBtn.disabled = false; }
     }
