@@ -24,9 +24,13 @@
     padding: 5px 8px; box-shadow: 0 8px 24px -8px rgba(0,0,0,.35);
     font-family: system-ui, -apple-system, sans-serif; max-width: 220px;
   }
-  .gt-widget .goog-te-combo { margin: 0; padding: 4px 6px; border-radius: 6px; border: 1px solid rgba(0,0,0,.15); font-size: 13px; max-width: 200px; }
+  .gt-widget .goog-te-combo {
+    margin: 0 !important; padding: 8px 10px; border-radius: 8px;
+    border: 1px solid rgba(0,0,0,.2); font-size: 14px; line-height: 1.2;
+    color: #1C2628 !important; background: #fff; min-width: 150px; max-width: 220px;
+  }
   .gt-widget .goog-logo-link, .gt-widget .goog-te-gadget span { display: none !important; }
-  .gt-widget .goog-te-gadget { font-size: 0 !important; color: transparent !important; }
+  .gt-widget .goog-te-gadget { font-size: 0 !important; }
   /* Stop Google's top banner from pushing the page down */
   .goog-te-banner-frame.skiptranslate, iframe.goog-te-banner-frame { display: none !important; }
   body { top: 0 !important; }
