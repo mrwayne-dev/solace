@@ -122,6 +122,9 @@ document.addEventListener('DOMContentLoaded', function () {
         loadSummary();
         loadActive();
         loadMatured();
+        // Refresh the shared wallet widgets (Main Wallet / Total Balance, invested,
+        // earnings) so the debited balance updates live without a page reload.
+        if (typeof window.refreshDashboard === 'function') window.refreshDashboard();
         amountEl.value = '';
         planSelect.selectedIndex = 0;
         updatePlanDetails();
