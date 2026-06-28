@@ -53,3 +53,6 @@ $topbar_avatar = htmlspecialchars($_SESSION['profile_picture'] ?? '/assets/image
         </div>
     </div>
 </div>
+
+<!-- Google Website Translate (100+ languages) — floating selector, shared partial -->
+<?php include __DIR__ . '/../../public/_partials/translate.php'; ?>

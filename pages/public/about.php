@@ -63,6 +63,59 @@ include __DIR__ . '/_partials/head.php';
   </div>
 </section>
 
+<!-- =================== REGISTERED & COMPLIANT — certificate =================== -->
+<section class="section section--warm" id="registration">
+  <div class="container">
+    <div class="section-header section-header--center" style="max-width: 760px; margin: 0 auto var(--space-10);">
+      <p class="eyebrow"><span class="eyebrow__icon"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg></span>Registered &amp; compliant</p>
+      <h2 class="section-header__title">A registered Texas company.</h2>
+      <p class="section-header__body">
+        Solace Mining LLC is a domestic Limited Liability Company formed under the laws of the State of Texas and on file with the Texas Secretary of State.
+      </p>
+    </div>
+
+    <div class="grid-2" style="gap: var(--space-10); align-items: center;">
+      <!-- Certificate image -->
+      <div>
+        <a href="/assets/images/solace-certificate.jpeg" target="_blank" rel="noopener" aria-label="View the full Certificate of Formation">
+          <img src="/assets/images/solace-certificate.jpeg" alt="Solace Mining LLC — Texas Certificate of Formation"
+               loading="lazy"
+               style="width: 100%; height: auto; border-radius: var(--radius-card); border: 1px solid var(--color-ink-muted); box-shadow: 0 12px 32px -12px rgba(0,0,0,.35); background: #fff;">
+        </a>
+        <p class="f12-regular" style="text-align: center; margin-top: var(--space-3); color: var(--color-ink-muted);">Tap the certificate to view full size.</p>
+      </div>
+
+      <!-- Formation details -->
+      <div>
+        <ul style="display: flex; flex-direction: column; gap: var(--space-3); margin-bottom: var(--space-5);">
+          <li style="display: flex; justify-content: space-between; gap: var(--space-4); padding-bottom: var(--space-3); border-bottom: 1px solid rgba(0,0,0,.08);">
+            <span style="color: var(--color-ink-muted);">Legal entity</span><span style="font-weight: var(--fw-semibold); text-align: right;">Solace Mining LLC</span>
+          </li>
+          <li style="display: flex; justify-content: space-between; gap: var(--space-4); padding-bottom: var(--space-3); border-bottom: 1px solid rgba(0,0,0,.08);">
+            <span style="color: var(--color-ink-muted);">Entity type</span><span style="font-weight: var(--fw-semibold); text-align: right;">Limited Liability Company (LLC)</span>
+          </li>
+          <li style="display: flex; justify-content: space-between; gap: var(--space-4); padding-bottom: var(--space-3); border-bottom: 1px solid rgba(0,0,0,.08);">
+            <span style="color: var(--color-ink-muted);">State of formation</span><span style="font-weight: var(--fw-semibold); text-align: right;">Texas, United States</span>
+          </li>
+          <li style="display: flex; justify-content: space-between; gap: var(--space-4); padding-bottom: var(--space-3); border-bottom: 1px solid rgba(0,0,0,.08);">
+            <span style="color: var(--color-ink-muted);">File number</span><span style="font-weight: var(--fw-semibold); text-align: right;">01902920</span>
+          </li>
+          <li style="display: flex; justify-content: space-between; gap: var(--space-4); padding-bottom: var(--space-3); border-bottom: 1px solid rgba(0,0,0,.08);">
+            <span style="color: var(--color-ink-muted);">Date of formation</span><span style="font-weight: var(--fw-semibold); text-align: right;">5 May 2024</span>
+          </li>
+          <li style="display: flex; justify-content: space-between; gap: var(--space-4); padding-bottom: var(--space-3); border-bottom: 1px solid rgba(0,0,0,.08);">
+            <span style="color: var(--color-ink-muted);">Registered office</span><span style="font-weight: var(--fw-semibold); text-align: right;">4001 N. Central Expressway, Suite 300, Dallas, TX 75204</span>
+          </li>
+          <li style="display: flex; justify-content: space-between; gap: var(--space-4);">
+            <span style="color: var(--color-ink-muted);">Certificate no.</span><span style="font-weight: var(--fw-semibold); text-align: right;">TX-2024-01902920</span>
+          </li>
+        </ul>
+        <a href="https://www.sos.texas.gov/corp/index.shtml" target="_blank" rel="noopener" class="btn btn--primary">Verify with the Texas SOS</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- =================== HOW IT STARTED — pull-quote =================== -->
 <section class="section section--warm">
   <div class="container">
