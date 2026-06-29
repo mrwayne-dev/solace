@@ -74,12 +74,21 @@ $user_role = $_SESSION['role'] ?? 'user';
         </div>
       </div>
 
-      <!-- Total Earnings -->
+      <!-- Total Earnings (lifetime) -->
       <div class="wallet-card wallet-green">
         <div class="wallet-card-header">Total Earnings</div>
         <div class="wallet-card-balance">$<span id="total-earnings">0.00</span></div>
         <div class="wallet-card-footer">
           SLM-ERN-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>
+        </div>
+      </div>
+
+      <!-- Withdrawable Profit (spendable) -->
+      <div class="wallet-card wallet-accent">
+        <div class="wallet-card-header">Withdrawable Profit</div>
+        <div class="wallet-card-balance">$<span id="profit-balance">0.00</span></div>
+        <div class="wallet-card-footer">
+          SLM-PRF-<?= str_pad($user_id, 4, '0', STR_PAD_LEFT) ?>
         </div>
       </div>
 

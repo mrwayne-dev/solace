@@ -334,6 +334,7 @@ var loadDashboardData = async function () {
         $('#holdlock-savings').text(formatCurrency(w.holdlock_savings ?? 0));
         $('#total-earnings').text(formatCurrency(w.total_earnings ?? 0));
         $('#wallet-total-earnings').text(formatCurrency(w.total_earnings ?? 0));
+        $('#profit-balance').text(formatCurrency(w.profit_balance ?? 0));
         // Withdrawable = spendable capital + spendable profit
         $('#withdraw-available').text(formatCurrency(w.available_balance ?? w.balance ?? 0));
 
@@ -388,6 +389,8 @@ var loadDashboardData = async function () {
         $('#total-investments').text(formatCurrency(parseNum(c.active_value ?? w.total_investments ?? w.investments ?? 0)));
         $('#referral-earnings').text(formatCurrency(parseNum(w.referral_earnings ?? 0)));
         $('#total-earnings').text(formatCurrency(parseNum(w.total_earnings ?? 0)));
+        $('#profit-balance').text(formatCurrency(parseNum(w.profit_balance ?? 0)));
+        $('#withdraw-available').text(formatCurrency(parseNum(w.available_balance ?? w.balance ?? 0)));
       }
 
       // --- Wallet Activity List (wallet.php) ---
