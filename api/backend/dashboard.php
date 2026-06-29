@@ -165,11 +165,13 @@ echo json_encode([
     'status' => 'success',
     'data' => [
         'wallet' => [
-            'balance' => (float)$wallet['balance'],
+            'balance' => (float)$wallet['balance'],                 // Main Wallet = spendable capital
+            'profit_balance' => (float)($wallet['profit_balance'] ?? 0), // spendable profit (withdrawable)
+            'available_balance' => round((float)$wallet['balance'] + (float)($wallet['profit_balance'] ?? 0), 2),
             'total_deposited' => (float)$wallet['total_deposited'],
             'total_withdrawn' => (float)$wallet['total_withdrawn'],
             'investments' => (float)$wallet['total_investments'],
-            'total_earnings' => (float)$wallet['total_earnings'],
+            'total_earnings' => (float)$wallet['total_earnings'],   // lifetime profit (display)
             'referral_earnings' => (float)$wallet['referral_earnings'],
             'pending_withdrawals' => $pendingWithdrawalCount, // now counts requests
         ],

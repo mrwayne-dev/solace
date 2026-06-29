@@ -334,6 +334,8 @@ var loadDashboardData = async function () {
         $('#holdlock-savings').text(formatCurrency(w.holdlock_savings ?? 0));
         $('#total-earnings').text(formatCurrency(w.total_earnings ?? 0));
         $('#wallet-total-earnings').text(formatCurrency(w.total_earnings ?? 0));
+        // Withdrawable = spendable capital + spendable profit
+        $('#withdraw-available').text(formatCurrency(w.available_balance ?? w.balance ?? 0));
 
         // --- Product allocations (computed live by wallet.php) ---
         const xweekly = Number(w.xweekly_invested ?? 0);

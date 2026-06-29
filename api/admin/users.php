@@ -348,7 +348,7 @@ function handlePostRequest($pdo) {
         /* ---------------------- ADJUST WALLET BALANCE (R/W) ---------------------- */
         case 'adjust_balance':
             $field = $data['field'] ?? 'balance';
-            $allowed = ['balance', 'total_deposited', 'total_withdrawn', 'referral_earnings'];
+            $allowed = ['balance', 'profit_balance', 'total_deposited', 'total_withdrawn', 'referral_earnings'];
             if (!in_array($field, $allowed, true)) {
                 sendResponse(['status' => 'error', 'message' => 'Invalid wallet field.'], 400);
             }

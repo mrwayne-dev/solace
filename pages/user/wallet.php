@@ -230,6 +230,7 @@ $user_role = $_SESSION['role'] ?? 'user';
                                                                 <span class="input-icon">$</span>
                                                                 <input class="wallet-input form-control" type="number" placeholder="Enter amount" min="1" id="withdraw-amount">
                                                             </div>
+                                                            <p class="f12-regular text-Gray" style="margin-top:8px;">Available to withdraw (capital + profit): $<span id="withdraw-available">0.00</span></p>
                                                         </div>
                                                         <div class="mb-20">
                                                             <label class="f14-regular text-Black mb-8">Withdrawal Method</label>

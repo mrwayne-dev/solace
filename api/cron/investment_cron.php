@@ -97,12 +97,15 @@ foreach ($investments as $inv) {
         $pdo->prepare("UPDATE wallets SET total_earnings = total_earnings + ? WHERE user_id = ?")
             ->execute([$accrual, $user_id]);
 
-        // On completion, release principal + ALL accrued profit to the wallet at once.
+        // On completion: principal returns to the spendable Main Wallet (capital),
+        // while the profit goes into the separate spendable profit bucket so the
+        // Main Wallet card shows capital only. Total Earnings (lifetime) is unchanged
+        // here — it already grew via the daily accrual above.
         if ($is_complete) {
             $payout = round($amount + $total_roi, 2);
             $pdo->prepare("UPDATE investments SET status = 'completed' WHERE id = ?")->execute([$investment_id]);
-            $pdo->prepare("UPDATE wallets SET balance = balance + ?, total_investments = GREATEST(total_investments - ?, 0) WHERE user_id = ?")
-                ->execute([$payout, $amount, $user_id]);
+            $pdo->prepare("UPDATE wallets SET balance = balance + ?, profit_balance = profit_balance + ?, total_investments = GREATEST(total_investments - ?, 0) WHERE user_id = ?")
+                ->execute([$amount, $total_roi, $amount, $user_id]);
 
             $mref = 'SLM-MATURE-' . strtoupper(uniqid());
             $mdetails = json_encode(['investment_id' => $investment_id, 'principal_returned' => $amount, 'profit_released' => $total_roi]);

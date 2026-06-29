@@ -99,14 +99,19 @@ try {
 // --------------------------
 if ($action === 'cancel') {
 
-    // 1. Return funds to wallet + reduce pending
+    // 1. Return funds to the correct buckets (capital vs profit) + reduce pending.
+    //    The split was recorded on the withdrawal; fall back to capital for legacy rows.
+    $wd = json_decode($txn['details'] ?? '{}', true);
+    $refundProfit  = is_array($wd) && isset($wd['from_profit'])  ? (float) $wd['from_profit']  : 0.0;
+    $refundCapital = is_array($wd) && isset($wd['from_capital']) ? (float) $wd['from_capital'] : ($amount - $refundProfit);
     $wallet = $pdo->prepare("
-        UPDATE wallets 
-        SET balance = balance + ?, 
+        UPDATE wallets
+        SET balance = balance + ?,
+            profit_balance = profit_balance + ?,
             pending_withdrawals = pending_withdrawals - ?
         WHERE user_id=?
     ");
-    $wallet->execute([$amount, $amount, $userId]);
+    $wallet->execute([$refundCapital, $refundProfit, $amount, $userId]);
 
     // 2. Update transaction
     $update = $pdo->prepare("UPDATE transactions SET status='failed' WHERE id=? LIMIT 1");

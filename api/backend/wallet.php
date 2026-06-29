@@ -272,19 +272,30 @@ error_reporting(0);
                 }
 
                 $wallet = getUserWallet($pdo, $user_id);
-                if (!$wallet || $wallet['balance'] < $amount) jsonResponse('error', 'Insufficient wallet balance.');
+                // Withdrawable = spendable capital (balance) + spendable profit (profit_balance)
+                $capital = (float) ($wallet['balance'] ?? 0);
+                $profit  = (float) ($wallet['profit_balance'] ?? 0);
+                $available = round($capital + $profit, 2);
+                if (!$wallet || $available < $amount) jsonResponse('error', 'Insufficient withdrawable balance.');
+
+                // Draw from profit first, then capital — record the split so a later
+                // cancellation refunds each bucket correctly.
+                $fromProfit  = min($amount, $profit);
+                $fromCapital = round($amount - $fromProfit, 2);
 
                 $reference = generateReference('SLM-WD');
                 $detailsJson = json_encode([
                     'method' => $method,
                     'withdraw_details' => $details,
+                    'from_capital' => $fromCapital,
+                    'from_profit' => $fromProfit,
                     'requested_at' => date('Y-m-d H:i:s')
                 ]);
 
                 $pdo->beginTransaction();
                 try {
-                    $pdo->prepare("UPDATE wallets SET balance = balance - ?, pending_withdrawals = pending_withdrawals + ? WHERE user_id = ?")
-                        ->execute([$amount, $amount, $user_id]);
+                    $pdo->prepare("UPDATE wallets SET balance = balance - ?, profit_balance = profit_balance - ?, pending_withdrawals = pending_withdrawals + ? WHERE user_id = ?")
+                        ->execute([$fromCapital, $fromProfit, $amount, $user_id]);
 
                     $pdo->prepare("
                         INSERT INTO transactions (user_id, type, method, amount, reference, status, details, created_at)
@@ -397,15 +408,18 @@ error_reporting(0);
                 $wallet = $walletStmt->fetch(PDO::FETCH_ASSOC);
 
                 // --- Step 5: Build full summary response for frontend ---
+                $profitBalance = (float)($wallet['profit_balance'] ?? 0);
                 $summary = [
-                    'balance'              => (float)$wallet['balance'],
+                    'balance'              => (float)$wallet['balance'],        // Main Wallet = spendable capital
+                    'profit_balance'       => $profitBalance,                   // spendable profit (withdrawable)
+                    'available_balance'    => round((float)$wallet['balance'] + $profitBalance, 2), // total withdrawable
                     'total_deposited'      => (float)$wallet['total_deposited'],
                     'total_withdrawn'      => (float)$wallet['total_withdrawn'],
                     'total_investments'    => $totalInvested,
                     'total_invested'       => $totalInvested,
                     'referral_earnings'    => (float)$wallet['referral_earnings'],
                     'pending_withdrawals'  => (float)$wallet['pending_withdrawals'],
-                    'total_earnings'       => $totalEarnings,
+                    'total_earnings'       => $totalEarnings,                   // lifetime profit (display)
                 ];
 
 
