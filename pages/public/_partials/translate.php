@@ -155,10 +155,27 @@
     }
     document.addEventListener('DOMContentLoaded', function () {
       var sel = document.getElementById('slm-lang');
-      if (!sel) return;
-      var cur = readLang();
-      if (cur) { try { sel.value = cur; } catch (e) {} }
-      sel.addEventListener('change', function () { setLang(this.value); });
+      if (sel) {
+        var cur = readLang();
+        if (cur) { try { sel.value = cur; } catch (e) {} }
+        sel.addEventListener('change', function () { setLang(this.value); });
+      }
+      // Remove Google's injected top banner + the body offset it applies,
+      // and keep removing it since Google re-injects on translate.
+      function killGoogleBar() {
+        var bar = document.querySelector('.goog-te-banner-frame');
+        if (bar) { bar.style.display = 'none'; }
+        var frames = document.querySelectorAll('iframe.skiptranslate');
+        for (var i = 0; i < frames.length; i++) { frames[i].style.display = 'none'; }
+        if (document.body && document.body.style.top) { document.body.style.top = '0px'; }
+      }
+      killGoogleBar();
+      try {
+        new MutationObserver(killGoogleBar).observe(document.documentElement, {
+          childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class']
+        });
+      } catch (e) {}
+      setInterval(killGoogleBar, 400);
     });
   })();
 </script>
@@ -178,10 +195,13 @@
     border: 0; background: transparent; outline: none;
     font-size: 14px; color: #1C2628; padding: 6px 4px; max-width: 190px; cursor: pointer;
   }
-  /* Suppress Google's own banner/gadget chrome so only our control shows */
-  .goog-te-banner-frame.skiptranslate, iframe.goog-te-banner-frame { display: none !important; }
+  /* Suppress Google's top banner + chrome so only our own pill shows */
+  .goog-te-banner-frame, .goog-te-banner-frame.skiptranslate,
+  iframe.goog-te-banner-frame, iframe.skiptranslate,
+  .goog-te-balloon-frame, #goog-gt-tt, .goog-tooltip { display: none !important; visibility: hidden !important; }
   .goog-logo-link, .goog-te-gadget { display: none !important; }
   body { top: 0 !important; position: static !important; }
+  .skiptranslate { line-height: 0 !important; }
   @media (max-width: 560px) { .slm-translate { left: 12px; bottom: 12px; } }
   @media print { .slm-translate { display: none; } }
 </style>
