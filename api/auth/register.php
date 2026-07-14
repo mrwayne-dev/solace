@@ -76,10 +76,10 @@ try {
         $referred_by = $refStmt->fetchColumn() ?: null;
     }
 
-    // --- Insert new user (unverified — no session until email is confirmed) ---
+    // --- Insert new user ---
     $stmt = $pdo->prepare("
         INSERT INTO users (name, full_name, email, password, email_verified, referred_by, created_at)
-        VALUES (?, ?, ?, ?, 0, ?, NOW())
+        VALUES (?, ?, ?, ?, 1, ?, NOW())
     ");
     $stmt->execute([$full_name, $full_name, $email, $hashed, $referred_by]);
     $user_id = $pdo->lastInsertId();
@@ -96,47 +96,25 @@ try {
     // --- Create wallet entry ---
     $pdo->prepare("INSERT INTO wallets (user_id, balance) VALUES (?, 0.00)")->execute([$user_id]);
 
-    // --- DEV WORKAROUND (local only): no mail server yet ------------------
-    // In local/dev, skip the email-OTP step entirely: mark the account
-    // verified and open the session so registration lands straight on the
-    // dashboard. Production (APP_ENV=production) keeps full OTP verification.
-    if (defined('APP_ENV') && APP_ENV === 'local') {
-        $pdo->prepare("UPDATE users SET email_verified = 1 WHERE id = ?")->execute([$user_id]);
-        session_regenerate_id(true);
-        $_SESSION['user_id']        = $user_id;
-        $_SESSION['email']          = $email;
-        $_SESSION['full_name']      = $full_name;
-        $_SESSION['role']           = 'user';
-        $_SESSION['profile_picture'] = '/assets/images/avatar/default.png';
-        echo json_encode([
-            'status'  => 'success',
-            'message' => 'Account created. Redirecting…',
-            'data'    => ['redirect' => '/dashboard']
-        ]);
-        exit;
-    }
+    // --- Open the logged-in session (regenerate ID first to prevent fixation) ---
+    session_regenerate_id(true);
+    $_SESSION['user_id']         = $user_id;
+    $_SESSION['email']           = $email;
+    $_SESSION['full_name']       = $full_name;
+    $_SESSION['role']            = 'user';
+    $_SESSION['profile_picture'] = '/assets/images/avatar/default.png';
 
-    // --- Generate + store email verification OTP ---
-    $otp = random_int(100000, 999999);
-    $expiry = date('Y-m-d H:i:s', strtotime('+10 minutes'));
-    $pdo->prepare("DELETE FROM email_verifications WHERE user_id = ?")->execute([$user_id]);
-    $pdo->prepare("INSERT INTO email_verifications (user_id, otp, expires_at) VALUES (?, ?, ?)")
-        ->execute([$user_id, $otp, $expiry]);
-
-    // --- Send Verification Email (welcome email is sent after verification) ---
+    // --- Send Welcome Email ---
     sendEmail([
         'to' => $email,
-        'template' => 'email_verification',
-        'variables' => [
-            'user_name' => $full_name,
-            'otp' => $otp,
-        ],
+        'template' => 'welcome_user',
+        'variables' => ['user_name' => $full_name],
     ]);
 
     echo json_encode([
-        'status' => 'success',
-        'message' => 'We sent a 6-digit verification code to your email.',
-        'data' => ['requires_verification' => true, 'user_id' => $user_id]
+        'status'  => 'success',
+        'message' => 'Account created. Redirecting…',
+        'data'    => ['redirect' => '/dashboard']
     ]);
 
 } catch (Exception $e) {

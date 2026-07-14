@@ -56,19 +56,6 @@ include __DIR__ . '/_partials/head.php';
         <button type="submit" class="btn btn--primary" style="width: 100%;">Create account</button>
       </form>
 
-      <!-- Verify step — revealed after sign-up (OTP emailed) -->
-      <form id="verify-form" class="form-stack hidden" autocomplete="off">
-        <div class="form-field">
-          <label class="form-field__label" for="verify-otp">Enter the 6-digit code</label>
-          <input id="verify-otp" type="text" inputmode="numeric" class="form-field__input" placeholder="••••••" maxlength="6" required>
-          <p class="form-field__hint">We emailed a code to verify your address. Check your inbox (and spam folder).</p>
-        </div>
-        <button type="submit" class="btn btn--primary" style="width: 100%;">Verify &amp; continue</button>
-        <p style="text-align:center; font-size: var(--text-sm); margin-top: var(--space-3);">
-          Didn't get it? <a href="#" id="verify-resend" class="form-link">Resend code</a>
-        </p>
-      </form>
-
       <div class="form-footer">
         Already have an account? <a href="/login">Sign in</a>
       </div>

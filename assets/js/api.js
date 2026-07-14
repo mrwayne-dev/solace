@@ -237,11 +237,6 @@ if (loginForm) {
       setTimeout(() => {
         window.location.href = res.data?.redirect || (isAdmin ? '/admin' : '/pages/user/dashboard.php');
       }, 600);
-    } else if (res.data?.requires_verification) {
-      // Unverified account — reveal the OTP step instead of failing outright.
-      pendingVerifyUserId = res.data.user_id;
-      showToast(res.message || 'Please verify your email to continue.', 'info');
-      revealVerifyStep(loginForm);
     } else {
       showToast(res.message || 'Login failed. Please try again.', 'error');
     }
@@ -286,13 +281,7 @@ if (registerForm) {
     }
 
     const res = await fetchApi(getAuthEndpoint('register'), data);
-    if (res.status === 'success' && res.data?.requires_verification) {
-      // Email verification required — reveal the OTP step.
-      pendingVerifyUserId = res.data.user_id;
-      showToast(res.message || 'Check your email for a 6-digit code.', 'success');
-      revealVerifyStep(registerForm);
-    } else if (res.status === 'success') {
-      // Fallback (e.g. admin register) — straight redirect.
+    if (res.status === 'success') {
       showToast('Registration successful! Redirecting...', 'success');
       setTimeout(() => {
         window.location.href = res.data?.redirect || (isAdmin ? '/admin' : '/pages/user/dashboard.php');
@@ -301,51 +290,6 @@ if (registerForm) {
       showToast(res.message || 'Registration failed. Try again.', 'error');
     }
   });
-}
-
-/* =======================================================
-    EMAIL VERIFICATION (shared by register + login pages)
-    ======================================================= */
-let pendingVerifyUserId = null;
-
-// Hide the primary auth form and show the OTP verify step.
-function revealVerifyStep(primaryForm) {
-  const verifyForm = document.getElementById('verify-form');
-  if (!verifyForm) return;
-  if (primaryForm) primaryForm.classList.add('hidden');
-  verifyForm.classList.remove('hidden');
-  document.getElementById('verify-otp')?.focus();
-}
-
-const verifyForm = document.getElementById('verify-form');
-if (verifyForm) {
-  verifyForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const otp = document.getElementById('verify-otp')?.value.trim() || '';
-    if (!pendingVerifyUserId) return showToast('Please sign up or sign in first.', 'error');
-    if (!otp) return showToast('Enter the 6-digit code.', 'error');
-
-    const res = await fetchApi('/api/auth/verify_email.php', { user_id: pendingVerifyUserId, otp });
-    if (res.status === 'success') {
-      showToast(res.message || 'Email verified! Redirecting...', 'success');
-      setTimeout(() => {
-        window.location.href = res.data?.redirect || '/dashboard';
-      }, 600);
-    } else {
-      showToast(res.message || 'Verification failed. Try again.', 'error');
-    }
-  });
-
-  const resendLink = document.getElementById('verify-resend');
-  if (resendLink) {
-    resendLink.addEventListener('click', async (e) => {
-      e.preventDefault();
-      if (!pendingVerifyUserId) return showToast('Please sign up or sign in first.', 'error');
-      const res = await fetchApi('/api/auth/verify_email.php', { user_id: pendingVerifyUserId, resend: true });
-      showToast(res.message || (res.status === 'success' ? 'A new code has been sent.' : 'Could not resend code.'),
-        res.status === 'success' ? 'success' : 'error');
-    });
-  }
 }
 
 /* =======================================================

@@ -45,7 +45,7 @@ try {
     }
 
     // --- Retrieve user ---
-    $stmt = $pdo->prepare("SELECT id, name, full_name, email, password, status, role, profile_picture, email_verified FROM users WHERE email = ?");
+    $stmt = $pdo->prepare("SELECT id, name, full_name, email, password, status, role, profile_picture FROM users WHERE email = ?");
     $stmt->execute([$email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -65,16 +65,6 @@ try {
     if (!password_verify($password, $user['password'])) {
         recordLoginFailure($pdo, $ip, $email);
         echo json_encode(['status' => 'error', 'message' => 'Invalid email or password.']);
-        exit;
-    }
-
-    // --- Block unverified accounts (existing accounts are backfilled to verified) ---
-    if (isset($user['email_verified']) && (int)$user['email_verified'] === 0) {
-        echo json_encode([
-            'status' => 'error',
-            'message' => 'Please verify your email to continue. We can send you a new code.',
-            'data' => ['requires_verification' => true, 'user_id' => (int)$user['id']]
-        ]);
         exit;
     }
 
